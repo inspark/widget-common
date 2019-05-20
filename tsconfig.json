@@ -16,6 +16,14 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "sem-dashboard": [
+        "dist/sem-dashboard"
+      ],
+      "sem-dashboard/*": [
+        "dist/sem-dashboard/*"
+      ]
+    }
   }
 }
