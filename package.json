@@ -1,15 +1,17 @@
 {
-  "name": "sem-dashboard-common",
+  "name": "widget-common-container",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build sem-dashboard",
+    "clean": "rm -rf dist/*",
+    "build": "npm run clean & ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "publish": "npm publish dist/widget-common/"
   },
-  "private": true,
+  "private": false,
   "dependencies": {
     "@angular/animations": "~7.0.0",
     "@angular/common": "~7.0.0",

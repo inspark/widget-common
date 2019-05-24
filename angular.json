@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "sem-dashboard-common": {
+    "widget-common-container": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/sem-dashboard-common",
+            "outputPath": "dist/widget-common",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -62,18 +62,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "sem-dashboard-common:build"
+            "browserTarget": "widget-common:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "sem-dashboard-common:build:production"
+              "browserTarget": "widget-common:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "sem-dashboard-common:build"
+            "browserTarget": "widget-common:build"
           }
         },
         "test": {
@@ -107,7 +107,7 @@
         }
       }
     },
-    "sem-dashboard-common-e2e": {
+    "widget-common-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "prefix": "",
@@ -116,11 +116,11 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "sem-dashboard-common:serve"
+            "devServerTarget": "widget-common:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "sem-dashboard-common:serve:production"
+              "devServerTarget": "widget-common:serve:production"
             }
           }
         },
@@ -135,33 +135,33 @@
         }
       }
     },
-    "sem-dashboard": {
-      "root": "projects/sem-dashboard",
-      "sourceRoot": "projects/sem-dashboard/src",
+    "widget-common": {
+      "root": "projects/widget-common",
+      "sourceRoot": "projects/widget-common/src",
       "projectType": "library",
       "prefix": "lib",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-ng-packagr:build",
           "options": {
-            "tsConfig": "projects/sem-dashboard/tsconfig.lib.json",
-            "project": "projects/sem-dashboard/ng-package.json"
+            "tsConfig": "projects/widget-common/tsconfig.lib.json",
+            "project": "projects/widget-common/ng-package.json"
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/sem-dashboard/src/test.ts",
-            "tsConfig": "projects/sem-dashboard/tsconfig.spec.json",
-            "karmaConfig": "projects/sem-dashboard/karma.conf.js"
+            "main": "projects/widget-common/src/test.ts",
+            "tsConfig": "projects/widget-common/tsconfig.spec.json",
+            "karmaConfig": "projects/widget-common/karma.conf.js"
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "projects/sem-dashboard/tsconfig.lib.json",
-              "projects/sem-dashboard/tsconfig.spec.json"
+              "projects/widget-common/tsconfig.lib.json",
+              "projects/widget-common/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**"
@@ -171,5 +171,5 @@
       }
     }
   },
-  "defaultProject": "sem-dashboard-common"
+  "defaultProject": "widget-common"
 }

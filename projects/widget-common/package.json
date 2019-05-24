@@ -1,6 +1,10 @@
 {
-  "name": "sem-dashboard",
+  "name": "@inspark/widget-common",
   "version": "0.0.1",
+  "description": "",
+  "author": "Inspark",
+  "private": false,
+
   "peerDependencies": {
     "@angular/common": "^7.0.0",
     "@angular/core": "^7.0.0",

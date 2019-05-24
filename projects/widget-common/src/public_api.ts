@@ -1,5 +1,5 @@
 /*
- * Public API Surface of sem-dashboard
+ * Public API Surface of widget-common
  */
 
 export * from './lib/communication.service';
