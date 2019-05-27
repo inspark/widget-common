@@ -143,7 +143,7 @@ export interface IWidgetParam {
   viewConfig?: IWidgetParamConfig;
   custom?: any;
   borders?: Border[];
-  dashboardLink?: number;
+  dashboardLink?: { dashname?: string, id: number };
   isEditing?: boolean; // Параметр, обозначающий, что поле редактируется
   canEditable?: boolean; // Может ли параметр редактироваться
 }
