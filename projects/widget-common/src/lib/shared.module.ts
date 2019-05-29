@@ -1,5 +1,4 @@
-import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
-import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import {TranslateModule} from '@ngx-translate/core';
 import {Injectable, NgModule} from '@angular/core';
 import {NvD3Module} from 'angular2-nvd3';
 import {ChartComponentModule} from './chart/chart.component';
@@ -13,9 +12,6 @@ import {
 } from './widget.utils';
 import {InlineSVGModule} from 'ng-inline-svg';
 import {
-  HttpClientModule,
-  HttpClient,
-  HTTP_INTERCEPTORS,
   HttpInterceptor,
   HttpRequest,
   HttpHandler, HttpEvent
@@ -64,9 +60,5 @@ export class DevInterceptor implements HttpInterceptor {
   ]
 })
 export class DashboardSharedModule {
-}
-
-export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http);
 }
 

@@ -88,7 +88,7 @@ export class ChartComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     if (this.config && this.values) {
-      if (this.values.length) {
+      if (this.values.length && this.values[0].data) {
         this.options = {chart: this.generateChartOptions(this.config, this.values[0])};
         this.data = this.generateData(this.config, this.values);
       }

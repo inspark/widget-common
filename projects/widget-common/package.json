@@ -12,6 +12,7 @@
     "moment": "^2.24.0",
     "ng-inline-svg": "^8.4.1",
     "@ngx-translate/http-loader": "^3.0.1",
-    "rxjs": "^6.3.3"
+    "rxjs": "^6.3.3",
+    "@ng-bootstrap/ng-bootstrap": "^4.1.3"
   }
 }

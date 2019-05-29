@@ -7,6 +7,11 @@ class Common {
     return '';
   }
 
+  override(serviceUrl: string, transformChartUrlConfig: any) {
+    this.serviceUrl = serviceUrl;
+    this.transformChartUrlConfig = transformChartUrlConfig;
+  }
+
 }
 
 export const common = new Common();
