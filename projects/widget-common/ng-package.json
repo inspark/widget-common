@@ -3,5 +3,8 @@
   "dest": "../../dist/widget-common",
   "lib": {
     "entryFile": "src/public_api.ts"
-  }
+  },
+  "whitelistedNonPeerDependencies": [
+    "."
+  ]
 }

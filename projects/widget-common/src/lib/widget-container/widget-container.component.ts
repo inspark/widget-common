@@ -166,9 +166,10 @@ export class WidgetContainer {
           } else {
             this.generateValues();
           }
-
-          const url = getWidgetPath(this.prodOpts.widgetClass);
-          this.media = updateWidgetMediaUrl(this.component.media, url);
+          if (this.prodOpts.widgetClass) {
+            const url = getWidgetPath(this.prodOpts.widgetClass);
+            this.media = updateWidgetMediaUrl(this.component.media, url);
+          }
         }
         this.component.onInit();
       }
@@ -228,7 +229,6 @@ export class WidgetContainer {
           if (data.command === 'values') {
             this.values = data.values;
             this.component.onUpdate(this.values);
-
             console.log('NEW VALUES', this.values);
           }
         } else {
