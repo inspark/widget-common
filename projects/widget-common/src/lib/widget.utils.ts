@@ -11,6 +11,14 @@ import {Pipe, PipeTransform} from '@angular/core';
 import {common} from "./common";
 
 
+//Обертка для среды разработки
+export const Component = (opts) => {
+  return (component) => {
+    return component;
+  };
+};
+
+
 @Pipe({name: 'filterIndexOf'})
 export class FilterIndexOfPipe implements PipeTransform {
   transform(array: any[], field: string, search: any) {
@@ -148,7 +156,13 @@ function assignValue(item: WidgetParamChildren, itemPath, params: IWidgetParam[]
         if (!itemValues[i]) {
           itemValues[i] = [];
         }
-        itemValues[i][j] = {...param, data: null, value: null, custom: {}, viewConfig: getConfig(viewConfig, path.join('.'))};
+        itemValues[i][j] = {
+          ...param,
+          data: null,
+          value: null,
+          custom: {},
+          viewConfig: getConfig(viewConfig, path.join('.'))
+        };
         if (i > rows) {
           rows = i;
         }
@@ -158,7 +172,12 @@ function assignValue(item: WidgetParamChildren, itemPath, params: IWidgetParam[]
       }
     });
 
-    const res: ItemTable = {...itemTable, data: {values: itemValues}, values: itemValues, viewConfig: getConfig(viewConfig, path)};
+    const res: ItemTable = {
+      ...itemTable,
+      data: {values: itemValues},
+      values: itemValues,
+      viewConfig: getConfig(viewConfig, path)
+    };
     return res;
   } else {
     const param = params.find(val => val.refName === path);
@@ -204,7 +223,15 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
   if (params instanceof Array) {
     const item: any = params[0];
     const itemPath = [...path, 1];
-    result.push({name: itemPath.join('.'), title: 'Item 1', views: item.views, itemType, paramType, parent, config: null});
+    result.push({
+      name: itemPath.join('.'),
+      title: 'Item 1',
+      views: item.views,
+      itemType,
+      paramType,
+      parent,
+      config: null
+    });
   } else {
     for (const key in params) {
       if (params.hasOwnProperty(key)) {
@@ -242,11 +269,26 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
               itemType,
               paramType,
               parent,
-              viewConfig: {rows: 1, cols: 1, colsName: ['Col 1'], rowsName: ['Row 1'], visibleRow: true, visibleCol: true},
+              viewConfig: {
+                rows: 1,
+                cols: 1,
+                colsName: ['Col 1'],
+                rowsName: ['Row 1'],
+                visibleRow: true,
+                visibleCol: true
+              },
               config: {},
             });
           } else {
-            result.push({name: itemPath.join('.'), title: item.title, views: item.views, itemType, paramType, parent, config: {}});
+            result.push({
+              name: itemPath.join('.'),
+              title: item.title,
+              views: item.views,
+              itemType,
+              paramType,
+              parent,
+              config: {}
+            });
           }
         }
       }
