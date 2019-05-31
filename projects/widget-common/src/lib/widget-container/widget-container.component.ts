@@ -32,6 +32,7 @@ import {assignValues, createParamList} from "../widget.utils";
 import {getWidgetPath, updateWidgetMediaUrl} from "../loader";
 import {generateValues} from "../widget.generator";
 import {sprintf} from "../sprintf";
+import {common} from "../common";
 
 
 export interface WidgetContainerDevOptions {
@@ -85,13 +86,13 @@ export class WidgetContainer {
       private prodOpts: WidgetContainerProduction = opts as WidgetContainerProduction;
 
 
-      readonly CHART_TYPES = ChartTypes;
+
       readonly pictureId = opts.isDev ? -1 : (this.prodOpts.widget ? this.prodOpts.widget.config.widget.picture.pictureId : null);
 
       private message$: Observable<any>;
 
+      readonly CHART_TYPES = ChartTypes;
       readonly VALUE_TYPE = VALUE_TYPE;
-      readonly STATE_COLORS = STATE_COLORS;
 
 
       set values(data) {
@@ -207,7 +208,7 @@ export class WidgetContainer {
                       datapie.push({
                         'key': item.state.name,
                         'y': item.interval,
-                        'color': item.state.id > -1 ? this.STATE_COLORS[item.state.id] : this.STATE_COLORS[0]
+                        'color': item.state.id > -1 ? STATE_COLORS[item.state.id] : STATE_COLORS[0]
                       });
                     });
                     values[key].items[i].datapie = datapie;
@@ -280,34 +281,22 @@ export class WidgetContainer {
         return res;
       }
 
-      onReady(scope, el) {
-        console.log('onReady', scope);
-        this.CHARTS.pie = scope.chart;
-      }
-
-      openWindow(url) {
-        if (url && url != null) {
-          window.open(url, '_blank');
-        }
-        return false;
-      }
-
       /**
        * Заглушка для получения URL
        */
       urlExport(): string {
-        return '';
+        return common.serviceUrl + '/' + 'db/widget' + '/' + this.widget.id + '/export';
       }
 
-      paramCancel(par: ItemSingle) {
+      paramCancel(par: WidgetItem) {
         par.isEditing = false;
       }
 
-      paramEdit(par: ItemSingle) {
+      paramEdit(par: WidgetItem) {
         par.isEditing = true;
       }
 
-      paramSave(par: ItemSingle) {
+      paramSave(par: WidgetItem) {
         par.isEditing = false;
       }
     }

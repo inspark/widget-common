@@ -8,10 +8,10 @@ import {
 } from './widget.interface';
 import {_} from './widget.component';
 import {Pipe, PipeTransform} from '@angular/core';
-import {common} from "./common";
+import {common} from './common';
 
 
-//Обертка для среды разработки
+// Обертка для среды разработки
 export const Component = (opts) => {
   return (component) => {
     return component;
@@ -74,7 +74,7 @@ export class MakePictureUrl implements PipeTransform {
 export class MakeIconUrl implements PipeTransform {
   transform(id: number): string {
     if (id === -1) {
-      return '';//require('./media/icon.svg');
+      return require('./media/icon.svg');
     } else {
       return common.serviceUrl + `/db/icon/${id}/img`;
     }
@@ -174,7 +174,6 @@ function assignValue(item: WidgetParamChildren, itemPath, params: IWidgetParam[]
 
     const res: ItemTable = {
       ...itemTable,
-      data: {values: itemValues},
       values: itemValues,
       viewConfig: getConfig(viewConfig, path)
     };

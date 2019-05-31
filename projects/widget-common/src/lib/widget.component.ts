@@ -1,24 +1,51 @@
-import {SiteTheme, WidgetParams, WidgetSize} from './widget.interface';
+import {
+  ChartTypes,
+  ItemSingle,
+  SiteTheme,
+  VALUE_TYPE,
+  WidgetItem,
+  WidgetParams,
+  WidgetSize
+} from './widget.interface';
 
 export const _ = (str: string) => str;
 
 export class WidgetComponent {
 
-  values: any;
   media: any;
-  theme: SiteTheme;
 
   onInit() {
-
-
   }
 
   onDestroy() {
-
   }
 
   onUpdate(values) {
+  }
 
+}
+
+
+export class WidgetComponentContainer {
+
+  values: any;
+  pictureId: number;
+
+  readonly CHART_TYPES = ChartTypes;
+  readonly VALUE_TYPE = VALUE_TYPE;
+
+
+  urlExport() {
+    return '';
+  }
+
+  paramCancel(par: WidgetItem) {
+  }
+
+  paramEdit(par: WidgetItem) {
+  }
+
+  paramSave(par: WidgetItem) {
   }
 
 }
@@ -31,6 +58,6 @@ export interface WidgetPackage {
   size: WidgetSize;
   styles: string;
   locales?: { code: string, file: string }[];
-  needPicture?: boolean
+  needPicture?: boolean;
 }
 

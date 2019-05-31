@@ -316,7 +316,6 @@ function generateTableParams(paramType: PARAM_TYPE, item: WidgetParamChildren, p
       visibleRow: true,
       visibleCol: true,
     },
-    data: {values},
     custom: {},
     borders: [],
     isEditing: false,

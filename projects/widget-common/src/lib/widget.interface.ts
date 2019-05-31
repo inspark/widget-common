@@ -2,20 +2,16 @@ export enum ITEM_TYPE {
   'single' = 1, // Единичные значения параметров
   'series' = 2, // Ряды данных
   'events' = 3, // Лента событий
-  'sysinfo' = 4, // Системная информация
   'interval' = 5, // Значения параметров на заданном интервале
   'table' = 6, // Таблица значений параметров
-  'image' = 7 // Изображение
 }
 
 export const ITEM_TYPE_ITOS = {
   1: 'single',
   2: 'series',
   3: 'events',
-  4: 'sysinfo',
   5: 'interval',
   6: 'table',
-  7: 'image',
 };
 
 
@@ -80,15 +76,14 @@ export interface ItemSeries extends IWidgetParam {
 }
 
 export interface ItemTable extends IWidgetParam {
-  data: TableValue;
-  values: any;
+  values: TableValues;
 }
 
 export interface ItemParent {
   [k: string]: WidgetItem | WidgetItem[] | ParamConfig;
 }
 
-export type WidgetItem = ItemSingle | ItemTable | ItemSeries | ItemInterval | ItemParent | EventValues;
+export type WidgetItem = any | ItemSingle | ItemTable | ItemSeries | ItemInterval | ItemParent | EventValues;
 
 export interface WidgetItems {
   [k: string]: WidgetItem;
@@ -309,7 +304,7 @@ export interface EventValues {
   data: {
     rowList: Array<EventValue>;
   };
-  config: any
+  config: ParamConfigEvents;
 }
 
 // У корневых элементов необходимо указать item_type
@@ -319,7 +314,7 @@ export interface WidgetParam {
   param_type?: PARAM_TYPE;
   items?: WidgetParamsChildren | WidgetArrayParam[];
   views?: string[]; // Перечисление возможных видов параметра
-  available?: any[];
+  available?: any[]; // Ограничение для генератора случайных чисел
 }
 
 export interface WidgetParamChildren {
@@ -328,7 +323,7 @@ export interface WidgetParamChildren {
   param_type?: PARAM_TYPE;
   items?: WidgetParamsChildren | WidgetArrayParam[];
   views?: string[]; // Перечисление возможных видов параметра
-  available?: any[];
+  available?: any[]; // Ограничение для генератора случайных чисел
 }
 
 export interface WidgetArrayParam {
