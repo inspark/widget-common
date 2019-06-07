@@ -267,7 +267,6 @@ function generateIntervalParams(paramType: PARAM_TYPE, item: WidgetParamChildren
         color: ['error', 'warning', 'none', 'success'][getRandom(0, 4)],
         comment: 'comment',
         idIcon: -1,
-        name: 'nameß'
       },
       'beginInterval': 1556658000000,
       'endInterval': 1557139222542,

@@ -74,7 +74,7 @@ export class MakePictureUrl implements PipeTransform {
 export class MakeIconUrl implements PipeTransform {
   transform(id: number): string {
     if (id === -1) {
-      return require('./media/icon.svg');
+      return ''; //return require('./media/icon.svg');
     } else {
       return common.serviceUrl + `/db/icon/${id}/img`;
     }

@@ -122,7 +122,6 @@ export interface IWidgetDeviceParam {
   object: { id: number, shortname: string, fullname: string };
   param: { id?: number, calc?: boolean, name?: string, type?: PARAM_TYPE, value?: number, measure?: { title: string, unit: string } };
   zone?: { name: string };
-  state?: { id?: number, name?: string, comment?: string };
 }
 
 
@@ -202,30 +201,17 @@ export interface ParamConfigSeries {
 
 export interface ParamConfigEvents {
   lineType?: number;  // События, команды, уставки
-  attrList?: any[];       // Список и относительное расположение выдаваемых атрибутов
-  titleList?: any[];        // Список и относительное расположение заголовков выдаваемых атрибутов
+  attrList?: string[];       // Список и относительное расположение выдаваемых атрибутов
+  titleList?: string[];        // Список и относительное расположение заголовков выдаваемых атрибутов
   size?: number;     //  Максимальное количество выдаваемых строк в ленте
-  objectIds?: any[];         // Идентификаторы объектов
-  eventIds?: any[];          // Идентификаторы событий
-  commands?: any[];          // Идентификаторы команд
+  objectIds?: number[];         // Идентификаторы объектов
+  eventIds?: number[];          // Идентификаторы событий
+  commands?: number[];          // Идентификаторы команд
 }
 
 
 export type ParamConfig = ParamConfigInterval | ParamConfigSeries | ParamConfigSingle | ParamConfigEvents;
 
-/**
- * Интерфейс для ленты событий с типом 1
- */
-export interface EventLogValue {
-  shortname: string;
-  serialnumber: string;
-  eventid: number;
-  name: string;
-  timestmp: number;
-  msg: string;
-
-
-}
 
 /**
  значение  - value
@@ -237,11 +223,7 @@ export interface SingleValue {
   manually: boolean;
   date: number;
   value: any;
-  state: {
-    color: string;
-    comment: string;
-    idIcon: number;
-  };
+  state: ParamState;
 }
 
 
@@ -261,12 +243,7 @@ export interface IntervalValue {
   min: number; //  absolute
   max: number; //  absolute
   states: ParamStates[]; //  absolute signal
-  state: { //
-    color: string;
-    comment: string;
-    name: string;
-    idIcon: number;
-  };
+  state: ParamState;
   beginInterval: number;
   endInterval: number;
   switchCount: number; // signal
@@ -298,7 +275,19 @@ export interface TableValue {
 }
 
 // События
-export type EventValue = EventLogValue ;
+
+
+/**
+ * Интерфейс для ленты событий с типом 1
+ */
+export interface EventValue {
+  shortname: string;
+  serialnumber: string;
+  eventid: number;
+  name: string;
+  timestmp: number;
+  msg: string;
+}
 
 export interface EventValues {
   data: {
@@ -351,6 +340,12 @@ export interface WidgetSize {
   sm: WidgetSizePosition;
   lg: WidgetSizePosition;
   mobile: WidgetSizePosition;
+}
+
+export interface ParamState {
+  color: string;
+  comment: string;
+  idIcon: number;
 }
 
 export interface ParamStates {

@@ -192,6 +192,7 @@ export class WidgetContainer {
       private generateValues() {
         this.values = generateValues(this.prodOpts.widgetPackage.params, createParamList(this.prodOpts.widgetPackage.params));
         this.values = this.addChartData(this.values);
+        console.log('GENERATE', this.values);
         this.component.onUpdate(this.values);
       }
 
