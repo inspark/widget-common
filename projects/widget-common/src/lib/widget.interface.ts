@@ -122,6 +122,7 @@ export interface IWidgetDeviceParam {
   object: { id: number, shortname: string, fullname: string };
   param: { id?: number, calc?: boolean, name?: string, type?: PARAM_TYPE, value?: number, measure?: { title: string, unit: string } };
   zone?: { name: string };
+  state?: { id?: number, name?: string, comment?: string };
 }
 
 
@@ -204,9 +205,9 @@ export interface ParamConfigEvents {
   attrList?: string[];       // Список и относительное расположение выдаваемых атрибутов
   titleList?: string[];        // Список и относительное расположение заголовков выдаваемых атрибутов
   size?: number;     //  Максимальное количество выдаваемых строк в ленте
-  objectIds?: number[];         // Идентификаторы объектов
-  eventIds?: number[];          // Идентификаторы событий
-  commands?: number[];          // Идентификаторы команд
+  objectIds?: string[];         // Идентификаторы объектов
+  eventIds?: string[];          // Идентификаторы событий
+  commands?: string[];          // Идентификаторы команд
 }
 
 

@@ -281,7 +281,7 @@ function generateIntervalParams(paramType: PARAM_TYPE, item: WidgetParamChildren
 
 function generateEventsParams(paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): EventValues {
   const itemIndex = getRandom(1, 10);
-  return {data: EVENTS_DATA, config: {attrList: ['shortname', 'serialnumber', 'msg'], titleList: ["Объект", "Сер.номер", "Сообщение"]}};
+  return {data: EVENTS_DATA, config: {attrList: ['shortname', 'serialnumber', 'msg'], titleList: ['Объект', 'Сер.номер', 'Сообщение']}};
 }
 
 function generateTableParams(paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemTable {
