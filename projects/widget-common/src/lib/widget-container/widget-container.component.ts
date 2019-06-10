@@ -186,7 +186,9 @@ export class WidgetContainer {
           }
           this.message$ = null;
         }
-        this.component.onDestroy();
+        if (this.component) {
+          this.component.onDestroy();
+        }
       }
 
       private generateValues() {
@@ -286,7 +288,11 @@ export class WidgetContainer {
        * Заглушка для получения URL
        */
       urlExport(): string {
-        return common.serviceUrl + '/' + 'db/widget' + '/' + this.widget.id + '/export';
+        if (this.widget) {
+          return common.serviceUrl + '/' + 'db/widget' + '/' + this.widget.id + '/export';
+        } else {
+          return '';
+        }
       }
 
       paramCancel(par: WidgetItem) {
