@@ -26,7 +26,7 @@ export function vsprintf(fmt, argv) {
 }
 
 function sprintf_format(parse_tree, argv) {
-  var cursor = 1, tree_length = parse_tree.length, arg, output = '', i, k, match, pad, pad_character, pad_length,
+  var cursor = 0, tree_length = parse_tree.length, arg, output = '', i, k, match, pad, pad_character, pad_length,
     is_positive, sign
   for (i = 0; i < tree_length; i++) {
     if (typeof parse_tree[i] === 'string') {

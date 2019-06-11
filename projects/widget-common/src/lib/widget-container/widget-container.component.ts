@@ -238,6 +238,7 @@ export class WidgetContainer {
         } else {
           data.forEach(val => {
             const param: any = this.getParam(val.refName);
+            const newVal = {...val};
             if (param.itemType === ITEM_TYPE.series) {
               param.data = val.values;
             } else {
@@ -248,17 +249,16 @@ export class WidgetContainer {
                   for (let i = 0; i < fmlength; i++) {
                     args.push(val.value);
                   }
-                  val.value = sprintf(param.viewConfig.formatValue, ...args);
+                  newVal.value = sprintf(param.viewConfig.formatValue, ...args);
                 } catch (e) {
                   console.log(e);
-                  val.value = 'Invalid format string';
+                  newVal.value = 'Invalid format string';
                 }
               }
-              param.data = val;
-              param.value = val.value;
+              param.data = newVal;
+              param.value = newVal.value;
             }
           });
-          console.log('[1]updateData', this.values);
           this.component.onUpdate(this.values);
           this.cdRef.detectChanges();
         }

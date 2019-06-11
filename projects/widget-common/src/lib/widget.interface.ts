@@ -270,11 +270,6 @@ export interface SeriesLineValue {
 
 export type TableValues = Array<Array<ItemSingle>>;
 
-// Таблица
-export interface TableValue {
-  values: TableValues;
-}
-
 // События
 
 
