@@ -9,7 +9,7 @@ const WIDGET_CACHE: {
 
 
 export function getWidgetPath(widget: IWidgetClass): string {
-  return `/assets/widgets/${widget.storeid}/`;
+  return `/assets/widgets/${widget.storeId}/`;
 }
 
 export function updateWidgetMediaUrl(media: object, url: string) {

@@ -31,7 +31,7 @@ export const PARAM_TYPE_ITOS = {
   3: 'param_type_increment'
 };
 
-// Типы знчений
+// Типы значений
 export enum VALUE_TYPE {
   'absolute' = 1,
   'relative' = 2,
@@ -145,15 +145,14 @@ export interface IWidgetParam {
 
 
 export interface IWidgetParamConfig {
-  pageLink?: string;
   formatValue?: string;
-  view?: null;
+  view?: string;
   rows?: number;
   cols?: number;
   rowsName?: string[];
   colsName?: string[];
-  visibleRow?: true;
-  visibleCol?: true;
+  visibleRow?: boolean;
+  visibleCol?: boolean;
 }
 
 
@@ -396,19 +395,12 @@ export interface IWidgetConfig {
 
 export interface IWidgetClass {
   id: number;
-  storeid?: string; // ссылка на файл
-  version?: string;
-  name?: string;
-  description?: string;
-}
-
-export interface IWidgetStore {
-  id: number;
   storeId?: string; // ссылка на файл
   version?: string;
   name?: string;
   description?: string;
 }
+
 
 export type WidgetDataList = Array<SingleValue | IntervalValue>;
 
