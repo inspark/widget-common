@@ -25,7 +25,7 @@
     "zone.js": "~0.8.26"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~0.10.0",
+    "@angular-devkit/build-angular": "^0.800.3",
     "@angular-devkit/build-ng-packagr": "~0.10.0",
     "@angular/cli": "~7.0.4",
     "@angular/compiler-cli": "~7.0.0",
@@ -37,7 +37,6 @@
     "@types/jasmine": "~2.8.8",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^8.10.48",
-    "angular2-nvd3": "^1.0.7",
     "codelyzer": "~4.5.0",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",
@@ -49,6 +48,9 @@
     "moment": "^2.24.0",
     "ng-inline-svg": "^8.4.1",
     "ng-packagr": "^4.2.0",
+    "ng2-nvd3": "^2.0.0",
+    "d3": "^3.5.15",
+    "nvd3": "^1.8.5",
     "protractor": "~5.4.0",
     "rxjs": "^6.3.3",
     "ts-node": "~7.0.0",

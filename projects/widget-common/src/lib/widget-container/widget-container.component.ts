@@ -226,7 +226,7 @@ export class WidgetContainer {
 
 
       private updateData(data) {
-        if (!data) {
+        if (!data || !data.length) {
           return;
         }
         if (opts.isDev) {
@@ -304,6 +304,9 @@ export class WidgetContainer {
       }
 
       paramSave(par: WidgetItem) {
+        if ((opts as WidgetContainerProduction).sendData) {
+          (opts as WidgetContainerProduction).sendData(par);
+        }
         par.isEditing = false;
       }
     }

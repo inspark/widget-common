@@ -7,12 +7,14 @@
   "peerDependencies": {
     "@angular/common": "^7.0.0",
     "@angular/core": "^7.0.0",
-    "angular2-nvd3": "^1.0.7",
+    "ng2-nvd3": "^2.0.0",
     "moment": "^2.24.0",
     "rxjs": "^6.3.3"
   },
   "dependencies": {
-    "angular2-nvd3": "^1.0.7",
+    "ng2-nvd3": "^2.0.0",
+    "d3": "^3.5.15",
+    "nvd3": "^1.8.5",
     "moment": "^2.24.0",
     "ng-inline-svg": "^8.4.1",
     "@ngx-translate/http-loader": "^3.0.1",

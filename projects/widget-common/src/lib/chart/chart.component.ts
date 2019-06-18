@@ -9,13 +9,14 @@ import {
   SiteTheme
 } from '../widget.interface';
 import * as d3 from 'd3';
-
-import {NvD3Module} from 'angular2-nvd3';
+import 'nvd3';
+import {NvD3Module} from 'ng2-nvd3';
 import {CommonModule} from '@angular/common';
 import {PieChartComponent} from '../pie-chart/pie-chart.component';
 import * as moment_ from 'moment';
 
 const moment = moment_;
+console.log('d3', d3);
 
 @Component({
   selector: 'app-chart',
@@ -217,15 +218,15 @@ export class ChartComponent implements OnInit, OnChanges {
       clipEdge: true,
       duration: 100,
       useInteractiveGuideline: true,
-      interactiveLayer: {
-        tooltip: {
-          gravity: 's',
-          fixedTop: 65,
-          contentGenerator: function () {
-            return config.charttype === ChartTypes.candlestickBarChart ? candleContentGeneration : lineContentGenerator;
-          }(),
-        },
-      },
+      // interactiveLayer: {
+      //   tooltip: {
+      //     gravity: 's',
+      //     fixedTop: 65,
+      //     contentGenerator: function () {
+      //       return config.charttype === ChartTypes.candlestickBarChart ? candleContentGeneration : lineContentGenerator;
+      //     }(),
+      //   },
+      // },
 
       xAxis: {
         axisLabel: 'Дата',
@@ -255,25 +256,25 @@ export class ChartComponent implements OnInit, OnChanges {
 
       zoom,
 
-      tooltip: {
-        contentGenerator: function (d) {
-          if (d.point.y == null) {
-            return '<div style="background-color: ' + d.point.color + '">'
-              + '<div>' + moment(d.point.x).format('DD-MM-YYYY HH:mm') + '</div>'
-              + '<div>Нет данных</div>'
-              + '</div>';
-          }
-
-
-          return '<div style="background-color: ' + d.point.color + '">'
-            + '<div>' + moment(d.point.x).format('DD-MM-YYYY HH:mm') + '</div>'
-            + '<div>' + parseFloat(d.point.y).toFixed(2) + '</div>'
-            + '</div>';
-        },
-        ohlcContentGenerator: function (d) {
-          return '<div>test content</div>';
-        }
-      },
+      // tooltip: {
+      //   contentGenerator: function (d) {
+      //     if (d.point.y == null) {
+      //       return '<div style="background-color: ' + d.point.color + '">'
+      //         + '<div>' + moment(d.point.x).format('DD-MM-YYYY HH:mm') + '</div>'
+      //         + '<div>Нет данных</div>'
+      //         + '</div>';
+      //     }
+      //
+      //
+      //     return '<div style="background-color: ' + d.point.color + '">'
+      //       + '<div>' + moment(d.point.x).format('DD-MM-YYYY HH:mm') + '</div>'
+      //       + '<div>' + parseFloat(d.point.y).toFixed(2) + '</div>'
+      //       + '</div>';
+      //   },
+      //   ohlcContentGenerator: function (d) {
+      //     return '<div>test content</div>';
+      //   }
+      // },
 
 
     };
