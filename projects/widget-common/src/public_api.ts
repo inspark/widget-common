@@ -4,7 +4,6 @@
 
 export * from './lib/communication.service';
 export * from './lib/common';
-export * from './lib/errorHandler';
 export * from './lib/loader';
 export * from './lib/shared.module';
 export * from './lib/widget.component';

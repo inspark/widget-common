@@ -1,10 +1,7 @@
 import {
   ChangeDetectorRef,
-  Compiler,
   Component,
-  Input,
   NgModule,
-  NgModuleFactory,
   OnDestroy,
   OnInit,
   ViewEncapsulation
@@ -75,7 +72,7 @@ export class WidgetContainer {
       selector: 'widget-component',
       template: opts.widgetPackage.template,
       styles: [opts.widgetPackage.styles],
-      encapsulation: ViewEncapsulation.Emulated
+      encapsulation: ViewEncapsulation.Emulated,
     })
     class WidgetComponent implements OnInit, OnDestroy {
       component = opts.widgetPackage.component;
@@ -84,7 +81,6 @@ export class WidgetContainer {
 
       private devOpts: WidgetContainerDevOptions = opts as WidgetContainerDevOptions;
       private prodOpts: WidgetContainerProduction = opts as WidgetContainerProduction;
-
 
 
       readonly pictureId = opts.isDev ? -1 : (this.prodOpts.widget ? this.prodOpts.widget.config.widget.picture.pictureId : null);
