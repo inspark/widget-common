@@ -19,5 +19,11 @@
     "ng-inline-svg": "^8.4.1",
     "@ngx-translate/http-loader": "^3.0.1",
     "@ng-bootstrap/ng-bootstrap": "^4.1.3"
-  }
+  },
+  "copyFiles": [
+    {
+      "from": "./src/assets/*.*",
+      "to": "../../dist/widget-common/assets/"
+    }
+  ]
 }

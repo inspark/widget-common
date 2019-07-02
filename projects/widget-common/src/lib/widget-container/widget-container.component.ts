@@ -83,7 +83,7 @@ export class WidgetContainer {
       private prodOpts: WidgetContainerProduction = opts as WidgetContainerProduction;
 
 
-      readonly pictureId = opts.isDev ? -1 : (this.prodOpts.widget ? this.prodOpts.widget.config.widget.picture.pictureId : null);
+      pictureId = opts.isDev ? -1 : (this.prodOpts.widget ? this.prodOpts.widget.config.widget.picture.pictureId : null);
 
       private message$: Observable<any>;
 
@@ -187,6 +187,7 @@ export class WidgetContainer {
         }
       }
 
+      // Для превью в продакшене
       private generateValues() {
         this.values = generateValues(this.prodOpts.widgetPackage.params, createParamList(this.prodOpts.widgetPackage.params));
         this.values = this.addChartData(this.values);
@@ -222,16 +223,21 @@ export class WidgetContainer {
 
 
       private updateData(data) {
-        if (!data || !data.length) {
+        console.log('updateData', data);
+        if (!data) {
           return;
         }
         if (opts.isDev) {
           if (data.command === 'values') {
             this.values = data.values;
             this.component.onUpdate(this.values);
+            this.pictureId = data.config.pictureId ? -1 : null;
             console.log('NEW VALUES', this.values);
           }
         } else {
+          if (!data.length) {
+            return;
+          }
           data.forEach(val => {
             const param: any = this.getParam(val.refName);
             const newVal = {...val};

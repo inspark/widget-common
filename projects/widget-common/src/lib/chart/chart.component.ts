@@ -16,7 +16,6 @@ import {PieChartComponent} from '../pie-chart/pie-chart.component';
 import * as moment_ from 'moment';
 
 const moment = moment_;
-console.log('d3', d3);
 
 @Component({
   selector: 'app-chart',

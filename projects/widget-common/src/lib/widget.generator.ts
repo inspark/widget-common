@@ -1,12 +1,18 @@
 import {
-  ChartTypes, EventValues,
+  Border,
+  ChartTypes,
+  EventValues,
+  GenerateConfigItem,
   ITEM_TYPE,
+  ItemCustom,
   ItemInterval,
   ItemSeries,
   ItemSingle,
   ItemTable,
   LineType,
   PARAM_TYPE,
+  ParamConfigCustom,
+  ParamConfigCustomType,
   ParamConfigEvents,
   ParamConfigInterval,
   ParamConfigSeries,
@@ -25,47 +31,51 @@ export function generateValues(inputValues: WidgetParamsChildren | WidgetArrayPa
                                params: ParamConfigurator[],
                                itemType = ITEM_TYPE.single, paramType = PARAM_TYPE.value, path = []): WidgetItem[] {
 
+  console.log('generateValues', inputValues, params);
   if (inputValues instanceof Array) {
-
     // Проходимся по массив
+
     const result: WidgetItem[] = [];
     const conf: any = inputValues[0];
     itemType = conf.item_type !== undefined ? conf.item_type : itemType;
     paramType = conf.param_type !== undefined ? conf.param_type : paramType;
-    const max = Math.min(4, conf.max || 10);
     const param = findParam(params, path.join('.'));
-    for (let i = 0; i < max - 1; i++) {
-      result.push(generateValue(conf, paramType, itemType, param));
+    const max = Math.min(param.generateConfig.count || 3, conf.max || 10);
+    for (let i = 0; i < max; i++) {
+      result.push(generateValue(i, conf, paramType, itemType, param));
     }
     return result;
   } else {
-
     // Проходимся по объекту
 
     const result: any = {};
     for (const key in inputValues) {
       if (inputValues.hasOwnProperty(key)) {
-
-        const param = findParam(params, key);
+        const itemPath = [...path, key];
+        const param = findParam(params, itemPath.join('.'));
 
         const item = inputValues[key];
-        const itemPath = [...path, key];
+
         itemType = item.item_type || itemType;
         paramType = item.param_type || paramType;
         if (inputValues[key].items) {
           if (inputValues[key].items instanceof Array) {
+            // Если элемент - массив
             result[key] = {
               items: generateValues(inputValues[key].items, params, itemType, paramType, itemPath),
-              config: generateParamConfig(itemType, param)
+              config: generateParamConfig(itemType, param),
             };
           } else {
+            // Если элемент - объект
             result[key] = {
               ...generateValues(inputValues[key].items, params, itemType, paramType, itemPath),
-              config: generateParamConfig(itemType, param)
+              config: generateParamConfig(itemType, param),
             };
           }
         } else {
-          result[key] = generateValue(item, paramType, itemType, param);
+          // Если элемент - простой
+
+          result[key] = generateValue(0, item, paramType, itemType, param);
         }
       }
     }
@@ -75,8 +85,14 @@ export function generateValues(inputValues: WidgetParamsChildren | WidgetArrayPa
 }
 
 
-function generateParamConfig(itemType: ITEM_TYPE, param: ParamConfigurator): ParamConfigSeries | ParamConfigInterval | ParamConfigSingle | ParamConfigEvents {
+function generateParamConfig(itemType: ITEM_TYPE, param: ParamConfigurator, paramType: PARAM_TYPE = null)
+  : ParamConfigSeries | ParamConfigInterval | ParamConfigSingle | ParamConfigEvents | ParamConfigCustom {
   switch (itemType) {
+    case ITEM_TYPE.custom:
+      return {
+        type: paramType === PARAM_TYPE.custom_string ? ParamConfigCustomType.string : null,
+        text: 'text'
+      };
     case ITEM_TYPE.interval:
       return {
         dailyRange: 'dailyRange',
@@ -111,19 +127,22 @@ function generateParamConfig(itemType: ITEM_TYPE, param: ParamConfigurator): Par
 
 }
 
-function generateValue(item: WidgetParamChildren, paramType: PARAM_TYPE, itemType: ITEM_TYPE, param: ParamConfigurator): WidgetItem {
+function generateValue(index: number, item: WidgetParamChildren, paramType: PARAM_TYPE, itemType: ITEM_TYPE, param: ParamConfigurator): WidgetItem {
 
+  console.log('generateValue', param);
   switch (itemType) {
     case ITEM_TYPE.series:
-      return generateSeriesParam(paramType, item, param);
+      return generateSeriesParam(index, paramType, item, param);
     case ITEM_TYPE.single:
-      return generateSingleParams(paramType, item, param);
+      return generateSingleParams(index, paramType, item, param);
     case ITEM_TYPE.table:
-      return generateTableParams(paramType, item, param);
+      return generateTableParams(index, paramType, item, param);
     case ITEM_TYPE.events:
-      return generateEventsParams(paramType, item, param);
-    default:
-      return generateIntervalParams(paramType, item, param);
+      return generateEventsParams(index, paramType, item, param);
+    case ITEM_TYPE.custom:
+      return generateCustomParams(index, paramType, item, param);
+    case ITEM_TYPE.interval:
+      return generateIntervalParams(index, paramType, item, param);
   }
 }
 
@@ -141,13 +160,13 @@ function getRandomValue(paramType: PARAM_TYPE, item: WidgetParamChildren) {
 }
 
 
-function generateSingleParams(paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemSingle {
+function generateSingleParams(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemSingle {
 
   const value = getRandomValue(paramType, item);
-
+  const config = getConfig(param, index);
   return {
     device: {
-      controller: {id: null, serialnumber: 'SN' + getRandom(10000, 99999)},
+      controller: {id: null, serialnumber: 'SN' + getRandom(10000, 99999), isOnline: config.isOnline},
       object: {id: null, shortname: 'Object ' + getRandom(10000, 99999), fullname: 'Object ' + getRandom(10000, 99999)},
 
       param: {
@@ -164,9 +183,9 @@ function generateSingleParams(paramType: PARAM_TYPE, item: WidgetParamChildren, 
     widgetId: null,
     title: 'Title param',
     config: generateParamConfig(ITEM_TYPE.single, param),
-    value,
+    value: config.data ? value : null,
     viewConfig: {},
-    data: {
+    data: config.data ? {
       date: 1548968400000,
       value: value,
       locked: false,
@@ -176,21 +195,23 @@ function generateSingleParams(paramType: PARAM_TYPE, item: WidgetParamChildren, 
         comment: 'comment',
         idIcon: getRandom(0, 1) - 1
       },
-    },
+    } : null,
+    dashboardLink: config.pageLink ? {dashname: 'Test dashname', id: 2} : null,
     custom: {},
-    borders: [],
+    canEditable: config.editable,
+    borders: config.borders ? BORDERS : [],
     isEditing: false,
   };
 }
 
-function generateSeriesParam(paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemSeries {
+
+function generateSeriesParam(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemSeries {
 
   const value = getRandomValue(paramType, item);
   return {
     device: {
       controller: {id: null, serialnumber: 'SN' + getRandom(10000, 99999)},
       object: {id: null, shortname: 'Object ' + getRandom(10000, 99999), fullname: 'Object ' + getRandom(10000, 99999)},
-
       param: {
         id: null,
         name: 'deviceParam name',
@@ -215,9 +236,9 @@ function generateSeriesParam(paramType: PARAM_TYPE, item: WidgetParamChildren, p
 
 }
 
-function generateIntervalParams(paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemInterval {
+function generateIntervalParams(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemInterval {
   const value = getRandomValue(paramType, item);
-
+  const config = getConfig(param, index);
   return {
     device: {
       controller: {id: null, serialnumber: 'SN' + getRandom(10000, 99999)},
@@ -239,7 +260,7 @@ function generateIntervalParams(paramType: PARAM_TYPE, item: WidgetParamChildren
     config: generateParamConfig(ITEM_TYPE.single, param),
     value,
     viewConfig: null,
-    data: {
+    data: config.data ? {
       states: [{
         'interval': 21602841,
         'state': {'id': 3, 'name': 'критическое', 'color': 'error', 'comment': 'Критическое значение параметра'}
@@ -271,22 +292,43 @@ function generateIntervalParams(paramType: PARAM_TYPE, item: WidgetParamChildren
       'beginInterval': 1556658000000,
       'endInterval': 1557139222542,
 
-    },
+    } : null,
     custom: {},
-    borders: [],
+    borders: config.borders ? BORDERS : [],
     isEditing: false,
   };
 
 }
 
-function generateEventsParams(paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): EventValues {
-  const itemIndex = getRandom(1, 10);
-  return {data: EVENTS_DATA, config: {attrList: ['shortname', 'serialnumber', 'msg'], titleList: ['Объект', 'Сер.номер', 'Сообщение']}};
+function generateEventsParams(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): EventValues {
+  return {
+    data: EVENTS_DATA,
+    config: {attrList: ['shortname', 'serialnumber', 'msg'], titleList: ['Объект', 'Сер.номер', 'Сообщение']}
+  };
 }
 
-function generateTableParams(paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemTable {
-  const values = [[generateSingleParams(paramType, item, param), generateSingleParams(paramType, item, param)],
-    [generateSingleParams(paramType, item, param), generateSingleParams(paramType, item, param)]];
+function generateCustomParams(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemCustom {
+  const config = getConfig(param, index);
+  const value = BIG_TEXT.slice(0, Math.min(config.paragraphCount || 2, 5)).join('\n');
+  return {
+    device: null,
+    refName: '',
+    itemType: ITEM_TYPE.custom,
+    widgetId: null,
+    title: 'Title param',
+    config: generateParamConfig(ITEM_TYPE.custom, param, paramType),
+    value,
+    viewConfig: {},
+    dashboardLink: config.pageLink ? {dashname: 'Test dashname', id: 2} : null,
+    custom: {},
+    canEditable: config.editable,
+    isEditing: false,
+  };
+}
+
+function generateTableParams(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemTable {
+  const values = [[generateSingleParams(index, paramType, item, param), generateSingleParams(index, paramType, item, param)],
+    [generateSingleParams(index, paramType, item, param), generateSingleParams(index, paramType, item, param)]];
 
   return {
     device: {
@@ -331,6 +373,46 @@ export function getRandom(min, max) {
   return Math.round(Math.random() * (max - min) + min);
 }
 
+function getConfig(param, index): GenerateConfigItem {
+  console.log('getConfig', param, index);
+  if (param.generateConfig.items) {
+    return param.generateConfig.items[index] || {};
+  }
+  return param.generateConfig;
+}
+
+const BORDERS: Border[] = [{
+  'state': {
+    'id': 3,
+    'name': 'критическое',
+    'color': 'error',
+    'comment': 'Критическое значение параметра'
+  }, 'intervals': [{'from': 70.0, 'to': null}]
+}, {
+  'state': {
+    'id': 2,
+    'name': 'отклонение',
+    'color': 'warning',
+    'comment': 'Значение параметра отклонилось от нормального'
+  }, 'intervals': [{'from': 30.0, 'to': 70.0}]
+}, {
+  'state': {'id': 1, 'name': 'норма', 'color': 'success', 'comment': 'Нормальное значение параметра'},
+  'intervals': [{'from': 0.0, 'to': 30.0}]
+}, {
+  'state': {
+    'id': 0,
+    'name': 'нет контроля',
+    'color': 'none',
+    'comment': 'Значение параметра не контролируется'
+  }, 'intervals': [{'from': -20.0, 'to': 0.0}]
+}, {
+  'state': {
+    'id': -1,
+    'name': 'недостоверно',
+    'color': 'falsevalue',
+    'comment': 'Недостоверное значение параметра'
+  }, 'intervals': [{'from': null, 'to': -20.0}]
+}];
 
 const CHART_VALUES = [{'timestmp': 1548968400000, 'value': 49.2489651094027}, {
   'timestmp': 1548968400000,
@@ -5976,3 +6058,11 @@ const EVENTS_DATA = {
     'categoryid': 10
   }]
 };
+
+const BIG_TEXT = [
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi convallis congue nisi vel congue. Nulla vel sem non diam condimentum consectetur. Vivamus venenatis vehicula arcu, nec porta nisl. Aliquam vitae euismod arcu. Aenean fringilla, ligula et convallis fermentum, felis ligula commodo ante, non bibendum arcu diam vel ligula. Nullam lobortis interdum lorem ut convallis. Suspendisse potenti. Sed malesuada suscipit odio. Morbi a magna quis arcu semper consequat.',
+  '\n\nMauris posuere, nunc eget pulvinar feugiat, urna quam egestas enim, non interdum enim arcu eu diam. Curabitur suscipit aliquet luctus. Proin eleifend nisl vitae tellus pulvinar elementum. Praesent sollicitudin, dui eu ultrices maximus, orci tortor efficitur libero, eu eleifend leo orci ut quam. Donec dignissim vel nibh sit amet congue. Suspendisse congue lacinia suscipit. Donec nec massa facilisis, aliquet leo nec, accumsan mi. Nam fringilla massa vitae tortor mollis congue. Sed purus arcu, ornare non turpis eu, molestie laoreet leo. Nunc eu rhoncus orci. Pellentesque quis nisi tempus, sagittis erat eu, finibus tortor. Fusce nisi ex, facilisis vitae aliquet in, rutrum sed neque. Aliquam pellentesque tellus risus, sit amet hendrerit nulla condimentum at. Aliquam ultrices, nisi nec sagittis imperdiet, velit orci semper dui, vitae bibendum sem felis vel leo. Ut non leo auctor, dictum nunc sodales, dapibus dolor.',
+  '\n\nInteger blandit maximus sem, vel accumsan augue ultrices in. Curabitur ut dignissim magna, ut semper sem. Suspendisse tellus tortor, semper nec metus eu, maximus sodales tellus. Morbi sed tortor vel est vehicula blandit. Etiam id est risus. Ut consequat quis massa et commodo. Pellentesque fringilla commodo quam ac vestibulum. Quisque euismod elit velit, nec ultricies ligula consequat vitae. Ut aliquet sed sapien et elementum. Praesent rhoncus convallis nulla, vitae tempus magna euismod sit amet. Sed risus nunc, fringilla vel orci a, cursus rhoncus quam. Mauris tincidunt dolor lacus, et condimentum nisl tempor sit amet. Sed eros tortor, auctor a vulputate et, vulputate id ante. Quisque ultrices mollis vulputate. Aenean ut augue sem.',
+  '\n\nDonec luctus mauris nec nibh varius, in posuere felis scelerisque. Donec vitae dapibus felis. In interdum, libero vehicula pellentesque iaculis, orci felis tempus mauris, vel ullamcorper leo odio quis nibh. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed fringilla vestibulum urna, nec sollicitudin lacus porta eu. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean posuere ultrices nunc sit amet pretium. Quisque eget tortor semper, convallis diam sit amet, gravida purus. Maecenas finibus gravida mi eu convallis. Vivamus quis volutpat dui, vel elementum mauris. Aenean pretium odio tortor, et placerat ligula congue sit amet. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ut tristique nisi. Suspendisse pharetra elit a ligula convallis dictum. Nunc egestas non leo eu ultrices.',
+  '\n\nPraesent pulvinar nunc nec quam consectetur fringilla. Pellentesque tristique ex id mollis fermentum. Praesent sit amet lacinia nibh. Nulla at ex consequat, hendrerit sapien in, tincidunt tortor. Etiam eget efficitur libero. Proin consequat tellus at placerat sagittis. Nam vitae euismod sapien, sit amet ullamcorper odio. Sed tincidunt ut sem eu pellentesque. Sed efficitur nulla urna, sed finibus enim imperdiet in. Nulla ac nulla finibus, eleifend urna quis, semper felis.'
+]

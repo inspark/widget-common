@@ -1,4 +1,5 @@
 import {
+  GenerateConfigItem,
   ITEM_TYPE, ItemParent, ItemSingle, ItemTable,
   IWidgetParam, IWidgetParamConfig,
   PARAM_TYPE, ParamConfigurator, TableValues,
@@ -74,7 +75,7 @@ export class MakePictureUrl implements PipeTransform {
 export class MakeIconUrl implements PipeTransform {
   transform(id: number): string {
     if (id === -1) {
-      return ''; //return require('./media/icon.svg');
+      return require('../assets/icon.svg');
     } else {
       return common.serviceUrl + `/db/icon/${id}/img`;
     }
@@ -215,11 +216,12 @@ export function findParam(params: ParamConfigurator[], refname: string): ParamCo
 
 // Преобразует  структуру параметров виджета в структуру для конфигуратора
 export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[], itemType = ITEM_TYPE.single,
-                                paramType = PARAM_TYPE.value, path = [], parent = null): ParamConfigurator[] {
+                                paramType: PARAM_TYPE = PARAM_TYPE.value, path = [], parent = null): ParamConfigurator[] {
   const result: ParamConfigurator[] = [];
 
 
   if (params instanceof Array) {
+    // Элемент масссива
     const item: any = params[0];
     const itemPath = [...path, 1];
     result.push({
@@ -229,7 +231,8 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
       itemType,
       paramType,
       parent,
-      config: null
+      config: null,
+      generateConfig: {count: 3, data: true}
     });
   } else {
     for (const key in params) {
@@ -240,7 +243,7 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
         const itemPath = [...path, key];
 
         if (params[key].items) {
-
+          // Массив
           const res: ParamConfigurator = {
             name: itemPath.join('.'),
             title: _(item.title),
@@ -249,6 +252,7 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
             parent,
             views: item.views,
             config: {},
+            generateConfig: {count: 3, data: true},
           };
           res.items = createParamList(params[key].items, itemType, paramType, itemPath, res);
           if (params[key].items instanceof Array) {
@@ -259,7 +263,7 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
           }
           result.push(res);
         } else {
-
+          // Таблица
           if (itemType === ITEM_TYPE.table) {
             result.push({
               name: itemPath.join('.'),
@@ -277,8 +281,10 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
                 visibleCol: true
               },
               config: {},
+              generateConfig: {data: true}
             });
           } else {
+            // Простой элемент
             result.push({
               name: itemPath.join('.'),
               title: item.title,
@@ -286,7 +292,8 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
               itemType,
               paramType,
               parent,
-              config: {}
+              config: {},
+              generateConfig: {data: true}
             });
           }
         }
@@ -294,7 +301,17 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
     }
   }
   return result;
+}
 
+export function createGenerateItemConfig(): GenerateConfigItem {
+  return {
+    pageLink: false,
+    isOnline: true,
+    data: true,
+    borders: false,
+    editable: false,
+    paragraphCount: 1,
+  };
 }
 
 export function addArrayItem(parent: ParamConfigurator) {

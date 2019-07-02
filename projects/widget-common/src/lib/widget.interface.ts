@@ -4,6 +4,7 @@ export enum ITEM_TYPE {
   'events' = 3, // Лента событий
   'interval' = 5, // Значения параметров на заданном интервале
   'table' = 6, // Таблица значений параметров
+  'custom' = 7, // Поле не требующее обработки сервера
 }
 
 export const ITEM_TYPE_ITOS = {
@@ -23,6 +24,8 @@ export enum PARAM_TYPE {
   'signal' = 1, // сигнальный
   'value' = 2, // мгновенное значение
   'increment' = 3, // нарастающий итог
+
+  'custom_string' = 11,
 }
 
 export const PARAM_TYPE_ITOS = {
@@ -79,6 +82,10 @@ export interface ItemTable extends IWidgetParam {
   values: TableValues;
 }
 
+export interface ItemCustom extends IWidgetParam {
+  value: string;
+}
+
 export interface ItemParent {
   [k: string]: WidgetItem | WidgetItem[] | ParamConfig;
 }
@@ -114,6 +121,28 @@ export interface ParamConfigurator {
   views?: string[]; // Варианты представлений параметра
   viewConfig?: IWidgetParamConfig;
   config?: ParamConfigInterval | ParamConfigSeries | ParamConfigSingle | ParamConfigEvents;
+  generateConfig?: GenerateConfig;
+}
+
+export interface GenerateConfig extends GenerateConfigItem {
+  count?: number;
+  items?: GenerateConfigItem[];
+  pictureId?: boolean;
+}
+
+export interface GenerateConfigItem {
+  // Для всех параметров
+  pageLink?: boolean;
+  isOnline?: boolean;
+  editable?: boolean;
+  data?: boolean;
+
+  // Для мгновенных
+  borders?: boolean;
+
+  // Для кастомных
+  paragraphCount?: number;
+
 }
 
 
@@ -210,7 +239,21 @@ export interface ParamConfigEvents {
 }
 
 
-export type ParamConfig = ParamConfigInterval | ParamConfigSeries | ParamConfigSingle | ParamConfigEvents;
+export interface ParamConfigCustom {
+  text?: string;
+  type?: ParamConfigCustomType;
+}
+
+export enum ParamConfigCustomType {
+  'string',
+}
+
+export type ParamConfig =
+  ParamConfigInterval
+  | ParamConfigSeries
+  | ParamConfigSingle
+  | ParamConfigEvents
+  | ParamConfigCustom;
 
 
 /**
@@ -271,6 +314,9 @@ export type TableValues = Array<Array<ItemSingle>>;
 
 // События
 
+export interface CustomValue {
+  value: string;
+}
 
 /**
  * Интерфейс для ленты событий с типом 1
