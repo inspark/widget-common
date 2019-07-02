@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "clean": "rm -rf dist/*",
-    "build": "npm run clean && ng build && copy-files-from-to --config ./projects/widget-common/package.json --mode production",
+    "build_full": "copy-files-from-to --config ./projects/widget-common/versions/full/copy.json && ng build",
+    "build_interface": "copy-files-from-to --config ./projects/widget-common/versions/interfaces/copy.json && ng build",
+    "build": "npm run clean && npm run build_full && npm run build_interface && copy-files-from-to --config ./projects/widget-common/copy.json --mode production && node update_full.js",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",

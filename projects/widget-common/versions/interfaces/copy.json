@@ -1,0 +1,15 @@
+{
+  "copyFiles": [
+    {
+      "from": "ng-package.json",
+      "to": "../../ng-package.json"
+    },
+    {
+      "from": "public_api.ts",
+      "to": "../../src/public_api.ts"
+    }
+  ],
+  "copyFilesSettings": {
+    "whenFileExists": "overwrite"
+  }
+}

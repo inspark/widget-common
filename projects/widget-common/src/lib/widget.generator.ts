@@ -91,7 +91,7 @@ function generateParamConfig(itemType: ITEM_TYPE, param: ParamConfigurator, para
     case ITEM_TYPE.custom:
       return {
         type: paramType === PARAM_TYPE.custom_string ? ParamConfigCustomType.string : null,
-        text: 'text'
+        value: 'text'
       };
     case ITEM_TYPE.interval:
       return {

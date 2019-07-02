@@ -1,9 +1,16 @@
 import {
   GenerateConfigItem,
-  ITEM_TYPE, ItemParent, ItemSingle, ItemTable,
-  IWidgetParam, IWidgetParamConfig,
-  PARAM_TYPE, ParamConfigurator, TableValues,
-  WidgetArrayParam, WidgetItem, WidgetItems,
+  ITEM_TYPE,
+  ItemParent,
+  ItemTable,
+  IWidgetParam,
+  IWidgetParamConfig,
+  PARAM_TYPE, ParamConfigCustom,
+  ParamConfigurator,
+  TableValues,
+  WidgetArrayParam,
+  WidgetItem,
+  WidgetItems,
   WidgetParamChildren,
   WidgetParamsChildren,
 } from './widget.interface';
@@ -11,13 +18,6 @@ import {_} from './widget.component';
 import {Pipe, PipeTransform} from '@angular/core';
 import {common} from './common';
 
-
-// Обертка для среды разработки
-export const Component = (opts) => {
-  return (component) => {
-    return component;
-  };
-};
 
 
 @Pipe({name: 'filterIndexOf'})
@@ -91,6 +91,8 @@ export class MakeChartUrl implements PipeTransform {
 
 // Добавляем значения для
 export function assignValues(inputValues: WidgetParamsChildren, params: IWidgetParam[], viewConfig: { [k: string]: IWidgetParamConfig }, path = []): ItemParent {
+
+
   const result: WidgetItems = {};
   for (const key in inputValues) {
     if (inputValues.hasOwnProperty(key)) {
@@ -126,14 +128,21 @@ function getConfig(viewConfig, refName) {
   return viewConfig[refName] ? viewConfig[refName] : {};
 }
 
-function assignValuesArray(inputValues: WidgetArrayParam[], params: IWidgetParam[], viewConfig: { [k: string]: IWidgetParamConfig }, path = []): WidgetItem[] {
+function assignValuesArray(inputValues: WidgetArrayParam[], params: IWidgetParam[], viewConfigs: { [k: string]: IWidgetParamConfig }, path = []): WidgetItem[] {
   let result: WidgetItem[] = [];
   const sPath = path.join('.');
+  console.log('!assignValuesArray', inputValues);
   params.forEach(val => {
     const valPath = val.refName.split('.');
     const ind: any = valPath.splice(valPath.length - 1, 1);
     if (valPath.join('.') === sPath) {
-      result[ind] = {...val, data: null, value: null, viewConfig: getConfig(viewConfig, val.refName)};
+      const viewConfig = getConfig(viewConfigs, val.refName);
+      console.log('viewConfig', val, viewConfig);
+      if (val.itemType === ITEM_TYPE.custom) {
+        result[ind] = {...val, data: null, value: (val.config as ParamConfigCustom).value, viewConfig};
+      } else {
+        result[ind] = {...val, data: null, value: null, viewConfig};
+      }
     }
   });
   result = result.filter(val => val);
@@ -141,7 +150,7 @@ function assignValuesArray(inputValues: WidgetArrayParam[], params: IWidgetParam
 }
 
 
-function assignValue(item: WidgetParamChildren, itemPath, params: IWidgetParam[], viewConfig: { [k: string]: IWidgetParamConfig }): WidgetItem {
+function assignValue(item: WidgetParamChildren, itemPath, params: IWidgetParam[], viewConfigs: { [k: string]: IWidgetParamConfig }): WidgetItem {
   const path = itemPath.join('.');
 
   if (item.item_type === ITEM_TYPE.table) {
@@ -162,7 +171,7 @@ function assignValue(item: WidgetParamChildren, itemPath, params: IWidgetParam[]
           data: null,
           value: null,
           custom: {},
-          viewConfig: getConfig(viewConfig, path.join('.'))
+          viewConfig: getConfig(viewConfigs, path.join('.'))
         };
         if (i > rows) {
           rows = i;
@@ -176,13 +185,18 @@ function assignValue(item: WidgetParamChildren, itemPath, params: IWidgetParam[]
     const res: ItemTable = {
       ...itemTable,
       values: itemValues,
-      viewConfig: getConfig(viewConfig, path)
+      viewConfig: getConfig(viewConfigs, path)
     };
     return res;
   } else {
     const param = params.find(val => val.refName === path);
     if (param) {
-      return {...param, data: null, value: null, viewConfig: getConfig(viewConfig, path), custom: {}};
+      const viewConfig = getConfig(viewConfigs, path);
+      if (item.item_type === ITEM_TYPE.custom) {
+        return {...param, data: null, value: (param.config as ParamConfigCustom).value, viewConfig, custom: {}};
+      } else {
+        return {...param, data: null, value: null, viewConfig, custom: {}};
+      }
     } else {
       return {};
     }

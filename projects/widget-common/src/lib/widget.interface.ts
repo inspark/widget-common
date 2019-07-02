@@ -120,7 +120,7 @@ export interface ParamConfigurator {
   parent: ParamConfigurator;
   views?: string[]; // Варианты представлений параметра
   viewConfig?: IWidgetParamConfig;
-  config?: ParamConfigInterval | ParamConfigSeries | ParamConfigSingle | ParamConfigEvents;
+  config?: ParamConfigInterval | ParamConfigSeries | ParamConfigSingle | ParamConfigEvents | ParamConfigCustom;
   generateConfig?: GenerateConfig;
 }
 
@@ -240,7 +240,7 @@ export interface ParamConfigEvents {
 
 
 export interface ParamConfigCustom {
-  text?: string;
+  value?: string;
   type?: ParamConfigCustomType;
 }
 
@@ -461,3 +461,11 @@ export interface WidgetSocketDataCommand {
   message?: string;
   error?: string;
 }
+
+
+// Обертка для среды разработки
+export const Component = (opts) => {
+  return (component) => {
+    return component;
+  };
+};

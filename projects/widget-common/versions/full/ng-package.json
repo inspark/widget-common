@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../dist/widget-common/interface",
+  "dest": "../../dist/widget-common/full",
   "lib": {
     "entryFile": "src/public_api.ts"
   },

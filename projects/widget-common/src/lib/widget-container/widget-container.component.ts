@@ -160,6 +160,7 @@ export class WidgetContainer {
         } else {
           if (this.prodOpts.widget) {
             this.values = assignValues(this.prodOpts.widgetPackage.params, this.prodOpts.params, this.prodOpts.widget.config.items);
+            console.log(' this.values', this.values);
           } else {
             this.generateValues();
           }
