@@ -3,10 +3,6 @@
     {
       "from": "./src/assets/*.*",
       "to": "../../dist/widget-common/full/assets/"
-    },
-    {
-      "from": "./versions/full/external_public_api.ts",
-      "to": "../../dist/widget-common/public_api.ts"
     }
   ]
 }
