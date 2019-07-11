@@ -148,7 +148,7 @@ export interface GenerateConfigItem {
 
 export interface IWidgetDeviceParam {
   controller?: { id: number, serialnumber: string, isOnline?: boolean };
-  object: { id: number, shortname: string, fullname: string };
+  object?: { id: number, shortname: string, fullname: string };
   param: { id?: number, calc?: boolean, name?: string, type?: PARAM_TYPE, value?: number, measure?: { title: string, unit: string } };
   zone?: { name: string };
   state?: { id?: number, name?: string, comment?: string };
