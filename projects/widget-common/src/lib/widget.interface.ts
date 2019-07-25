@@ -407,6 +407,7 @@ export interface IWidget {
   dashboard: ServiceDashboardClass;
   title: string;
   conflict?: boolean;
+  hidden?: boolean;
   config?: IWidgetConfig;
 }
 
@@ -434,6 +435,7 @@ export interface IWidgetConfig {
       setId: number;
       pictureId: number
     },
+    floatHeader?: boolean;
   };
   position: WidgetSize;
   items: { [k: string]: IWidgetParamConfig };
