@@ -435,7 +435,7 @@ export interface IWidgetConfig {
       setId: number;
       pictureId: number
     },
-    floatHeader?: boolean;
+    floatingHeader?: boolean;
   };
   position: WidgetSize;
   items: { [k: string]: IWidgetParamConfig };
