@@ -128,6 +128,12 @@ export interface GenerateConfig extends GenerateConfigItem {
   count?: number;
   items?: GenerateConfigItem[];
   pictureId?: boolean;
+
+  // Для таблиц
+  columns?: number;
+  rows?: number;
+  visibleRow?: boolean;
+  visibleCol?: boolean;
 }
 
 export interface GenerateConfigItem {

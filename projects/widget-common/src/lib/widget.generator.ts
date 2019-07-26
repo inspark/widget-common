@@ -327,8 +327,25 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
 }
 
 function generateTableParams(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemTable {
-  const values = [[generateSingleParams(index, paramType, item, param), generateSingleParams(index, paramType, item, param)],
-    [generateSingleParams(index, paramType, item, param), generateSingleParams(index, paramType, item, param)]];
+
+  console.log('config', param.generateConfig);
+
+  const values = [];
+
+
+  for (let i = 0; i < param.generateConfig.rows; i++) {
+    values[i] = [];
+    for (let j = 0; j < param.generateConfig.columns; j++) {
+      if (Math.random() < 0.9) {
+        values[i][j] = generateSingleParams(index, paramType, item, param);
+      } else {
+        values[i][j] = null;
+      }
+    }
+  }
+
+  // const values = [[generateSingleParams(index, paramType, item, param), generateSingleParams(index, paramType, item, param)],
+  //   [generateSingleParams(index, paramType, item, param), generateSingleParams(index, paramType, item, param)]];
 
   return {
     device: {
@@ -352,10 +369,10 @@ function generateTableParams(index: number, paramType: PARAM_TYPE, item: WidgetP
     viewConfig: {
       rowsName: ['row 1', 'row 2'],
       colsName: ['col 1', 'col 2'],
-      cols: 2,
-      rows: 2,
-      visibleRow: true,
-      visibleCol: true,
+      cols: param.generateConfig.columns,
+      rows: param.generateConfig.rows,
+      visibleRow: param.generateConfig.visibleRow,
+      visibleCol: param.generateConfig.visibleCol,
     },
     custom: {},
     borders: [],

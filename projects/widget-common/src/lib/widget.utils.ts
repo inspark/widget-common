@@ -19,7 +19,6 @@ import {Pipe, PipeTransform} from '@angular/core';
 import {common} from './common';
 
 
-
 @Pipe({name: 'filterIndexOf'})
 export class FilterIndexOfPipe implements PipeTransform {
   transform(array: any[], field: string, search: any) {
@@ -295,7 +294,13 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
                 visibleCol: true
               },
               config: {},
-              generateConfig: {data: true}
+              generateConfig: {
+                data: true,
+                rows: 2,
+                columns: 2,
+                visibleCol: true,
+                visibleRow: true,
+              }
             });
           } else {
             // Простой элемент
