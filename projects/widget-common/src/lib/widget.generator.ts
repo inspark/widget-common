@@ -31,7 +31,6 @@ export function generateValues(inputValues: WidgetParamsChildren | WidgetArrayPa
                                params: ParamConfigurator[],
                                itemType = ITEM_TYPE.single, paramType = PARAM_TYPE.value, path = []): WidgetItem[] {
 
-  console.log('generateValues', inputValues, params);
   if (inputValues instanceof Array) {
     // Проходимся по массив
 
@@ -129,7 +128,6 @@ function generateParamConfig(itemType: ITEM_TYPE, param: ParamConfigurator, para
 
 function generateValue(index: number, item: WidgetParamChildren, paramType: PARAM_TYPE, itemType: ITEM_TYPE, param: ParamConfigurator): WidgetItem {
 
-  console.log('generateValue', param);
   switch (itemType) {
     case ITEM_TYPE.series:
       return generateSeriesParam(index, paramType, item, param);
@@ -328,7 +326,6 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
 
 function generateTableParams(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemTable {
 
-  console.log('config', param.generateConfig);
 
   const values = [];
 
@@ -391,7 +388,6 @@ export function getRandom(min, max) {
 }
 
 function getConfig(param, index): GenerateConfigItem {
-  console.log('getConfig', param, index);
   if (param.generateConfig.items) {
     return param.generateConfig.items[index] || {};
   }

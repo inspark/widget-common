@@ -160,7 +160,6 @@ export class WidgetContainer {
         } else {
           if (this.prodOpts.widget) {
             this.values = assignValues(this.prodOpts.widgetPackage.params, this.prodOpts.params, this.prodOpts.widget.config.items);
-            console.log(' this.values', this.values);
           } else {
             this.generateValues();
           }
@@ -192,7 +191,6 @@ export class WidgetContainer {
       private generateValues() {
         this.values = generateValues(this.prodOpts.widgetPackage.params, createParamList(this.prodOpts.widgetPackage.params));
         this.values = this.addChartData(this.values);
-        console.log('GENERATE', this.values);
         this.component.onUpdate(this.values);
       }
 
@@ -224,7 +222,6 @@ export class WidgetContainer {
 
 
       private updateData(data) {
-        console.log('updateData', data);
         if (!data) {
           return;
         }
@@ -233,7 +230,6 @@ export class WidgetContainer {
             this.values = data.values;
             this.component.onUpdate(this.values);
             this.pictureId = data.config.pictureId ? -1 : null;
-            console.log('NEW VALUES', this.values);
           }
         } else {
           if (!data.length) {

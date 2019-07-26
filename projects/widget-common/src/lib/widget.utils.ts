@@ -22,7 +22,6 @@ import {common} from './common';
 @Pipe({name: 'filterIndexOf'})
 export class FilterIndexOfPipe implements PipeTransform {
   transform(array: any[], field: string, search: any) {
-    console.log('array', array, field, search);
     return array.filter(val => {
       return val[field].indexOf(search) !== -1;
     });
@@ -130,13 +129,11 @@ function getConfig(viewConfig, refName) {
 function assignValuesArray(inputValues: WidgetArrayParam[], params: IWidgetParam[], viewConfigs: { [k: string]: IWidgetParamConfig }, path = []): WidgetItem[] {
   let result: WidgetItem[] = [];
   const sPath = path.join('.');
-  console.log('!assignValuesArray', inputValues);
   params.forEach(val => {
     const valPath = val.refName.split('.');
     const ind: any = valPath.splice(valPath.length - 1, 1);
     if (valPath.join('.') === sPath) {
       const viewConfig = getConfig(viewConfigs, val.refName);
-      console.log('viewConfig', val, viewConfig);
       if (val.itemType === ITEM_TYPE.custom) {
         result[ind] = {...val, data: null, value: (val.config as ParamConfigCustom).value, viewConfig};
       } else {
