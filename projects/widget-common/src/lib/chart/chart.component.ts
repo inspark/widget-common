@@ -31,6 +31,7 @@ export class ChartComponent implements OnInit, OnChanges {
 
   @Input() values: ItemSeries[];
   @Input() config: ParamConfigSeries;
+  @Input() noDataMessage = 'No data';
 
   theme: SiteTheme;
 
@@ -188,7 +189,7 @@ export class ChartComponent implements OnInit, OnChanges {
 
     res = {
       type: config.charttype === ChartTypes.histogramChart ? 'historicalBarChart' : config.charttype,
-      noData: 'No data for the period',
+      noData: this.noDataMessage,
       xScale: d3.time.scale(),
       showControls: true,
       height: 250,

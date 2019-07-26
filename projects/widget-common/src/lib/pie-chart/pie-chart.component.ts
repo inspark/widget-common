@@ -5,6 +5,7 @@ import {
   ParamConfigSeries,
   SiteTheme
 } from '../widget.interface';
+
 @Component({
   selector: 'app-pie-chart',
   templateUrl: './pie-chart.component.html',
@@ -19,6 +20,7 @@ export class PieChartComponent implements OnInit, OnChanges {
 
   @Input() values: ItemInterval | ItemSingle;
   @Input() config: ParamConfigSeries;
+  @Input() noDataMessage = 'No data';
 
   theme: SiteTheme;
 
@@ -56,6 +58,7 @@ export class PieChartComponent implements OnInit, OnChanges {
         transitionDuration: 500,
         labelThreshold: 0.05,
         labelSunbeamLayout: true,
+        noData: this.noDataMessage,
       }
     };
   }
