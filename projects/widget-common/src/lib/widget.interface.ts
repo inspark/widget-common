@@ -134,6 +134,8 @@ export interface GenerateConfig extends GenerateConfigItem {
   rows?: number;
   visibleRow?: boolean;
   visibleCol?: boolean;
+  data?: boolean;
+  param?: boolean;
 }
 
 export interface GenerateConfigItem {
@@ -142,6 +144,7 @@ export interface GenerateConfigItem {
   isOnline?: boolean;
   editable?: boolean;
   data?: boolean;
+  param?: boolean;
 
   // Для мгновенных
   borders?: boolean;

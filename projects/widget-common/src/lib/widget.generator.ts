@@ -163,7 +163,7 @@ function generateSingleParams(index: number, paramType: PARAM_TYPE, item: Widget
   const value = getRandomValue(paramType, item);
   const config = getConfig(param, index);
   return {
-    device: {
+    device: config.param ? {
       controller: {id: null, serialnumber: 'SN' + getRandom(10000, 99999), isOnline: config.isOnline},
       object: {id: null, shortname: 'Object ' + getRandom(10000, 99999), fullname: 'Object ' + getRandom(10000, 99999)},
 
@@ -175,7 +175,7 @@ function generateSingleParams(index: number, paramType: PARAM_TYPE, item: Widget
         calc: false,
       },
       zone: {name: 'tagInfo zone'},
-    },
+    } : null,
     refName: '',
     itemType: ITEM_TYPE.single,
     widgetId: null,
@@ -341,22 +341,8 @@ function generateTableParams(index: number, paramType: PARAM_TYPE, item: WidgetP
     }
   }
 
-  // const values = [[generateSingleParams(index, paramType, item, param), generateSingleParams(index, paramType, item, param)],
-  //   [generateSingleParams(index, paramType, item, param), generateSingleParams(index, paramType, item, param)]];
-
   return {
-    device: {
-      controller: {id: null, serialnumber: 'SN' + getRandom(10000, 99999)},
-      object: {id: null, shortname: 'Object ' + getRandom(10000, 99999), fullname: 'Object ' + getRandom(10000, 99999)},
-      param: {
-        id: null,
-        name: 'deviceParam name',
-        measure: {unit: generateMeasureUnit(), title: 'Электричество'},
-        type: PARAM_TYPE.value,
-        calc: false,
-      },
-      zone: {name: 'tagInfo zone'},
-    },
+    device: null,
     refName: '',
     itemType: ITEM_TYPE.single,
     widgetId: null,

@@ -293,6 +293,7 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
               config: {},
               generateConfig: {
                 data: true,
+                param: true,
                 rows: 2,
                 columns: 2,
                 visibleCol: true,
@@ -309,7 +310,7 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
               paramType,
               parent,
               config: {},
-              generateConfig: {data: true}
+              generateConfig: {data: true, param: true}
             });
           }
         }
@@ -324,6 +325,7 @@ export function createGenerateItemConfig(): GenerateConfigItem {
     pageLink: false,
     isOnline: true,
     data: true,
+    param: true,
     borders: false,
     editable: false,
     paragraphCount: 1,
