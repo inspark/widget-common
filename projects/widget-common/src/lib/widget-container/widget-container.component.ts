@@ -21,15 +21,15 @@ import {
   WidgetParams,
   VALUE_TYPE,
   STATE_COLORS, ITEM_TYPE, ItemParent, WidgetItem
-} from "../widget.interface";
-import {WidgetPackage} from "../widget.component";
-import {CommunicationService} from "../communication.service";
-import {DashboardSharedModule} from "../shared.module";
-import {assignValues, createParamList} from "../widget.utils";
-import {getWidgetPath, updateWidgetMediaUrl} from "../loader";
-import {generateValues} from "../widget.generator";
-import {sprintf} from "../sprintf";
-import {common} from "../common";
+} from '../widget.interface';
+import {WidgetPackage} from '../widget.component';
+import {CommunicationService} from '../communication.service';
+import {DashboardSharedModule} from '../shared.module';
+import {assignValues, createParamList} from '../widget.utils';
+import {getWidgetPath, updateWidgetMediaUrl} from '../loader';
+import {generateValues} from '../widget.generator';
+import {sprintf} from '../sprintf';
+import {common} from '../common';
 
 export interface WidgetContainerDevOptions {
   widgetPackage: WidgetPackage;
@@ -43,6 +43,7 @@ export interface WidgetContainerProduction {
   widgetClass: IWidgetClass;
   params: IWidgetParam[];
   sendData: (param: ItemSingle) => {};
+  setManual: (param: ItemSingle, value: boolean) => {};
   isDev: boolean;
 }
 
@@ -323,6 +324,12 @@ export class WidgetContainer {
           (opts as WidgetContainerProduction).sendData(par);
         }
         par.isEditing = false;
+      }
+
+      setManual(par, value) {
+        if ((opts as WidgetContainerProduction).setManual) {
+          (opts as WidgetContainerProduction).setManual(par, value);
+        }
       }
     }
 
