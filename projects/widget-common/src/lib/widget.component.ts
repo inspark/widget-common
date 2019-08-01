@@ -48,6 +48,9 @@ export class WidgetComponentContainer {
   paramSave(par: WidgetItem) {
   }
 
+  getIconUrl(par: WidgetItem) {
+  }
+
 }
 
 

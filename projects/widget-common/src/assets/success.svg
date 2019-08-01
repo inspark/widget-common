@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+    <g fill="#44f" fill-rule="nonzero">
+        <circle cx="12" cy="12" r="10" stroke="#666" stroke-width="1" fill="#6a6" />
+    </g>
+    <text style="font:  4px sans-serif; color: #000" x="4.5" y="13.5" class="small">Success</text>
+</svg>

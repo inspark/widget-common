@@ -9,7 +9,7 @@ import {
   ItemSeries,
   ItemSingle,
   ItemTable,
-  LineType,
+  LineType, PARAM_STATE_INT,
   PARAM_TYPE,
   ParamConfigCustom,
   ParamConfigCustomType,
@@ -158,6 +158,19 @@ function getRandomValue(paramType: PARAM_TYPE, item: WidgetParamChildren) {
 }
 
 
+function getIconSet(needIcons: boolean) {
+  if (!needIcons) {
+    return null;
+  }
+  return {
+    error: require('../assets/error.svg'),
+    falsevalue: require('../assets/falsevalue.svg'),
+    none: require('../assets/none.svg'),
+    success: require('../assets/success.svg'),
+    warning: require('../assets/warning.svg'),
+  };
+}
+
 function generateSingleParams(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemSingle {
 
   const value = getRandomValue(paramType, item);
@@ -188,16 +201,17 @@ function generateSingleParams(index: number, paramType: PARAM_TYPE, item: Widget
       value: value,
       locked: false,
       manually: getRandom(0, 10) > 5,
-      state: {
-        color: ['error', 'warning', 'none', 'success'][getRandom(0, 4)],
+      state: config.state ? {
+        color: PARAM_STATE_INT[config.state],
         comment: 'comment',
-        idIcon: getRandom(0, 1) - 1
-      },
+        idIcon: config.isIcon ? -1 : 0,
+      } : null,
     } : null,
     dashboardLink: config.pageLink ? {dashname: 'Test dashname', id: 2} : null,
     custom: {},
     canEditable: config.editable,
     borders: config.borders ? BORDERS : [],
+    icons: getIconSet(config.iconSet),
     isEditing: false,
   };
 }
@@ -282,11 +296,11 @@ function generateIntervalParams(index: number, paramType: PARAM_TYPE, item: Widg
       percent: 1, //  relative и increment
       min: 1, //  absolute
       max: 1, //  absolute
-      state: { //
-        color: ['error', 'warning', 'none', 'success'][getRandom(0, 4)],
+      state: config.state ? {
+        color: PARAM_STATE_INT[config.state],
         comment: 'comment',
-        idIcon: -1,
-      },
+        idIcon: config.isIcon ? -1 : 0,
+      } : null,
       'beginInterval': 1556658000000,
       'endInterval': 1557139222542,
 
@@ -333,11 +347,11 @@ function generateTableParams(index: number, paramType: PARAM_TYPE, item: WidgetP
   for (let i = 0; i < param.generateConfig.rows; i++) {
     values[i] = [];
     for (let j = 0; j < param.generateConfig.columns; j++) {
-      if (Math.random() < 0.9) {
+      // if (Math.random() < 0.9) {
         values[i][j] = generateSingleParams(index, paramType, item, param);
-      } else {
-        values[i][j] = null;
-      }
+      // } else {
+      //   values[i][j] = null;
+      // }
     }
   }
 

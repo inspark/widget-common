@@ -2,5 +2,5 @@
     <g fill="#44f" fill-rule="nonzero">
         <circle cx="12" cy="12" r="10" stroke="#666" stroke-width="1" fill="#fff" />
     </g>
-    <text style="font:  5px sans-serif; color: #000" x="7" y="14" class="small">SVG</text>
+    <text style="font:  5px sans-serif; color: #000" x="6" y="14" class="small">None</text>
 </svg>

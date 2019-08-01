@@ -134,8 +134,6 @@ export interface GenerateConfig extends GenerateConfigItem {
   rows?: number;
   visibleRow?: boolean;
   visibleCol?: boolean;
-  data?: boolean;
-  param?: boolean;
 }
 
 export interface GenerateConfigItem {
@@ -145,15 +143,28 @@ export interface GenerateConfigItem {
   editable?: boolean;
   data?: boolean;
   param?: boolean;
+  isIcon?: boolean;
+  iconSet?: boolean;
+
+  state?: number;
 
   // Для мгновенных
   borders?: boolean;
 
   // Для кастомных
   paragraphCount?: number;
-
 }
 
+// @ts-ignore
+export enum PARAM_STATE {
+  'falsevalue' = -1,
+  'none' = 0,
+  'success' = 1,
+  'warning' = 2,
+  'error' = 3,
+}
+
+export const PARAM_STATE_INT = {'-1': 'falsevalue', 0: 'none', 1: 'success', 2: 'warning', 3: 'error'};
 
 export interface IWidgetDeviceParam {
   controller?: { id: number, serialnumber: string, isOnline?: boolean };
@@ -174,6 +185,13 @@ export interface IWidgetParam {
   title: string;
   config: ParamConfig;
   viewConfig?: IWidgetParamConfig;
+  icons?: {
+    falsevalue: string;
+    none: string;
+    success: string;
+    warning: string;
+    error: string;
+  };
   custom?: any;
   borders?: Border[];
   dashboardLink?: { dashname?: string, id: number };

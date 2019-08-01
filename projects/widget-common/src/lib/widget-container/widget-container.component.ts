@@ -31,7 +31,6 @@ import {generateValues} from "../widget.generator";
 import {sprintf} from "../sprintf";
 import {common} from "../common";
 
-
 export interface WidgetContainerDevOptions {
   widgetPackage: WidgetPackage;
   isDev: boolean;
@@ -198,7 +197,7 @@ export class WidgetContainer {
         for (const key in this.prodOpts.widgetPackage.params) {
           if (this.prodOpts.widgetPackage.params.hasOwnProperty(key)) {
             const param = this.prodOpts.widgetPackage.params[key];
-            if (param.items instanceof Array) {
+            if (param && param.items instanceof Array) {
               if (param.items[0].item_type === ITEM_TYPE.interval && values[key].items) {
                 for (let i = 0; i < values[key].items.length; i++) {
                   const datapie = [];
@@ -222,6 +221,7 @@ export class WidgetContainer {
 
 
       private updateData(data) {
+        console.log('updateData', data);
         if (!data) {
           return;
         }
@@ -267,20 +267,36 @@ export class WidgetContainer {
         const array = path.split('.');
         let res: any = this.values;
         let isTable = false;
-        array.forEach(val => {
+        if (res) {
 
-          if ((res as ItemParent).items) {
-            res = res.items[parseInt(val, 10) - 1];
-          } else if (res.hasOwnProperty('values')) {
-            res = res.values[parseInt(val, 10) - 1];
-            isTable = true;
-          } else if (isTable) {
-            res = res[parseInt(val, 10) - 1];
-          } else {
-            res = res[val];
-          }
-        });
+          array.forEach(val => {
+
+            if ((res as ItemParent).items) {
+              res = res.items[parseInt(val, 10) - 1];
+            } else if (res.hasOwnProperty('values')) {
+              res = res.values[parseInt(val, 10) - 1];
+              isTable = true;
+            } else if (isTable) {
+              res = res[parseInt(val, 10) - 1];
+            } else {
+              res = res[val];
+            }
+          });
+        }
         return res;
+      }
+
+      public getIconUrl(par: WidgetItem) {
+        if (par.data && par.data.state && par.data.state.idIcon) {
+          if (par.data.state.idIcon === -1) { // dev icon
+            return require('../assets/icon.svg');
+          } else {
+            return `${common.serviceUrl + '/'}db/icon/${par.data.state.idIcon}/img`;
+          }
+
+        } else {
+          return '';
+        }
       }
 
       /**
