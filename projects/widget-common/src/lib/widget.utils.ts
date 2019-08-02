@@ -234,6 +234,8 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
     // Элемент масссива
     const item: any = params[0];
     const itemPath = [...path, 1];
+    itemType = item.item_type || itemType;
+    paramType = item.param_type || paramType;
     result.push({
       name: itemPath.join('.'),
       title: 'Item 1',
