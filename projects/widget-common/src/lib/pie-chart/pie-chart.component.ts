@@ -21,6 +21,7 @@ export class PieChartComponent implements OnInit, OnChanges {
   @Input() values: ItemInterval | ItemSingle;
   @Input() config: ParamConfigSeries;
   @Input() noDataMessage = 'No data';
+  @Input() height = null;
 
   theme: SiteTheme;
 
@@ -42,7 +43,7 @@ export class PieChartComponent implements OnInit, OnChanges {
     return {
       chart: {
         type: 'pieChart',
-        height: chartType === ChartTypes.pieChart ? 300 : 80,
+        height: this.height ? this.height : (chartType === ChartTypes.pieChart ? 300 : 80),
         x: function (d) {
           return d.key;
         },

@@ -195,7 +195,7 @@ function generateSingleParams(index: number, paramType: PARAM_TYPE, item: Widget
     title: 'Title param',
     config: generateParamConfig(ITEM_TYPE.single, param),
     value: config.data ? value : null,
-    viewConfig: {},
+    viewConfig: {view: config.view},
     data: config.data ? {
       date: 1548968400000,
       value: value,
@@ -348,7 +348,7 @@ function generateTableParams(index: number, paramType: PARAM_TYPE, item: WidgetP
     values[i] = [];
     for (let j = 0; j < param.generateConfig.columns; j++) {
       // if (Math.random() < 0.9) {
-        values[i][j] = generateSingleParams(index, paramType, item, param);
+      values[i][j] = generateSingleParams(index, paramType, item, param);
       // } else {
       //   values[i][j] = null;
       // }
@@ -370,6 +370,7 @@ function generateTableParams(index: number, paramType: PARAM_TYPE, item: WidgetP
       rows: param.generateConfig.rows,
       visibleRow: param.generateConfig.visibleRow,
       visibleCol: param.generateConfig.visibleCol,
+      view: param.generateConfig.view,
     },
     custom: {},
     borders: [],

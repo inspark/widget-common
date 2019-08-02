@@ -32,6 +32,13 @@ export class ChartComponent implements OnInit, OnChanges {
   @Input() values: ItemSeries[];
   @Input() config: ParamConfigSeries;
   @Input() noDataMessage = 'No data';
+  @Input() height = 250;
+  @Input() margin = {
+    top: 20,
+    right: 50,
+    bottom: 40,
+    left: 65
+  };
 
   theme: SiteTheme;
 
@@ -192,13 +199,8 @@ export class ChartComponent implements OnInit, OnChanges {
       noData: this.noDataMessage,
       xScale: d3.time.scale(),
       showControls: true,
-      height: 250,
-      margin: {
-        top: 20,
-        right: 50,
-        bottom: 40,
-        left: 65
-      },
+      height: this.height,
+      margin: this.margin,
       x: function (d) {
         if (typeof d !== 'undefined') {
           return d.timestmp;

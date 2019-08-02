@@ -145,6 +145,7 @@ export interface GenerateConfigItem {
   param?: boolean;
   isIcon?: boolean;
   iconSet?: boolean;
+  view?: string; // Тип отображения
 
   state?: number;
 
@@ -443,7 +444,7 @@ export interface ServiceDashboardClass {
   dashname?: string;
   hidden?: boolean;
   objrubric?: Objrubric;
-  favorite?: number
+  favorite?: number;
 }
 
 

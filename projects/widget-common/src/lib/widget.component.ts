@@ -35,7 +35,7 @@ export class WidgetComponentContainer {
   readonly VALUE_TYPE = VALUE_TYPE;
 
 
-  urlExport() {
+  urlExport(): string {
     return '';
   }
 
@@ -48,7 +48,8 @@ export class WidgetComponentContainer {
   paramSave(par: WidgetItem) {
   }
 
-  getIconUrl(par: WidgetItem) {
+  getIconUrl(par: WidgetItem): string {
+    return '';
   }
 
 }
