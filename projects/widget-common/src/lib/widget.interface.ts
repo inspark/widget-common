@@ -146,7 +146,7 @@ export interface GenerateConfigItem {
   isIcon?: boolean;
   iconSet?: boolean;
   view?: string; // Тип отображения
-
+  isWorkingDevice?: boolean;
   state?: number;
 
   // Для мгновенных
@@ -172,6 +172,7 @@ export interface IWidgetDeviceParam {
   object?: { id: number, shortname: string, fullname: string };
   param: { id?: number, calc?: boolean, name?: string, type?: PARAM_TYPE, value?: number, measure?: { title: string, unit: string } };
   zone?: { name: string };
+  isWorking?: boolean;
   state?: { id?: number, name?: string, comment?: string };
 }
 

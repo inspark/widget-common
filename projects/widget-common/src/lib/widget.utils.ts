@@ -331,6 +331,7 @@ export function createGenerateItemConfig(): GenerateConfigItem {
     borders: false,
     editable: false,
     paragraphCount: 1,
+    isWorkingDevice: true,
   };
 }
 

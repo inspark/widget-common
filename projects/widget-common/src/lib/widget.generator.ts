@@ -179,7 +179,7 @@ function generateSingleParams(index: number, paramType: PARAM_TYPE, item: Widget
     device: config.param ? {
       controller: {id: null, serialnumber: 'SN' + getRandom(10000, 99999), isOnline: config.isOnline},
       object: {id: null, shortname: 'Object ' + getRandom(10000, 99999), fullname: 'Object ' + getRandom(10000, 99999)},
-
+      isWorking: config.isWorkingDevice,
       param: {
         id: null,
         name: 'deviceParam name',
