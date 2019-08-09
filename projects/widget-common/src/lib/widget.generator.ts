@@ -178,7 +178,14 @@ function generateSingleParams(index: number, paramType: PARAM_TYPE, item: Widget
   return {
     device: config.param ? {
       controller: {id: null, serialnumber: 'SN' + getRandom(10000, 99999), isOnline: config.isOnline},
-      object: {id: null, shortname: 'Object ' + getRandom(10000, 99999), fullname: 'Object ' + getRandom(10000, 99999)},
+      object: {
+        id: null,
+        shortname: 'Object ' + getRandom(10000, 99999),
+        fullname: 'Object ' + getRandom(10000, 99999),
+        timezone: 3,
+        latitude: 0,
+        longitude: 0
+      },
       isWorking: config.isWorkingDevice,
       param: {
         id: null,
@@ -223,7 +230,14 @@ function generateSeriesParam(index: number, paramType: PARAM_TYPE, item: WidgetP
   return {
     device: {
       controller: {id: null, serialnumber: 'SN' + getRandom(10000, 99999)},
-      object: {id: null, shortname: 'Object ' + getRandom(10000, 99999), fullname: 'Object ' + getRandom(10000, 99999)},
+      object: {
+        id: null,
+        shortname: 'Object ' + getRandom(10000, 99999),
+        fullname: 'Object ' + getRandom(10000, 99999),
+        timezone: 3,
+        latitude: 0,
+        longitude: 0
+      },
       param: {
         id: null,
         name: 'deviceParam name',
@@ -254,7 +268,14 @@ function generateIntervalParams(index: number, paramType: PARAM_TYPE, item: Widg
   return {
     device: {
       controller: {id: null, serialnumber: 'SN' + getRandom(10000, 99999)},
-      object: {id: null, shortname: 'Object ' + getRandom(10000, 99999), fullname: 'Object ' + getRandom(10000, 99999)},
+      object: {
+        id: null,
+        shortname: 'Object ' + getRandom(10000, 99999),
+        fullname: 'Object ' + getRandom(10000, 99999),
+        timezone: 3,
+        latitude: 0,
+        longitude: 0
+      },
 
       param: {
         id: null,

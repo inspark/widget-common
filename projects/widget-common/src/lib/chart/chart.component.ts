@@ -1,4 +1,4 @@
-import {Component, Input, NgModule, OnChanges, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, NgModule, OnChanges, OnInit} from '@angular/core';
 import {
   ChartTypes,
   ItemSeries,
@@ -21,7 +21,7 @@ const moment = moment_;
   selector: 'app-chart',
   templateUrl: './chart.component.html',
   styleUrls: ['./chart.component.scss'],
-
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChartComponent implements OnInit, OnChanges {
 
@@ -95,6 +95,7 @@ export class ChartComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
+    this.data = [];
     if (this.config && this.values) {
       if (this.values.length && this.values[0].data) {
         this.options = {chart: this.generateChartOptions(this.config, this.values[0])};
@@ -174,19 +175,20 @@ export class ChartComponent implements OnInit, OnChanges {
     switch (config.duration) {
       case SeriesDuration.day:
         zoom.scaleExtent = [1, 6];
-        period = this.getDay(config.count);
+        period = this.getDay(config.count, values.device.object.timezone);
         break;
       case SeriesDuration.month:
-        period = this.getMonth(config.count);
+        period = this.getMonth(config.count, values.device.object.timezone);
         zoom.scaleExtent = [1, 192];
         break;
       case SeriesDuration.week:
         zoom.scaleExtent = [1, 48];
-        period = this.getWeek(config.count);
+        period = this.getWeek(config.count, values.device.object.timezone);
         break;
       default:
         period = this.getDate();
     }
+
     if (config.generator) {
       const times = this.getMaxMinTimeline(values);
       xDomain = [times.min, times.max];
@@ -195,7 +197,7 @@ export class ChartComponent implements OnInit, OnChanges {
     }
 
     res = {
-      type: config.charttype === ChartTypes.histogramChart ? 'historicalBarChart' : config.charttype,
+      type: config.charttype === ChartTypes.histogramChart ? 'discreteBarChart' : config.charttype,
       noData: this.noDataMessage,
       xScale: d3.time.scale(),
       showControls: true,
@@ -209,6 +211,9 @@ export class ChartComponent implements OnInit, OnChanges {
         }
       },
       y: function (d) {
+        if (!d) {
+          return null;
+        }
         return config.charttype === ChartTypes.candlestickBarChart ? d.close : d.value;
       },
 
@@ -396,50 +401,33 @@ export class ChartComponent implements OnInit, OnChanges {
 
   }
 
-  getDay(num) {
+  getDay(num, timezone) {
     const res: any = {};
-    const d: any = new Date();
+    const d: Date = new Date();
+    d.setHours(0, 0, 0);
+    d.setTime(d.getTime() + (-d.getTimezoneOffset() - timezone * 60) * 60000); // set object timezone
     d.setDate(d.getDate() - num);
-    const dd: any = d.getDate();
-    const mm: any = d.getMonth() + 1;
-    const yyyy: any = d.getFullYear();
-
-    d.setSeconds(0);
-    d.setMinutes(0);
-    d.setHours(0);
     res.startTime = d.getTime();
-    d.setSeconds(59);
-    d.setMinutes(59);
-    d.setHours(23);
+    d.setDate(d.getDate() + 1);
     res.endTime = d.getTime();
-    res.text = ('0' + dd).slice(-2) + '/' + ('0' + mm).slice(-2) + '/' + yyyy;
-
     return res;
   }
 
-  getWeek(num) {
+
+  getWeek(num, timezone) {
     const res: any = {};
-    const d: any = new Date();
-    const day: any = d.getDay();
+    const d: Date = new Date();
+    const day = d.getDay();
     if (day === 0) {
       num++;
     }
-    const firstDay: any = new Date();
+    const firstDay = new Date();
+    const lastDay = new Date();
     firstDay.setDate(d.getDate() - day - num * 7 + 1);
-    const lastDay: any = new Date();
-    if (num > 0) {
-      lastDay.setDate(d.getDate() - day - (num - 1) * 7);
-    } else {
-
-    }
-
-    firstDay.setSeconds(0);
-    firstDay.setMinutes(0);
-    firstDay.setHours(0);
+    firstDay.setHours(0, 0, 0);
+    firstDay.setTime(firstDay.getTime() + (-firstDay.getTimezoneOffset() - timezone * 60) * 60000); // set object timezone
     res.startTime = firstDay.getTime();
-    lastDay.setSeconds(59);
-    lastDay.setMinutes(59);
-    lastDay.setHours(23);
+    lastDay.setTime(firstDay.getTime() + 7 * 24 * 60 * 60 * 1000);
     res.endTime = lastDay.getTime();
     res.text = ('0' + firstDay.getDate()).slice(-2) + '/' + ('0' + (firstDay.getMonth() + 1)).slice(-2) + '/' + firstDay.getFullYear() +
       ' - ' +
@@ -449,25 +437,18 @@ export class ChartComponent implements OnInit, OnChanges {
   }
 
 
-  getMonth(num) {
+  getMonth(num, timezone) {
     const res: any = {};
-    const d: any = new Date();
-    let mm: any = d.getMonth();
-    const dd: any = d.getDate();
-    mm = d.getMonth() - parseInt(num);
-    const yyyy: any = d.getFullYear();
-
-    const firstDay: any = new Date(yyyy, mm, 1);
-    const lastDay: any = new Date(yyyy, mm + 1, 0);
-
-    firstDay.setSeconds(0);
-    firstDay.setMinutes(0);
-    firstDay.setHours(0);
-    res.startTime = firstDay.getTime();
-    lastDay.setSeconds(59);
-    lastDay.setMinutes(59);
-    lastDay.setHours(23);
-    res.endTime = lastDay.getTime();
+    const d: Date = new Date();
+    d.setHours(0, 0, 0);
+    d.setDate(1);
+    d.setMonth(d.getMonth() - num);
+    d.setTime(d.getTime() + (-d.getTimezoneOffset() - timezone * 60) * 60000); // set object timezone
+    const firstDay = d;
+    res.startTime = d.getTime();
+    d.setMonth(d.getMonth() + 1);
+    res.endTime = d.getTime();
+    const lastDay = d;
     res.text = ('0' + firstDay.getDate()).slice(-2) + '/' + ('0' + (firstDay.getMonth() + 1)).slice(-2) + '/' + firstDay.getFullYear() +
       ' - ' + ('0' + lastDay.getDate()).slice(-2) + '/' + ('0' + (lastDay.getMonth() + 1)).slice(-2) + '/' + lastDay.getFullYear();
     return res;

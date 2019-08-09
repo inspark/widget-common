@@ -15,8 +15,8 @@ export class CommunicationService {
     }
   }
 
-  next(id: number, val: any) {
-    this.create(id);
-    this.messageSource[id].next(val);
+  next(widgetId: number, value: any) {
+    this.create(widgetId);
+    this.messageSource[widgetId].next(value);
   }
 }

@@ -107,40 +107,6 @@ export class WidgetContainer {
       widget: IWidget = this.prodOpts.widget;
       private subscriber: any;
 
-      CHARTS = {
-        pie: {
-          chart: {
-            type: 'pieChart',
-            height: 80,
-            x: function (d) {
-              return d.key;
-            },
-            y: function (d) {
-              return parseFloat(String(d.y / 3600000)).toFixed(2);
-            },
-            showLabels: false,
-            showLegend: false,
-            labelType: 'percent',
-            donut: false,
-            donatRatio: 0.38,
-            duration: 500,
-            transitionDuration: 500,
-            labelThreshold: 0.05,
-            labelSunbeamLayout: true,
-            margin: {top: 5, right: 5, bottom: 5, left: 5},
-            marginTop: null
-            // legend: {
-            //   margin: {
-            //     top: 5,
-            //     right: 95,
-            //     bottom: 5,
-            //     left: 0
-            //   }
-            // }
-          }
-        }
-      };
-
       constructor(private communication: CommunicationService, private cdRef: ChangeDetectorRef) {
         if (opts.isDev) {
           this.message$ = communication.message$[0];
@@ -168,6 +134,7 @@ export class WidgetContainer {
             this.media = updateWidgetMediaUrl(this.component.media, url);
           }
         }
+        console.log('ngOnInit', this.prodOpts.widget, this.values);
         this.component.onInit();
       }
 
@@ -222,7 +189,7 @@ export class WidgetContainer {
 
 
       private updateData(data) {
-        console.log('updateData', data);
+        console.log('NEW MESSAGE updateData', this.prodOpts, data);
         if (!data) {
           return;
         }
@@ -234,6 +201,10 @@ export class WidgetContainer {
           }
         } else {
           if (!data.length) {
+
+            console.log('this.values CONTAINER', this.values);
+            this.component.onUpdate(this.values);
+            this.cdRef.detectChanges();
             return;
           }
           data.forEach(val => {
@@ -259,6 +230,7 @@ export class WidgetContainer {
               param.value = newVal.value;
             }
           });
+          console.log('updateData', this.prodOpts.widget, this.values);
           this.component.onUpdate(this.values);
           this.cdRef.detectChanges();
         }

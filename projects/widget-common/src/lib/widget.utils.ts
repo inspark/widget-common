@@ -194,7 +194,7 @@ function assignValue(item: WidgetParamChildren, itemPath, params: IWidgetParam[]
         return {...param, data: null, value: null, viewConfig, custom: {}};
       }
     } else {
-      return {};
+      return {data: null};
     }
   }
 }
