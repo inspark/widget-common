@@ -134,7 +134,7 @@ export class WidgetContainer {
             this.media = updateWidgetMediaUrl(this.component.media, url);
           }
         }
-        console.log('ngOnInit', this.prodOpts.widget, this.values);
+       // console.log('ngOnInit', this.prodOpts.widget, this.values);
         this.component.onInit();
       }
 
@@ -189,7 +189,7 @@ export class WidgetContainer {
 
 
       private updateData(data) {
-        console.log('NEW MESSAGE updateData', this.prodOpts, data);
+       // console.log('NEW MESSAGE updateData', this.prodOpts, data);
         if (!data) {
           return;
         }
@@ -202,7 +202,7 @@ export class WidgetContainer {
         } else {
           if (!data.length) {
 
-            console.log('this.values CONTAINER', this.values);
+            //console.log('this.values CONTAINER', this.values);
             this.component.onUpdate(this.values);
             this.cdRef.detectChanges();
             return;
@@ -230,7 +230,7 @@ export class WidgetContainer {
               param.value = newVal.value;
             }
           });
-          console.log('updateData', this.prodOpts.widget, this.values);
+         // console.log('updateData', this.prodOpts.widget, this.values);
           this.component.onUpdate(this.values);
           this.cdRef.detectChanges();
         }
