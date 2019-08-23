@@ -1,6 +1,6 @@
 import {TranslateModule} from '@ngx-translate/core';
 import {Injectable, NgModule} from '@angular/core';
-import {NvD3Module} from 'ng2-nvd3';
+import {NvD3Module} from 'angular2-nvd3';
 import {ChartComponentModule} from './chart/chart.component';
 import {
   ArrayNumberPipe,

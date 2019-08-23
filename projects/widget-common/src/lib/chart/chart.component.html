@@ -1,9 +1,9 @@
 <div style="width:100%">
-    <nvd3
+    <app-nvd3
             *ngIf="data"
             [options]="options"
             [data]="data"
             class="with-3d-shadow with-transitions o-flex__item">
-    </nvd3>
+    </app-nvd3>
     <div *ngIf="!data">{{noDataMessage}}</div>
 </div>

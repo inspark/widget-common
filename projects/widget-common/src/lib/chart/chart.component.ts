@@ -10,7 +10,7 @@ import {
 } from '../widget.interface';
 import * as d3 from 'd3';
 import 'nvd3';
-import {NvD3Module} from 'ng2-nvd3';
+import {NvD3Module} from 'angular2-nvd3';
 import {CommonModule} from '@angular/common';
 import {PieChartComponent} from '../pie-chart/pie-chart.component';
 import * as moment_ from 'moment';
@@ -97,11 +97,65 @@ export class ChartComponent implements OnInit, OnChanges {
   ngOnChanges() {
     this.data = [];
     if (this.config && this.values) {
+      console.log('config', this.config);
       if (this.values.length && this.values[0].data) {
         this.options = {chart: this.generateChartOptions(this.config, this.values[0])};
         this.data = this.generateData(this.config, this.values);
+        console.log('DATA', this.data);
       }
     }
+  }
+
+  genData() {
+    return stream_layers(3, 50 + Math.random() * 50, .1).map(function (data, i) {
+      return {
+        key: 'Stream' + i,
+        values: data
+      };
+    });
+
+    /* Inspired by Lee Byron's test data generator. */
+    function stream_layers(n, m, o) {
+      if (arguments.length < 3) {
+        o = 0;
+      }
+
+      function bump(a) {
+        let x = 1 / (.1 + Math.random()),
+          y = 2 * Math.random() - .5,
+          z = 10 / (.1 + Math.random());
+        for (let i = 0; i < m; i++) {
+          let w = (i / m - y) * z;
+          a[i] += x * Math.exp(-w * w);
+        }
+      }
+
+      return d3.range(n).map(function () {
+        let a = [], i;
+        for (i = 0; i < m; i++) {
+          a[i] = o + o * Math.random();
+        }
+        for (i = 0; i < 5; i++) {
+          bump(a);
+        }
+        return a.map(stream_index);
+      });
+    }
+
+    /* Another layer generator using gamma distributions. */
+    function stream_waves(n, m) {
+      return d3.range(n).map(function (i) {
+        return d3.range(m).map(function (j) {
+          let x = 20 * j / m - i / 3;
+          return 2 * x * Math.exp(-.5 * x);
+        }).map(stream_index);
+      });
+    }
+
+    function stream_index(d, i) {
+      return {x: i, y: Math.max(0, d)};
+    }
+
   }
 
 
@@ -109,7 +163,26 @@ export class ChartComponent implements OnInit, OnChanges {
   }
 
   generateData(config: ParamConfigSeries, values: ItemSeries[]) {
-    if (config.charttype === ChartTypes.candlestickBarChart) {
+    if (config.charttype === ChartTypes.histogramChart) {
+
+      console.log('values', values);
+
+      // return this.genData();
+      return values.map((value, ind) => {
+        return {
+          values: value.data.map((val: any) => {
+            return {x: val.timestmp, y: val.value};
+          }),
+          key: value.title,
+        };
+        // return d3.range(3).map{
+        //   values: value.data.map((val: any, i) => {
+        //     return {x: i, y: val.value};
+        //   }),
+        //   key: value.title,
+        // });
+      });
+    } else if (config.charttype === ChartTypes.candlestickBarChart) {
       return values.map((value, ind) => {
         return {
           seriesIndex: ind,
@@ -196,96 +269,101 @@ export class ChartComponent implements OnInit, OnChanges {
       xDomain = [period.startTime, period.endTime];
     }
 
-    res = {
-      type: config.charttype === ChartTypes.histogramChart ? 'discreteBarChart' : config.charttype,
-      noData: this.noDataMessage,
-      xScale: d3.time.scale(),
-      showControls: true,
-      height: this.height,
-      margin: this.margin,
-      x: function (d) {
-        if (typeof d !== 'undefined') {
-          return d.timestmp;
-        } else {
-          return 0;
-        }
-      },
-      y: function (d) {
-        if (!d) {
-          return null;
-        }
-        return config.charttype === ChartTypes.candlestickBarChart ? d.close : d.value;
-      },
+    if (config.charttype === ChartTypes.histogramChart) {
 
-      legend: {
-        rightAlign: false
-      },
-
-      useVoronoi: true,
-      clipEdge: true,
-      duration: 100,
-      useInteractiveGuideline: true,
-      // interactiveLayer: {
-      //   tooltip: {
-      //     gravity: 's',
-      //     fixedTop: 65,
-      //     contentGenerator: function () {
-      //       return config.charttype === ChartTypes.candlestickBarChart ? candleContentGeneration : lineContentGenerator;
-      //     }(),
-      //   },
-      // },
-
-      xAxis: {
-        axisLabel: 'Дата',
-        ticks: 5,
-        showMaxMin: true,
-        'margin': {
-          'top': 0,
-          'right': 0,
-          'bottom': 0,
-          'left': 0
+      res = {
+        type: 'multiBarChart',
+        height: this.height,
+        margin: this.margin,
+        clipEdge: true,
+        duration: 500,
+        stacked: true,
+        xAxis: {
+          axisLabel: 'Дата',
+          ticks: 5,
+          showMaxMin: true,
+          'margin': {
+            'top': 0,
+            'right': 0,
+            'bottom': 0,
+            'left': 0
+          },
+          'tickSubdivide': 10,
+          'tickSize': 2,
+          'tickPadding': 2,
+          // rotateLabels: 30,
+          tickFormat: (d) => {
+            return this.tickMultiFormat(new Date(d));
+          },
         },
-        'tickSubdivide': 10,
-        'tickSize': 2,
-        'tickPadding': 2,
-        // rotateLabels: 30,
-        tickFormat: (d) => {
-          return this.tickMultiFormat(new Date(d));
+        zoom,
+        yAxis: {
+          axisLabel: `${values.device.param.measure.title} [${values.device.param.measure.unit}]`,
+          tickFormat: tickFormat,
+          axisLabelDistance: 5
         },
-      },
-      xDomain,
-      yDomain,
-      yAxis: {
-        axisLabel: `${values.device.param.measure.title} [${values.device.param.measure.unit}]`,
-        tickFormat: tickFormat,
-        axisLabelDistance: 5
-      },
+      };
+    } else {
 
-      zoom,
+      res = {
+        type: config.charttype,
+        noData: this.noDataMessage,
+        xScale: d3.time.scale(),
+        showControls: true,
+        height: this.height,
+        margin: this.margin,
+        x: function (d) {
+          if (typeof d !== 'undefined') {
+            return d.timestmp;
+          } else {
+            return 0;
+          }
+        },
+        y: function (d) {
+          if (!d) {
+            return null;
+          }
+          return config.charttype === ChartTypes.candlestickBarChart ? d.close : d.value;
+        },
+        legend: {
+          rightAlign: false
+        },
+        useVoronoi: true,
+        clipEdge: true,
+        duration: 100,
+        useInteractiveGuideline: true,
+        xAxis: {
+          axisLabel: 'Дата',
+          ticks: 5,
+          showMaxMin: true,
+          'margin': {
+            'top': 0,
+            'right': 0,
+            'bottom': 0,
+            'left': 0
+          },
+          'tickSubdivide': 10,
+          'tickSize': 2,
+          'tickPadding': 2,
+          // rotateLabels: 30,
+          tickFormat: (d) => {
+            return this.tickMultiFormat(new Date(d));
+          },
+        },
+        xDomain,
+        yDomain,
+        yAxis: {
+          axisLabel: `${values.device.param.measure.title} [${values.device.param.measure.unit}]`,
+          tickFormat: tickFormat,
+          axisLabelDistance: 5
+        },
 
-      // tooltip: {
-      //   contentGenerator: function (d) {
-      //     if (d.point.y == null) {
-      //       return '<div style="background-color: ' + d.point.color + '">'
-      //         + '<div>' + moment(d.point.x).format('DD-MM-YYYY HH:mm') + '</div>'
-      //         + '<div>Нет данных</div>'
-      //         + '</div>';
-      //     }
-      //
-      //
-      //     return '<div style="background-color: ' + d.point.color + '">'
-      //       + '<div>' + moment(d.point.x).format('DD-MM-YYYY HH:mm') + '</div>'
-      //       + '<div>' + parseFloat(d.point.y).toFixed(2) + '</div>'
-      //       + '</div>';
-      //   },
-      //   ohlcContentGenerator: function (d) {
-      //     return '<div>test content</div>';
-      //   }
-      // },
+        zoom,
 
+      };
+    }
 
-    };
-
+    console.log('res', res);
 
     function tickFormat(d) {
       if (d == null) {
