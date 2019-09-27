@@ -1,4 +1,5 @@
 import {
+  ChartTypes,
   GenerateConfigItem,
   ITEM_TYPE,
   ItemParent,
@@ -6,7 +7,7 @@ import {
   IWidgetParam,
   IWidgetParamConfig,
   PARAM_TYPE, ParamConfigCustom,
-  ParamConfigurator,
+  ParamConfigurator, SeriesDuration,
   TableValues,
   WidgetArrayParam,
   WidgetItem,
@@ -229,7 +230,6 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
                                 paramType: PARAM_TYPE = PARAM_TYPE.value, path = [], parent = null): ParamConfigurator[] {
   const result: ParamConfigurator[] = [];
 
-
   if (params instanceof Array) {
     // Элемент масссива
     const item: any = params[0];
@@ -256,6 +256,10 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
 
         if (params[key].items) {
           // Массив
+          let config: any = {};
+          if (ITEM_TYPE.series === itemType) {
+            config = {count: 0, charttype: ChartTypes.lineChart, duration: SeriesDuration.day};
+          }
           const res: ParamConfigurator = {
             name: itemPath.join('.'),
             title: _(item.title),
@@ -263,7 +267,7 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
             paramType,
             parent,
             views: item.views,
-            config: {},
+            config,
             generateConfig: {count: 3, data: true},
           };
           res.items = createParamList(params[key].items, itemType, paramType, itemPath, res);
@@ -304,6 +308,11 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
             });
           } else {
             // Простой элемент
+
+            let config: any = {};
+            if (ITEM_TYPE.series === itemType) {
+              config = {count: 0, charttype: ChartTypes.lineChart, duration: SeriesDuration.day};
+            }
             result.push({
               name: itemPath.join('.'),
               title: item.title,
@@ -311,7 +320,7 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
               itemType,
               paramType,
               parent,
-              config: {},
+              config,
               generateConfig: {data: true, param: true}
             });
           }
