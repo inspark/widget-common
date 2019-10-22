@@ -20,6 +20,9 @@ export class WidgetComponent {
   onDestroy() {
   }
 
+  onResize(width, height) {
+  }
+
   onUpdate(values) {
   }
 
