@@ -163,7 +163,6 @@ export class ChartComponent implements OnInit, OnChanges {
   generateData(config: ParamConfigSeries, values: ItemSeries[]) {
     if (config.charttype === ChartTypes.histogramChart) {
 
-      console.log('values', values);
 
       // return this.genData();
       return values.map((value, ind) => {
@@ -296,7 +295,7 @@ export class ChartComponent implements OnInit, OnChanges {
         },
         zoom,
         yAxis: {
-          axisLabel: `${values.device.param.measure.title} [${values.device.param.measure.unit}]`,
+          axisLabel: values.device.param.measure.title ? `${values.device.param.measure.title} [${values.device.param.measure.unit}]` : '',
           tickFormat: tickFormat,
           axisLabelDistance: 5
         },
@@ -351,7 +350,7 @@ export class ChartComponent implements OnInit, OnChanges {
         xDomain,
         yDomain,
         yAxis: {
-          axisLabel: `${values.device.param.measure.title} [${values.device.param.measure.unit}]`,
+          axisLabel: values.device.param.measure.title ? `${values.device.param.measure.title} [${values.device.param.measure.unit}]` : '',
           tickFormat: tickFormat,
           axisLabelDistance: 5
         },
@@ -360,8 +359,6 @@ export class ChartComponent implements OnInit, OnChanges {
 
       };
     }
-
-    console.log('res', res);
 
     function tickFormat(d) {
       if (d == null) {
