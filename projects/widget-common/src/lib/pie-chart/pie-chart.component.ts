@@ -1,10 +1,11 @@
-import {Component, Input, NgModule, OnChanges, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, NgModule, OnChanges, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {
   ChartTypes, ItemInterval,
   ItemSeries, ItemSingle,
   ParamConfigSeries,
   SiteTheme
 } from '../widget.interface';
+import {NvD3Component} from "ng2-nvd3";
 
 @Component({
   selector: 'app-pie-chart',
@@ -12,7 +13,7 @@ import {
   styleUrls: ['./pie-chart.component.scss'],
 
 })
-export class PieChartComponent implements OnInit, OnChanges {
+export class PieChartComponent implements OnInit, OnChanges, OnDestroy {
 
 
   data: any;
@@ -22,21 +23,39 @@ export class PieChartComponent implements OnInit, OnChanges {
   @Input() config: ParamConfigSeries;
   @Input() noDataMessage = 'No data';
   @Input() height = null;
+  @Input() width = 250;
+  @ViewChild(NvD3Component) child: NvD3Component;
 
   theme: SiteTheme;
 
-  constructor() {
+  constructor(private cdr: ChangeDetectorRef) {
   }
 
-  ngOnChanges() {
-    if (this.config && this.values) {
-      this.options = this.generatePieChartOptions(this.config.charttype);
-      this.data = this.values.data;
+  ngOnChanges(changes) {
+    if (this.child && (changes.width || changes.height)) {
+      this.options = {
+        chart: {...this.options.chart, height: this.height}
+      };
+      this.cdr.detectChanges();
+      if (this.child && this.child.chart) {
+        this.child.chart.update();
+      }
+    }
+    if (changes.config || changes.values) {
+      this.data = [];
+      if (this.config && this.values) {
+        this.options = this.generatePieChartOptions(this.config.charttype);
+        this.data = this.values.data;
+      }
     }
   }
 
   ngOnInit() {
   }
+
+  ngOnDestroy() {
+  }
+
 
 
   generatePieChartOptions(chartType: ChartTypes) {

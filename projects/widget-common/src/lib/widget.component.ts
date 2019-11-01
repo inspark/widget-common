@@ -13,6 +13,9 @@ export const _ = (str: string) => str;
 export class WidgetComponent {
 
   media: any;
+  width: number;
+  height: number;
+
 
   onInit() {
   }
@@ -21,6 +24,8 @@ export class WidgetComponent {
   }
 
   onResize(width, height) {
+    this.width = width;
+    this.height = height;
   }
 
   onUpdate(values) {

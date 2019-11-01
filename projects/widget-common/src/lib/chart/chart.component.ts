@@ -1,4 +1,13 @@
-import {ChangeDetectionStrategy, Component, Input, NgModule, OnChanges, OnInit} from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef,
+  Component,
+  ElementRef,
+  Input,
+  NgModule,
+  OnChanges, OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {
   ChartTypes,
   ItemSeries,
@@ -10,7 +19,7 @@ import {
 } from '../widget.interface';
 import * as d3 from 'd3';
 import 'nvd3';
-import {NvD3Module} from 'angular2-nvd3';
+import {NvD3Module, NvD3Component} from 'ng2-nvd3';
 import {CommonModule} from '@angular/common';
 import {PieChartComponent} from '../pie-chart/pie-chart.component';
 import * as moment_ from 'moment';
@@ -23,8 +32,9 @@ const moment = moment_;
   styleUrls: ['./chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChartComponent implements OnInit, OnChanges {
+export class ChartComponent implements OnInit, OnChanges, OnDestroy {
 
+  @ViewChild(NvD3Component) child: NvD3Component;
 
   data = [];
   options;
@@ -32,15 +42,18 @@ export class ChartComponent implements OnInit, OnChanges {
   @Input() values: ItemSeries[];
   @Input() config: ParamConfigSeries;
   @Input() noDataMessage = 'No data';
+  @Input() width = 250;
   @Input() height = 250;
   @Input() margin = {
-    top: 20,
-    right: 50,
-    bottom: 40,
+    top: 0,
+    right: 0,
+    bottom: 0,
     left: 65
   };
 
   theme: SiteTheme;
+
+  uniqTitles = [];
 
   darkColor = [
     {'color': '#00FF7F'},
@@ -89,82 +102,46 @@ export class ChartComponent implements OnInit, OnChanges {
   ]);
 
 
-  constructor() {
+  constructor(private cdr: ChangeDetectorRef) {
 
 
   }
 
-  ngOnChanges() {
-    this.data = [];
-    if (this.config && this.values) {
-      if (this.values.length && this.values[0].data) {
-        this.options = {chart: this.generateChartOptions(this.config, this.values[0])};
-        this.data = this.generateData(this.config, this.values);
-      }
-    }
-  }
-
-  genData() {
-    return stream_layers(3, 50 + Math.random() * 50, .1).map(function (data, i) {
-      return {
-        key: 'Stream' + i,
-        values: data
+  ngOnChanges(changes) {
+    if (this.child && (changes.width || changes.height)) {
+      this.options = {
+        chart: {...this.options.chart, height: this.height}
       };
-    });
-
-    /* Inspired by Lee Byron's test data generator. */
-    function stream_layers(n, m, o) {
-      if (arguments.length < 3) {
-        o = 0;
+      this.cdr.detectChanges();
+      if (this.child && this.child.chart) {
+        this.child.chart.update();
       }
-
-      function bump(a) {
-        let x = 1 / (.1 + Math.random()),
-          y = 2 * Math.random() - .5,
-          z = 10 / (.1 + Math.random());
-        for (let i = 0; i < m; i++) {
-          let w = (i / m - y) * z;
-          a[i] += x * Math.exp(-w * w);
+    }
+    if (changes.config || changes.values) {
+      this.data = [];
+      if (this.config && this.values) {
+        if (this.values.length && this.values[0].data) {
+          this.options = {
+            chart: this.generateChartOptions(this.config, this.values),
+          };
+          this.data = this.generateData(this.config, this.values);
         }
+        this.cdr.detectChanges();
       }
-
-      return d3.range(n).map(function () {
-        let a = [], i;
-        for (i = 0; i < m; i++) {
-          a[i] = o + o * Math.random();
-        }
-        for (i = 0; i < 5; i++) {
-          bump(a);
-        }
-        return a.map(stream_index);
-      });
     }
-
-    /* Another layer generator using gamma distributions. */
-    function stream_waves(n, m) {
-      return d3.range(n).map(function (i) {
-        return d3.range(m).map(function (j) {
-          let x = 20 * j / m - i / 3;
-          return 2 * x * Math.exp(-.5 * x);
-        }).map(stream_index);
-      });
-    }
-
-    function stream_index(d, i) {
-      return {x: i, y: Math.max(0, d)};
-    }
-
   }
-
 
   ngOnInit() {
   }
 
+  ngOnDestroy() {
+  }
+
+
   generateData(config: ParamConfigSeries, values: ItemSeries[]) {
+    this.uniqTitles = [];
     if (config.charttype === ChartTypes.histogramChart) {
 
-
-      // return this.genData();
       return values.map((value, ind) => {
         return {
           values: value.data.map((val: any) => {
@@ -172,12 +149,6 @@ export class ChartComponent implements OnInit, OnChanges {
           }),
           key: value.title,
         };
-        // return d3.range(3).map{
-        //   values: value.data.map((val: any, i) => {
-        //     return {x: i, y: val.value};
-        //   }),
-        //   key: value.title,
-        // });
       });
     } else if (config.charttype === ChartTypes.candlestickBarChart) {
       return values.map((value, ind) => {
@@ -188,18 +159,37 @@ export class ChartComponent implements OnInit, OnChanges {
         };
       });
     } else {
+
       return values.map((value, ind) => {
         return {
           color: this.getChartColor(ind),
-          key: value.title,
+          key: this.findUniqName(value.title),
           values: value.data
         };
       });
     }
   }
 
+  findUniqName(title, ind = 0) {
 
-  generateChartOptions(config: ParamConfigSeries, values: ItemSeries) {
+    if (ind === 0) {
+      if (this.uniqTitles.indexOf(title) !== -1) {
+        return this.findUniqName(title, ind + 1);
+      }
+      this.uniqTitles.push(title);
+      return title;
+    } else {
+      const newTitle = `${title} (${ind})`;
+      if (this.uniqTitles.indexOf(newTitle) !== -1) {
+        return this.findUniqName(title, ind + 1);
+      }
+      this.uniqTitles.push(newTitle);
+      return newTitle;
+    }
+  }
+
+  generateChartOptions(config: ParamConfigSeries, values: ItemSeries[]) {
+    const value = values[0];
     let res = {};
     const zoom = {
       'enabled': true,
@@ -207,7 +197,7 @@ export class ChartComponent implements OnInit, OnChanges {
         1, 48
       ],
       'useFixedDomain': false,
-      'useNiceScale': true,
+      'useNiceScale': false,
       'horizontalOff': false,
       'verticalOff': true,
       'unzoomEventType': 'dblclick.zoom'
@@ -220,7 +210,7 @@ export class ChartComponent implements OnInit, OnChanges {
     const chartdatamin = [];
     const chartdatamax = [];
 
-    if (values.device.param.type === PARAM_TYPE.signal) {
+    if (value.device.param.type === PARAM_TYPE.signal) {
       chartdatamax[0] = 1.2;
       chartdatamin[0] = -0.2;
     } else {
@@ -245,22 +235,22 @@ export class ChartComponent implements OnInit, OnChanges {
     switch (config.duration) {
       case SeriesDuration.day:
         zoom.scaleExtent = [1, 6];
-        period = this.getDay(config.count, values.device.object.timezone);
+        period = this.getDay(config.count, value.device.object.timezone);
         break;
       case SeriesDuration.month:
-        period = this.getMonth(config.count, values.device.object.timezone);
+        period = this.getMonth(config.count, value.device.object.timezone);
         zoom.scaleExtent = [1, 192];
         break;
       case SeriesDuration.week:
         zoom.scaleExtent = [1, 48];
-        period = this.getWeek(config.count, values.device.object.timezone);
+        period = this.getWeek(config.count, value.device.object.timezone);
         break;
       default:
         period = this.getDate();
     }
 
     if (config.generator) {
-      const times = this.getMaxMinTimeline(values);
+      const times = this.getMaxMinTimeline(value);
       xDomain = [times.min, times.max];
     } else {
       xDomain = [period.startTime, period.endTime];
@@ -273,29 +263,20 @@ export class ChartComponent implements OnInit, OnChanges {
         height: this.height,
         margin: this.margin,
         clipEdge: true,
-        duration: 500,
+        duration: 300,
         stacked: true,
+        useInteractiveGuideline: true,
         xAxis: {
           axisLabel: 'Дата',
-          ticks: 5,
           showMaxMin: true,
-          'margin': {
-            'top': 0,
-            'right': 0,
-            'bottom': 0,
-            'left': 0
-          },
-          'tickSubdivide': 10,
-          'tickSize': 2,
-          'tickPadding': 2,
-          // rotateLabels: 30,
+          axisLabelDistance: 5,
           tickFormat: (d) => {
             return this.tickMultiFormat(new Date(d));
           },
         },
         zoom,
         yAxis: {
-          axisLabel: values.device.param.measure.title ? `${values.device.param.measure.title} [${values.device.param.measure.unit}]` : '',
+          axisLabel: value.device.param.measure.title ? `${value.device.param.measure.title} [${value.device.param.measure.unit}]` : '',
           tickFormat: tickFormat,
           axisLabelDistance: 5
         },
@@ -310,7 +291,7 @@ export class ChartComponent implements OnInit, OnChanges {
         height: this.height,
         margin: this.margin,
         x: function (d) {
-          if (typeof d !== 'undefined') {
+          if (d) {
             return d.timestmp;
           } else {
             return 0;
@@ -322,27 +303,13 @@ export class ChartComponent implements OnInit, OnChanges {
           }
           return config.charttype === ChartTypes.candlestickBarChart ? d.close : d.value;
         },
-        legend: {
-          rightAlign: false
-        },
         useVoronoi: true,
-        clipEdge: true,
-        duration: 100,
+        clipEdge: false,
+        duration: 300,
         useInteractiveGuideline: true,
         xAxis: {
           axisLabel: 'Дата',
-          ticks: 5,
-          showMaxMin: true,
-          'margin': {
-            'top': 0,
-            'right': 0,
-            'bottom': 0,
-            'left': 0
-          },
-          'tickSubdivide': 10,
-          'tickSize': 2,
-          'tickPadding': 2,
-          // rotateLabels: 30,
+          showMaxMin: false,
           tickFormat: (d) => {
             return this.tickMultiFormat(new Date(d));
           },
@@ -350,13 +317,11 @@ export class ChartComponent implements OnInit, OnChanges {
         xDomain,
         yDomain,
         yAxis: {
-          axisLabel: values.device.param.measure.title ? `${values.device.param.measure.title} [${values.device.param.measure.unit}]` : '',
+          axisLabel: value.device.param.measure.title ? `${value.device.param.measure.title} [${value.device.param.measure.unit}]` : '',
           tickFormat: tickFormat,
           axisLabelDistance: 5
         },
-
         zoom,
-
       };
     }
 
@@ -375,68 +340,20 @@ export class ChartComponent implements OnInit, OnChanges {
       return d3.format('.02f')(d);
     }
 
-
-    function dateToStr(d) {
-      return ('00' + d.getDate()).slice(-2) + '-' +
-        ('00' + (d.getMonth() + 1)).slice(-2) + '-' +
-        d.getFullYear() + ' ' +
-        ('00' + d.getHours()).slice(-2) + ':' +
-        ('00' + d.getMinutes()).slice(-2);
-      /*+ ":" +   ("00" + d.getSeconds()).slice(-2)*/
-    }
-
-    function candleContentGeneration(data) {
-      // we assume only one series exists for this chart
-      const d: any = data.series[0].data;
-      // match line colors as defined in nv.d3.css
-      const color: any = d.open < d.close ? '#2ca02c' : '#d62728';
-      return '' +
-        '<h3 style="color: ' + color + '">' + dateToStr(new Date(d.timestmp)) + '</h3>' +
-        '<table>' +
-        '<tr><td>' + 'open' + ':</td><td>' + tickFormat(d.open) + '</td></tr>' +
-        '<tr><td>' + 'close' + ':</td><td>' + tickFormat(d.close) + '</td></tr>' +
-        '<tr><td>' + 'high' + ':</td><td>' + tickFormat(d.high) + '</td></tr>' +
-        '<tr><td>' + 'low' + ':</td><td>' + tickFormat(d.low) + '</td></tr>' +
-        '</table>';
-    }
-
-    function lineContentGenerator(data) {
-
-      // we assume only one series exists for this chart
-      let dvalue: any = '';
-      let d: any = {};
-      if (typeof data.series[0].point !== 'undefined') {
-        d = data.series[0].point;
-      } else {
-        d = data.series[0].data;
-      }
-      const dtime = '<tr><td colspan: any = 3>' + moment(d.timestmp).format('DD-MM-YYYY HH:mm') + '</td></tr>';
-      data.series.forEach(function (data) {
-        const color: any = data.color;
-        if (data.value === null) {
-          dvalue += '<tr><td></td><td><h5 style="color: ' + color + ';font-weight: bold">' + data.key +
-            '</h5></td><td>Нет данных</td></tr>';
-        } else {
-          dvalue += '<tr><td></h5></td><td><h5 style="color: ' + color + ';font-weight: bold">' + data.key +
-            '</h5></td><td> ' + parseFloat(data.value).toFixed(2) + '</td></tr>';
-        }
-      });
-      return '<table>' + dtime + dvalue + '</table>';
-
-    }
-
     return res;
   }
 
-  getMaxMin(values: ItemSeries) {
+  getMaxMin(values: ItemSeries[]) {
     let max = Number.MIN_VALUE, min = Number.MAX_VALUE;
-    values.data.forEach((val: SeriesLineValue) => {
-      if (val.value > max) {
-        max = val.value;
-      }
-      if (val.value < min) {
-        min = val.value;
-      }
+    values.forEach(value => {
+      value.data.forEach((val: SeriesLineValue) => {
+        if (val.value > max) {
+          max = val.value;
+        }
+        if (val.value < min) {
+          min = val.value;
+        }
+      });
     });
     return {max, min};
   }
