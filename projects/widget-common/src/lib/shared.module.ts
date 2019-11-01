@@ -25,7 +25,7 @@ import {InlineSVGModule} from 'ng-inline-svg';
     TranslateModule,
     NvD3Module,
     ChartComponentModule,
-    InlineSVGModule.forRoot()
+    InlineSVGModule.forRoot({ baseUrl: '' }),
   ],
   exports: [
     TranslateModule,
