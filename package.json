@@ -22,7 +22,6 @@
     "@angular/platform-browser": "~7.0.0",
     "@angular/platform-browser-dynamic": "~7.0.0",
     "@angular/router": "~7.0.0",
-    "angular2-nvd3": "^1.0.7",
     "core-js": "^2.5.4",
     "zone.js": "~0.8.26"
   },
@@ -53,7 +52,6 @@
     "ng-inline-svg": "^8.4.1",
     "ng-packagr": "^4.2.0",
     "ng2-nvd3": "^2.0.0",
-    "nvd3": "^1.8.5",
     "protractor": "~5.4.0",
     "rxjs": "^6.3.3",
     "ts-node": "~7.0.0",

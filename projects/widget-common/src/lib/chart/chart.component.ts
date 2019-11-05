@@ -45,9 +45,9 @@ export class ChartComponent implements OnInit, OnChanges, OnDestroy {
   @Input() width = 250;
   @Input() height = 250;
   @Input() margin = {
-    top: 0,
-    right: 0,
-    bottom: 0,
+    top: 25,
+    right: 5,
+    bottom: 50,
     left: 65
   };
 
@@ -128,6 +128,9 @@ export class ChartComponent implements OnInit, OnChanges, OnDestroy {
         }
         this.cdr.detectChanges();
       }
+    }
+    if (this.child && this.child.chart) {
+      this.child.chart.update();
     }
   }
 
@@ -264,7 +267,6 @@ export class ChartComponent implements OnInit, OnChanges, OnDestroy {
         margin: this.margin,
         clipEdge: true,
         duration: 300,
-        stacked: true,
         useInteractiveGuideline: true,
         xAxis: {
           axisLabel: 'Дата',
