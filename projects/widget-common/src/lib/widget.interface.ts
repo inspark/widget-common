@@ -139,7 +139,6 @@ export interface GenerateConfig extends GenerateConfigItem {
 export interface GenerateConfigItem {
   // Для всех параметров
   pageLink?: boolean;
-  isOnline?: boolean;
   editable?: boolean;
   data?: boolean;
   param?: boolean;
@@ -154,6 +153,11 @@ export interface GenerateConfigItem {
 
   // Для кастомных
   paragraphCount?: number;
+
+
+  // устроства
+  isOnline?: boolean;
+  deviceState?: boolean;
 }
 
 // @ts-ignore
