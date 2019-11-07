@@ -33,6 +33,7 @@ import {common} from '../common';
 
 export interface WidgetContainerDevOptions {
   widgetPackage: WidgetPackage;
+  setManual: (param: ItemSingle, value: boolean) => {};
   isDev: boolean;
 }
 

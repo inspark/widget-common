@@ -415,11 +415,16 @@ export class ChartComponent implements OnInit, OnChanges, OnDestroy {
     }
     const firstDay = new Date();
     const lastDay = new Date();
-    firstDay.setDate(d.getDate() - day - num * 7 + 1);
+    if (num === 0) { // Если сдвиг 0, то неделя отсчитывается от текущего дня
+      firstDay.setDate(d.getDate() - num * 7 + 1 - 7);
+    } else {
+      firstDay.setDate(d.getDate() - day - num * 7 + 1);
+    }
     firstDay.setHours(0, 0, 0);
     firstDay.setTime(firstDay.getTime() + (-firstDay.getTimezoneOffset() - timezone * 60) * 60000); // set object timezone
-    res.startTime = firstDay.getTime();
     lastDay.setTime(firstDay.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    res.startTime = firstDay.getTime();
     res.endTime = lastDay.getTime();
     res.text = ('0' + firstDay.getDate()).slice(-2) + '/' + ('0' + (firstDay.getMonth() + 1)).slice(-2) + '/' + firstDay.getFullYear() +
       ' - ' +
