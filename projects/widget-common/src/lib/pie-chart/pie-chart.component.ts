@@ -73,11 +73,11 @@ export class PieChartComponent implements OnInit, OnChanges, OnDestroy {
         showLegend: chartType === ChartTypes.pieChart,
         labelType: 'percent',
         donut: chartType === ChartTypes.pieChart,
-        donatRatio: 0.38,
+        donutRatio: 0.38,
         duration: 500,
         transitionDuration: 500,
         labelThreshold: 0.05,
-        labelSunbeamLayout: true,
+        labelSunbeamLayout: false,
         noData: this.noDataMessage,
       }
     };
