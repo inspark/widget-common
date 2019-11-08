@@ -194,7 +194,7 @@ function generateSingleParams(index: number, paramType: PARAM_TYPE, item: Widget
         type: PARAM_TYPE.value,
         calc: false,
       },
-      state: (config.deviceState ? {
+      state: (config.isWorkingDevice ? {
         comment: 'Состояние канала устройства: работоспособен',
         id: 1,
         name: 'работоспособен'
@@ -215,7 +215,7 @@ function generateSingleParams(index: number, paramType: PARAM_TYPE, item: Widget
     data: config.data ? {
       date: 1548968400000,
       value: value,
-      locked: false,
+      locked: config.locked,
       manually: getRandom(0, 10) > 5,
       state: config.state ? {
         color: PARAM_STATE_INT[config.state],

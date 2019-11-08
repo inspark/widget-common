@@ -142,6 +142,7 @@ export interface GenerateConfigItem {
   editable?: boolean;
   data?: boolean;
   param?: boolean;
+  locked?: boolean;
   isIcon?: boolean;
   iconSet?: boolean;
   view?: string; // Тип отображения
@@ -157,7 +158,6 @@ export interface GenerateConfigItem {
 
   // устроства
   isOnline?: boolean;
-  deviceState?: boolean;
 }
 
 // @ts-ignore
