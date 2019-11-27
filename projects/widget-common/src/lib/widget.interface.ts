@@ -145,6 +145,7 @@ export interface GenerateConfigItem {
   locked?: boolean;
   isIcon?: boolean;
   iconSet?: boolean;
+  title?: string;
   view?: string; // Тип отображения
   isWorkingDevice?: boolean;
   state?: number;

@@ -341,6 +341,7 @@ export function createGenerateItemConfig(): GenerateConfigItem {
     editable: false,
     paragraphCount: 1,
     isWorkingDevice: true,
+    title: 'Title param'
   };
 }
 
