@@ -411,6 +411,17 @@ export interface WidgetSizePosition {
   h: number;
 }
 
+export enum WidgetCustomFieldType {
+  boolean,
+  dashboardLink,
+  string
+}
+
+export interface WidgetCustomField {
+  name: string;
+  type: WidgetCustomFieldType;
+}
+
 export interface WidgetSize {
   sm: WidgetSizePosition;
   lg: WidgetSizePosition;

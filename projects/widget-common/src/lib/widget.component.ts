@@ -2,7 +2,7 @@ import {
   ChartTypes,
   ItemSingle,
   SiteTheme,
-  VALUE_TYPE,
+  VALUE_TYPE, WidgetCustomField,
   WidgetItem,
   WidgetParams,
   WidgetSize
@@ -71,5 +71,6 @@ export interface WidgetPackage {
   styles: string;
   locales?: { code: string, file: string }[];
   needPicture?: boolean;
+  fields?: WidgetCustomField[];
 }
 
