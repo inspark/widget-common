@@ -3,7 +3,7 @@ import {
   GenerateConfigItem,
   ITEM_TYPE,
   ItemParent,
-  ItemTable,
+  ItemTable, IWidgetDeviceParamData,
   IWidgetParam,
   IWidgetParamConfig,
   PARAM_TYPE, ParamConfigCustom,
@@ -81,12 +81,23 @@ export class MakeIconUrl implements PipeTransform {
   }
 }
 
+/**
+ * @deprecated
+ */
 @Pipe({name: 'makeChartUrl'})
 export class MakeChartUrl implements PipeTransform {
   transform(id: number, isCalc, isSignal = false): string {
     return common.transformChartUrlConfig(id, isCalc, isSignal);
   }
 }
+
+@Pipe({name: 'chartUrl'})
+export class ChartUrl implements PipeTransform {
+  transform(param: IWidgetDeviceParamData): string {
+    return common.transformChartUrlConfig(param);
+  }
+}
+
 
 // Добавляем значения для
 export function assignValues(inputValues: WidgetParamsChildren, params: IWidgetParam[], viewConfig: { [k: string]: IWidgetParamConfig }, path = []): ItemParent {

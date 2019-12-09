@@ -175,12 +175,20 @@ export const PARAM_STATE_INT = {'-1': 'falsevalue', 0: 'none', 1: 'success', 2: 
 export interface IWidgetDeviceParam {
   controller?: { id: number, serialnumber: string, isOnline?: boolean };
   object?: { id: number, shortname: string, fullname: string, timezone: number, latitude: number, longitude: number };
-  param: { id?: number, calc?: boolean, name?: string, type?: PARAM_TYPE, value?: number, measure?: { title: string, unit: string } };
+  param: IWidgetDeviceParamData;
   zone?: { name: string };
   isWorking?: boolean;
   state?: { id?: number, name?: string, comment?: string };
 }
 
+export interface IWidgetDeviceParamData {
+  id?: number;
+  calc?: boolean;
+  name?: string;
+  type?: PARAM_TYPE;
+  value?: number;
+  measure?: { title: string, unit: string, id: number };
+}
 
 // Структура для хранения информации о параметры для виджетов
 export interface IWidgetParam {

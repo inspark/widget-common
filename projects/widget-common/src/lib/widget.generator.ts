@@ -190,7 +190,7 @@ function generateSingleParams(index: number, paramType: PARAM_TYPE, item: Widget
       param: {
         id: null,
         name: 'deviceParam name',
-        measure: {unit: generateMeasureUnit(), title: 'Электричество'},
+        measure: {unit: generateMeasureUnit(), title: 'Электричество', id: 1},
         type: PARAM_TYPE.value,
         calc: false,
       },
@@ -208,7 +208,7 @@ function generateSingleParams(index: number, paramType: PARAM_TYPE, item: Widget
     refName: '',
     itemType: ITEM_TYPE.single,
     widgetId: null,
-    title: config.title!== null ? config.title : 'Title param',
+    title: config.title !== null ? config.title : 'Title param',
     config: generateParamConfig(ITEM_TYPE.single, param),
     value: config.data ? value : null,
     viewConfig: {view: config.view},
@@ -250,7 +250,7 @@ function generateSeriesParam(index: number, paramType: PARAM_TYPE, item: WidgetP
       param: {
         id: null,
         name: 'deviceParam name',
-        measure: {unit: generateMeasureUnit(), title: 'Электричество'},
+        measure: {unit: generateMeasureUnit(), title: 'Электричество', id: 1},
         type: PARAM_TYPE.value,
         calc: false,
       },
@@ -293,11 +293,10 @@ function generateIntervalParams(index: number, paramType: PARAM_TYPE, item: Widg
         latitude: 0,
         longitude: 0
       },
-
       param: {
         id: null,
         name: 'deviceParam name',
-        measure: {unit: generateMeasureUnit(), title: 'Электричество'},
+        measure: {unit: generateMeasureUnit(), title: 'Электричество', id: 1},
         type: PARAM_TYPE.value,
         calc: false,
       },
@@ -306,7 +305,7 @@ function generateIntervalParams(index: number, paramType: PARAM_TYPE, item: Widg
     refName: '',
     itemType: ITEM_TYPE.single,
     widgetId: null,
-    title: config.title!==null ? config.title : 'Title param',
+    title: config.title !== null ? config.title : 'Title param',
     config: generateParamConfig(ITEM_TYPE.single, param),
     value,
     viewConfig: null,
@@ -365,7 +364,7 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
     refName: '',
     itemType: ITEM_TYPE.custom,
     widgetId: null,
-    title: config.title!==null ? config.title : 'Title param',
+    title: config.title !== null ? config.title : 'Title param',
     config: generateParamConfig(ITEM_TYPE.custom, param, paramType),
     value,
     viewConfig: {},

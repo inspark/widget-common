@@ -3,7 +3,7 @@ class Common {
   serviceUrl = '';
 
 
-  transformChartUrlConfig(id: number, isCalc, isSignal = false): string {
+  transformChartUrlConfig(param: any, isCalc = null, isSignal = null): string {
     return '';
   }
 

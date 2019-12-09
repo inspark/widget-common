@@ -6,6 +6,7 @@ import {
   ArrayNumberPipe,
   FilterIndexOfPipe,
   MakeChartUrl,
+  ChartUrl,
   MakeIconUrl,
   MakePictureUrl,
   PeriodFromDatePipe
@@ -20,6 +21,7 @@ import {InlineSVGModule} from 'ng-inline-svg';
     MakePictureUrl,
     MakeIconUrl,
     MakeChartUrl,
+    ChartUrl,
   ],
   imports: [
     TranslateModule,
@@ -36,6 +38,7 @@ import {InlineSVGModule} from 'ng-inline-svg';
     MakePictureUrl,
     MakeIconUrl,
     MakeChartUrl,
+    ChartUrl,
     ChartComponentModule,
     InlineSVGModule
   ]
