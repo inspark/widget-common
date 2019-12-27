@@ -149,6 +149,9 @@ export interface GenerateConfigItem {
   view?: string; // Тип отображения
   isWorkingDevice?: boolean;
   state?: number;
+  ctrability?: boolean;
+  value?: any;
+
 
   // Для мгновенных
   borders?: boolean;
@@ -188,6 +191,7 @@ export interface IWidgetDeviceParamData {
   type?: PARAM_TYPE;
   value?: number;
   measure?: { title: string, unit: string, id: number };
+  ctrability?: boolean;
 }
 
 // Структура для хранения информации о параметры для виджетов

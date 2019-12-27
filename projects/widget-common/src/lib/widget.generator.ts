@@ -144,6 +144,15 @@ function generateValue(index: number, item: WidgetParamChildren, paramType: PARA
   }
 }
 
+function updateValue(value) {
+
+  if (typeof value === 'boolean') {
+    return value ? 1 : 0;
+  } else {
+    return value;
+  }
+}
+
 function getRandomValue(paramType: PARAM_TYPE, item: WidgetParamChildren) {
 
   if (item.available) {
@@ -152,7 +161,7 @@ function getRandomValue(paramType: PARAM_TYPE, item: WidgetParamChildren) {
     if (paramType !== PARAM_TYPE.signal) {
       return getRandom(10, 999);
     } else {
-      return getRandom(0, 2);
+      return getRandom(0, 1);
     }
   }
 }
@@ -173,8 +182,8 @@ function getIconSet(needIcons: boolean) {
 
 function generateSingleParams(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemSingle {
 
-  const value = getRandomValue(paramType, item);
   const config = getConfig(param, index);
+  const value = (config.value === undefined || config.value === '') ? getRandomValue(paramType, item) : updateValue(config.value);
   return {
     device: config.param ? {
       controller: {id: null, serialnumber: 'SN' + getRandom(10000, 99999), isOnline: config.isOnline},
@@ -193,6 +202,7 @@ function generateSingleParams(index: number, paramType: PARAM_TYPE, item: Widget
         measure: {unit: generateMeasureUnit(), title: 'Электричество', id: 1},
         type: PARAM_TYPE.value,
         calc: false,
+        ctrability: config.ctrability,
       },
       state: (config.isWorkingDevice ? {
         comment: 'Состояние канала устройства: работоспособен',
@@ -216,7 +226,7 @@ function generateSingleParams(index: number, paramType: PARAM_TYPE, item: Widget
       date: 1548968400000,
       value: value,
       locked: config.locked,
-      manually: getRandom(0, 10) > 5,
+      manually: config.editable,
       state: config.state ? {
         color: PARAM_STATE_INT[config.state],
         comment: 'comment',
@@ -280,8 +290,8 @@ function generateChartValues() {
 }
 
 function generateIntervalParams(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemInterval {
-  const value = getRandomValue(paramType, item);
   const config = getConfig(param, index);
+  const value = (config.value === undefined || config.value === '') ? getRandomValue(paramType, item) : updateValue(config.value);
   return {
     device: {
       controller: {id: null, serialnumber: 'SN' + getRandom(10000, 99999)},
@@ -299,6 +309,7 @@ function generateIntervalParams(index: number, paramType: PARAM_TYPE, item: Widg
         measure: {unit: generateMeasureUnit(), title: 'Электричество', id: 1},
         type: PARAM_TYPE.value,
         calc: false,
+        ctrability: config.ctrability,
       },
       zone: {name: 'tagInfo zone'},
     },

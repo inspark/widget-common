@@ -26,7 +26,7 @@ import {WidgetPackage} from '../widget.component';
 import {CommunicationService} from '../communication.service';
 import {DashboardSharedModule} from '../shared.module';
 import {assignValues, createParamList} from '../widget.utils';
-import {getWidgetPath, updateWidgetMediaUrl} from '../loader';
+import {updateWidgetMediaUrl} from '../loader';
 import {generateValues} from '../widget.generator';
 import {sprintf} from '../sprintf';
 import {common} from '../common';
@@ -131,7 +131,7 @@ export class WidgetContainer {
             this.generateValues();
           }
           if (this.prodOpts.widgetClass) {
-            const url = getWidgetPath(this.prodOpts.widgetClass);
+            const url = common.getWidgetPath(this.prodOpts.widgetClass);
             this.media = updateWidgetMediaUrl(this.component.media, url);
           }
         }
@@ -241,21 +241,25 @@ export class WidgetContainer {
         const array = path.split('.');
         let res: any = this.values;
         let isTable = false;
-        if (res) {
-
-          array.forEach(val => {
-
-            if ((res as ItemParent).items) {
-              res = res.items[parseInt(val, 10) - 1];
-            } else if (res.hasOwnProperty('values')) {
-              res = res.values[parseInt(val, 10) - 1];
-              isTable = true;
-            } else if (isTable) {
-              res = res[parseInt(val, 10) - 1];
-            } else {
-              res = res[val];
-            }
-          });
+        try {
+          if (res) {
+            array.forEach(val => {
+              if ((res as ItemParent).items) {
+                res = res.items[parseInt(val, 10) - 1];
+              } else if (res.hasOwnProperty('values')) {
+                res = res.values[parseInt(val, 10) - 1];
+                isTable = true;
+              } else if (isTable) {
+                res = res[parseInt(val, 10) - 1];
+              } else {
+                res = res[val];
+              }
+            });
+          }
+        } catch (e) {
+          console.log(`W[${this.widget.id}]`, 'Error getting item', path);
+          console.log(`W[${this.widget.id}]`, 'Widget', this.widget);
+          console.log(`W[${this.widget.id}]`, 'Origin values', this.values);
         }
         return res;
       }
