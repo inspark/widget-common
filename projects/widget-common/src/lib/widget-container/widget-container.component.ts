@@ -94,7 +94,7 @@ export class WidgetContainer {
       readonly VALUE_TYPE = VALUE_TYPE;
       readonly SITE_THEMES = SiteTheme;
 
-      theme: SiteTheme;
+      theme: SiteTheme = opts.theme;
 
       set values(data) {
         this._values = data;
