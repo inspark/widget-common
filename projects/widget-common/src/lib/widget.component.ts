@@ -38,6 +38,7 @@ export class WidgetComponentContainer {
 
   values: any;
   pictureId: number;
+  theme: SiteTheme;
 
   readonly CHART_TYPES = ChartTypes;
   readonly VALUE_TYPE = VALUE_TYPE;

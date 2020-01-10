@@ -35,6 +35,7 @@ export interface WidgetContainerDevOptions {
   widgetPackage: WidgetPackage;
   setManual: (param: ItemSingle, value: boolean) => {};
   isDev: boolean;
+  theme: SiteTheme;
 }
 
 
@@ -46,6 +47,7 @@ export interface WidgetContainerProduction {
   sendData: (param: ItemSingle) => {};
   setManual: (param: ItemSingle, value: boolean) => {};
   isDev: boolean;
+  theme: SiteTheme;
 }
 
 
@@ -90,7 +92,9 @@ export class WidgetContainer {
 
       readonly CHART_TYPES = ChartTypes;
       readonly VALUE_TYPE = VALUE_TYPE;
+      readonly SITE_THEMES = SiteTheme;
 
+      theme: SiteTheme;
 
       set values(data) {
         this._values = data;
@@ -194,11 +198,18 @@ export class WidgetContainer {
         if (!data) {
           return;
         }
+        if (data.command === 'theme') {
+          this.theme = data.name;
+          return;
+        }
         if (opts.isDev) {
           if (data.command === 'values') {
             this.values = data.values;
             this.component.onUpdate(this.values);
             this.pictureId = data.config.pictureId ? -1 : null;
+          }
+          if (data.command === 'theme') {
+            this.theme = data.name;
           }
         } else {
           if (!data.length) {
