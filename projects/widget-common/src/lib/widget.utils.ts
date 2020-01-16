@@ -255,7 +255,7 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
       paramType,
       parent,
       config: null,
-      generateConfig: {count: 3, data: true}
+      generateConfig: {count: 3, param: true, data: true}
     });
   } else {
     for (const key in params) {
@@ -279,7 +279,7 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
             parent,
             views: item.views,
             config,
-            generateConfig: {count: 3, data: true},
+            generateConfig: {count: 3, param: true, data: true}
           };
           res.items = createParamList(params[key].items, itemType, paramType, itemPath, res);
           if (params[key].items instanceof Array) {
