@@ -13,6 +13,7 @@ export const ITEM_TYPE_ITOS = {
   3: 'events',
   5: 'interval',
   6: 'table',
+  7: 'custom',
 };
 
 
@@ -26,6 +27,7 @@ export enum PARAM_TYPE {
   'increment' = 3, // нарастающий итог
 
   'custom_string' = 11,
+  'custom_archer' = 12,
 }
 
 export const PARAM_TYPE_ITOS = {
@@ -83,7 +85,8 @@ export interface ItemTable extends IWidgetParam {
 }
 
 export interface ItemCustom extends IWidgetParam {
-  value: string;
+  value: any;
+  files?: any; //  For Archer
 }
 
 export interface ItemParent {
@@ -162,6 +165,10 @@ export interface GenerateConfigItem {
 
   // устроства
   isOnline?: boolean;
+
+  // Для арчера
+  files?: { [k: string]: string };
+  archer?: any;
 }
 
 // @ts-ignore
@@ -228,6 +235,8 @@ export interface IWidgetParamConfig {
   colsName?: string[];
   visibleRow?: boolean;
   visibleCol?: boolean;
+
+  files?: { [k: string]: any };
 }
 
 
@@ -292,6 +301,7 @@ export interface ParamConfigCustom {
 
 export enum ParamConfigCustomType {
   'string',
+  'archer',
 }
 
 export type ParamConfig =

@@ -9,7 +9,8 @@ import {
   ItemSeries,
   ItemSingle,
   ItemTable,
-  LineType, PARAM_STATE_INT,
+  LineType,
+  PARAM_STATE_INT,
   PARAM_TYPE,
   ParamConfigCustom,
   ParamConfigCustomType,
@@ -370,20 +371,39 @@ function generateEventsParams(index: number, paramType: PARAM_TYPE, item: Widget
 function generateCustomParams(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemCustom {
   const config = getConfig(param, index);
   const value = BIG_TEXT.slice(0, Math.min(config.paragraphCount || 2, 5)).join('\n');
-  return {
-    device: null,
-    refName: '',
-    itemType: ITEM_TYPE.custom,
-    widgetId: null,
-    title: config.title !== null ? config.title : 'Title param',
-    config: generateParamConfig(ITEM_TYPE.custom, param, paramType),
-    value,
-    viewConfig: {},
-    dashboardLink: config.pageLink ? {dashname: 'Test dashname', id: 2} : null,
-    custom: {},
-    canEditable: config.editable,
-    isEditing: false,
-  };
+  if (paramType === PARAM_TYPE.custom_string) {
+    return {
+      device: null,
+      refName: '',
+      itemType: ITEM_TYPE.custom,
+      widgetId: null,
+      title: config.title !== null ? config.title : 'Title param',
+      config: generateParamConfig(ITEM_TYPE.custom, param, paramType),
+      value: config.value ? config.value : value,
+      viewConfig: {},
+      dashboardLink: config.pageLink ? {dashname: 'Test dashname', id: 2} : null,
+      custom: {},
+      canEditable: config.editable,
+      isEditing: false,
+    };
+  }
+  if (paramType === PARAM_TYPE.custom_archer) {
+    const res = {
+      files: config.files ? {json: config.files.json, svg: config.files.svg} : null,
+      value: config.archer ? config.archer : null,
+      viewConfig: {},
+    };
+
+    if (config.archer) {
+      for (const key in config.archer) {
+        if (config.archer.hasOwnProperty(key)) {
+          res[key] = {value: config.archer[key]};
+        }
+      }
+    }
+
+    return res as any;
+  }
 }
 
 function generateTableParams(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemTable {

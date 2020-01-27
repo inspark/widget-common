@@ -111,15 +111,18 @@ export function assignValues(inputValues: WidgetParamsChildren, params: IWidgetP
       const refName = itemPath.join('.');
       if (inputValues[key].items) {
         const param = params.find(val => val.refName === itemPath.join('.'));
+        const cfg = getConfig(viewConfig, refName);
         if (inputValues[key].items instanceof Array) {
           result[key] = {
             items: assignValuesArray(inputValues[key].items as WidgetArrayParam[], params, viewConfig, itemPath),
-            viewConfig: getConfig(viewConfig, refName)
+            viewConfig: cfg,
+            files: cfg.files ? cfg.files : null
           } as ItemParent;
         } else {
           result[key] = {
             ...assignValues(inputValues[key].items as WidgetParamsChildren, params, viewConfig, itemPath),
-            viewConfig: getConfig(viewConfig, refName)
+            viewConfig: cfg,
+            files: cfg.files ? cfg.files : null
           } as ItemParent;
         }
         if (param && param.config) {
@@ -131,6 +134,18 @@ export function assignValues(inputValues: WidgetParamsChildren, params: IWidgetP
     }
   }
   return result;
+}
+
+export function validateArcherParams(variables) {
+  const errors = [];
+  const forbidenNames = ['viewConfig', 'title', 'config', 'files'];
+
+  forbidenNames.forEach(name => {
+    if (variables.find(item => item.name === name)) {
+      errors.push(name);
+    }
+  });
+  return errors;
 }
 
 
@@ -353,7 +368,8 @@ export function createGenerateItemConfig(): GenerateConfigItem {
     paragraphCount: 1,
     isWorkingDevice: true,
     title: 'Title param',
-    ctrability: true
+    ctrability: true,
+    archer: {}
   };
 }
 
@@ -366,6 +382,20 @@ export function addArrayItem(parent: ParamConfigurator) {
     parent: parent,
     config: {}
   });
+}
+
+export function convertArcherToItem(item, param): ParamConfigurator {
+  return {
+    name: (param.name || param.refName) + '.' + item.name,
+    title: item.name,
+    itemType: 1,
+    paramType: 1,
+    parent: param,
+    config: {},
+    generateConfig: {
+      count: 3, param: true, data: true
+    }
+  };
 }
 
 

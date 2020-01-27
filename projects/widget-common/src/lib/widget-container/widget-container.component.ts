@@ -115,12 +115,12 @@ export class WidgetContainer {
       constructor(private communication: CommunicationService, private cdRef: ChangeDetectorRef) {
         if (opts.isDev) {
           this.message$ = communication.message$[0];
-          this.message$.subscribe(this.updateData.bind(this));
+          this.message$.subscribe(this.onMessage.bind(this));
           this.communication.next(0, {command: 'SUBSCRIBE'});
         } else {
           if (this.prodOpts.widget) {
             this.message$ = communication.message$[this.prodOpts.widget.id];
-            this.subscriber = this.message$.subscribe(this.updateData.bind(this));
+            this.subscriber = this.message$.subscribe(this.onMessage.bind(this));
           }
         }
       }
@@ -193,7 +193,7 @@ export class WidgetContainer {
       }
 
 
-      private updateData(data) {
+      private onMessage(data) {
        // console.log('NEW MESSAGE updateData', this.prodOpts, data);
         if (!data) {
           return;
