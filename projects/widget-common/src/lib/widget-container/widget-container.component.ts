@@ -276,7 +276,7 @@ export class WidgetContainer {
       }
 
       public getIconUrl(par: WidgetItem) {
-        if (par.data && par.data.state && par.data.state.idIcon) {
+        if (par && par.data && par.data.state && par.data.state.idIcon) {
           if (par.data.state.idIcon === -1) { // dev icon
             return require('../assets/icon.svg');
           } else {
