@@ -218,6 +218,7 @@ export interface IWidgetParam {
     warning: string;
     error: string;
   };
+  files?: any;
   custom?: any;
   borders?: Border[];
   dashboardLink?: { dashname?: string, id: number };
@@ -531,6 +532,13 @@ export interface WidgetSocketDataCommand {
   error?: string;
 }
 
+export interface IWidgetFile {
+  name: string;
+  id: string;
+  parent: string;
+  content: any;
+  url: string;
+}
 
 // Обертка для среды разработки
 export const Component = (opts) => {
