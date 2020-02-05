@@ -16,8 +16,10 @@ export class WidgetComponent {
   width: number;
   height: number;
 
+  container: Element;
 
-  onInit() {
+  onInit(container: Element) {
+    this.container = container;
   }
 
   onDestroy() {

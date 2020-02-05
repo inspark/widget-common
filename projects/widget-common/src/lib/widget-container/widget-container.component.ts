@@ -36,6 +36,7 @@ export interface WidgetContainerDevOptions {
   setManual: (param: ItemSingle, value: boolean) => {};
   isDev: boolean;
   theme: SiteTheme;
+  element: Element;
 }
 
 
@@ -48,6 +49,7 @@ export interface WidgetContainerProduction {
   setManual: (param: ItemSingle, value: boolean) => {};
   isDev: boolean;
   theme: SiteTheme;
+  element: Element;
 }
 
 
@@ -104,12 +106,13 @@ export class WidgetContainer {
         return this._values;
       }
 
-      _values = {};
+      private _values = {};
 
-      randomInterval: any;
+      private randomInterval: any;
 
-      isCompact = false;
-      widget: IWidget = this.prodOpts.widget;
+      private widget: IWidget = this.prodOpts.widget;
+      private element: Element = this.prodOpts.element;
+
       private subscriber: any;
 
       constructor(private communication: CommunicationService, private cdRef: ChangeDetectorRef) {
@@ -139,8 +142,8 @@ export class WidgetContainer {
             this.media = updateWidgetMediaUrl(this.component.media, url);
           }
         }
-       // console.log('ngOnInit', this.prodOpts.widget, this.values);
-        this.component.onInit();
+        // console.log('ngOnInit', this.prodOpts.widget, this.values);
+        this.component.onInit(this.element);
       }
 
       ngOnDestroy() {
@@ -194,7 +197,7 @@ export class WidgetContainer {
 
 
       private onMessage(data) {
-       // console.log('NEW MESSAGE updateData', this.prodOpts, data);
+        // console.log('NEW MESSAGE updateData', this.prodOpts, data);
         if (!data) {
           return;
         }
@@ -221,6 +224,11 @@ export class WidgetContainer {
           }
           data.forEach(val => {
             const param: any = this.getParam(val.refName);
+            if (!param) {
+              console.log('param', param, val.refName, this.values)
+              console.error('Not Found param');
+              return;
+            }
             const newVal = {...val};
             if (param.itemType === ITEM_TYPE.series) {
               param.data = val.values;
@@ -242,7 +250,7 @@ export class WidgetContainer {
               param.value = newVal.value;
             }
           });
-         // console.log('updateData', this.prodOpts.widget, this.values);
+          // console.log('updateData', this.prodOpts.widget, this.values);
           this.component.onUpdate(this.values);
           this.cdRef.detectChanges();
         }
