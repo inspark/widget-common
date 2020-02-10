@@ -390,14 +390,14 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
   if (paramType === PARAM_TYPE.custom_archer) {
     const res = {
       files: config.files ? {json: config.files.json, svg: config.files.svg} : null,
-      value: config.archer ? config.archer : null,
+      value: (config.archer && config.archer.value )? config.archer.value : null,
       viewConfig: {},
     };
 
     if (config.archer) {
       for (const key in config.archer) {
         if (config.archer.hasOwnProperty(key)) {
-          res[key] = {value: config.archer[key]};
+          res[key] = config.archer[key];
         }
       }
     }
