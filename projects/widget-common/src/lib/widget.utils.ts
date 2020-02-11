@@ -390,7 +390,7 @@ export function addArrayItem(parent: ParamConfigurator) {
 export function convertArcherToItem(item, param): ParamConfigurator {
   return {
     name: (param.name || param.refName) + '.' + item.name,
-    title: item.name,
+    title: item.title ? item.title : item.name,
     itemType: ITEM_TYPE.single,
     paramType: PARAM_TYPE.value,
     parent: param,
