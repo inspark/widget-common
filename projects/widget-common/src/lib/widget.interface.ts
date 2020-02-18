@@ -538,6 +538,7 @@ export interface IWidgetFile {
   parent: string;
   content: any;
   url: string;
+  error?: Error;
 }
 
 // Обертка для среды разработки
