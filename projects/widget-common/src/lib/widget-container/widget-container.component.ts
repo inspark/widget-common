@@ -30,6 +30,7 @@ import {updateWidgetMediaUrl} from '../loader';
 import {generateValues} from '../widget.generator';
 import {sprintf} from '../sprintf';
 import {common} from '../common';
+import {RouterModule} from "@angular/router";
 
 export interface WidgetContainerDevOptions {
   widgetPackage: WidgetPackage;
@@ -57,7 +58,7 @@ export class WidgetContainer {
 
   public createComponentModule(componentType: any): any {
     @NgModule({
-      imports: [CommonModule, DashboardSharedModule, NgbModule, FormsModule],
+      imports: [CommonModule, DashboardSharedModule, NgbModule, FormsModule, RouterModule],
       declarations: [
         componentType,
       ],
