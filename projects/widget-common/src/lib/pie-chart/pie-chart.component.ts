@@ -62,6 +62,7 @@ export class PieChartComponent implements OnInit, OnChanges, OnDestroy {
     return {
       chart: {
         type: 'pieChart',
+        tooltip: {enabled: false},
         height: this.height ? this.height : (chartType === ChartTypes.pieChart ? 300 : 80),
         x: function (d) {
           return d.key;

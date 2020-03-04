@@ -263,11 +263,12 @@ export class ChartComponent implements OnInit, OnChanges, OnDestroy {
 
       res = {
         type: 'multiBarChart',
+        tooltip: {enabled: false},
         height: this.height,
         margin: this.margin,
         clipEdge: true,
         duration: 300,
-        useInteractiveGuideline: true,
+        useInteractiveGuideline: false,
         xAxis: {
           axisLabel: 'Дата',
           showMaxMin: true,
@@ -287,6 +288,7 @@ export class ChartComponent implements OnInit, OnChanges, OnDestroy {
 
       res = {
         type: config.charttype,
+        tooltip: {enabled: false},
         noData: this.noDataMessage,
         xScale: d3.time.scale(),
         showControls: true,
@@ -308,7 +310,7 @@ export class ChartComponent implements OnInit, OnChanges, OnDestroy {
         useVoronoi: true,
         clipEdge: false,
         duration: 300,
-        useInteractiveGuideline: true,
+        useInteractiveGuideline: false,
         xAxis: {
           axisLabel: 'Дата',
           showMaxMin: false,
