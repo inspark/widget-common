@@ -157,7 +157,7 @@ export class ChartComponent implements OnInit, OnChanges, OnDestroy {
       return values.map((value, ind) => {
         return {
           seriesIndex: ind,
-          values: value.data,
+          values: value.data && value.data.length ? value.data : [],
           key: value.title,
         };
       });
@@ -167,7 +167,7 @@ export class ChartComponent implements OnInit, OnChanges, OnDestroy {
         return {
           color: this.getChartColor(ind),
           key: this.findUniqName(value.title),
-          values: value.data
+          values: value.data && value.data.length ? value.data : []
         };
       });
     }
