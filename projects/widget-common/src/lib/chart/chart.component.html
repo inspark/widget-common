@@ -1,8 +1,8 @@
 <div style="width:100%">
-    <nvd3 *ngIf="data"
+    <nvd3 *ngIf="data && data.length > 0"
           [options]="options"
           [data]="data"
           class="with-3d-shadow with-transitions o-flex__item">
     </nvd3>
-    <div *ngIf="!data">{{noDataMessage}}</div>
+    <div *ngIf="!data || data.length < 1">{{noDataMessage}}</div>
 </div>
