@@ -352,7 +352,7 @@ function generateIntervalParams(index: number, paramType: PARAM_TYPE, item: Widg
       } : null,
       'beginInterval': 1556658000000,
       'endInterval': 1557139222542,
-
+      valueMap: [{interval: -84606254, value: 0}, {interval: 1806254, value: 1}],
     } : null,
     custom: {},
     borders: config.borders ? BORDERS : [],
@@ -390,7 +390,7 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
   if (paramType === PARAM_TYPE.custom_archer) {
     const res = {
       files: config.files ? {json: config.files.json, svg: config.files.svg} : null,
-      value: (config.archer && config.archer.value )? config.archer.value : null,
+      value: (config.archer && config.archer.value) ? config.archer.value : null,
       viewConfig: {},
     };
 

@@ -347,6 +347,7 @@ export interface IntervalValue {
   beginInterval: number;
   endInterval: number;
   switchCount: number; // signal
+  valueMap: Array<{ interval: number; value: number }>;
 }
 
 
