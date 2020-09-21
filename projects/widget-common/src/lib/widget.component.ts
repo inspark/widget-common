@@ -63,6 +63,9 @@ export class WidgetComponentContainer {
     return '';
   }
 
+  setManual(par: WidgetItem, value) {
+
+  }
 }
 
 
