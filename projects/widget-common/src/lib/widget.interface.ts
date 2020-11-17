@@ -449,6 +449,7 @@ export interface WidgetCustomField {
 export interface WidgetSize {
   sm: WidgetSizePosition;
   lg: WidgetSizePosition;
+  slg?: WidgetSizePosition;
   mobile: WidgetSizePosition;
 }
 
