@@ -519,8 +519,20 @@ export interface IWidgetClass {
   description?: string;
 }
 
+export interface SocketEventData {
+  refName: string;
+  rowList: EventValue[];
+}
 
-export type WidgetDataList = Array<SingleValue | IntervalValue>;
+export interface SocketSingleData extends SingleValue {
+  refName: string;
+}
+
+export interface SocketIntervalData extends IntervalValue {
+  refName: string;
+}
+
+export type WidgetDataList = Array<SocketSingleData | SocketIntervalData | SocketEventData> ;
 
 export interface WidgetSocketData {
   dataList: WidgetDataList;
