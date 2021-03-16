@@ -112,20 +112,22 @@ export function assignValues(inputValues: WidgetParamsChildren, params: IWidgetP
       const item = inputValues[key];
       const itemPath = [...path, key];
       const refName = itemPath.join('.');
-      if (inputValues[key].items) {
+      if (item.items) {
         const param = params.find(val => val.refName === itemPath.join('.'));
         const cfg = getConfig(viewConfig, refName);
-        if (inputValues[key].items instanceof Array) {
+        if (item.items instanceof Array) {
           result[key] = {
-            items: assignValuesArray(inputValues[key].items as WidgetArrayParam[], params, viewConfig, itemPath),
+            items: assignValuesArray(item.items as WidgetArrayParam[], params, viewConfig, itemPath),
             viewConfig: cfg,
-            files: cfg.files ? cfg.files : null
+            files: cfg.files ? cfg.files : null,
+            custom_data: item.custom_data
           } as ItemParent;
         } else {
           result[key] = {
-            ...assignValues(inputValues[key].items as WidgetParamsChildren, params, viewConfig, itemPath),
+            ...assignValues(item.items as WidgetParamsChildren, params, viewConfig, itemPath),
             viewConfig: cfg,
-            files: cfg.files ? cfg.files : null
+            files: cfg.files ? cfg.files : null,
+            custom_data: item.custom_data
           } as ItemParent;
         }
         if (param && param.config) {
@@ -141,9 +143,9 @@ export function assignValues(inputValues: WidgetParamsChildren, params: IWidgetP
 
 export function validateArcherParams(variables) {
   const errors = [];
-  const forbidenNames = ['viewConfig', 'title', 'config', 'files'];
+  const forbiddenNames = ['viewConfig', 'title', 'config', 'files'];
 
-  forbidenNames.forEach(name => {
+  forbiddenNames.forEach(name => {
     if (variables.find(item => item.name === name)) {
       errors.push(name);
     }
@@ -197,7 +199,8 @@ function assignValue(item: WidgetParamChildren, itemPath, params: IWidgetParam[]
           data: null,
           value: null,
           custom: {},
-          viewConfig: getConfig(viewConfigs, path.join('.'))
+          viewConfig: getConfig(viewConfigs, path.join('.')),
+          custom_data: item.custom_data
         };
         if (i > rows) {
           rows = i;
@@ -211,7 +214,8 @@ function assignValue(item: WidgetParamChildren, itemPath, params: IWidgetParam[]
     const res: ItemTable = {
       ...itemTable,
       values: itemValues,
-      viewConfig: getConfig(viewConfigs, path)
+      viewConfig: getConfig(viewConfigs, path),
+      custom_data: item.custom_data,
     };
     return res;
   } else {
@@ -219,9 +223,9 @@ function assignValue(item: WidgetParamChildren, itemPath, params: IWidgetParam[]
     if (param) {
       const viewConfig = getConfig(viewConfigs, path);
       if (item.item_type === ITEM_TYPE.custom) {
-        return {...param, data: null, value: (param.config as ParamConfigCustom).value, viewConfig, custom: {}};
+        return {...param, data: null, value: (param.config as ParamConfigCustom).value, custom_data: item.custom_data,  viewConfig, custom: {}};
       } else {
-        return {...param, data: null, value: null, viewConfig, custom: {}};
+        return {...param, data: null, value: null,  custom_data: item.custom_data, viewConfig, custom: {}};
       }
     } else {
       return {data: null};
@@ -273,7 +277,8 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
       paramType,
       parent,
       config: null,
-      generateConfig: {count: 3, param: true, data: true}
+      generateConfig: {count: 3, param: true, data: true},
+      param: params[0] as WidgetParamChildren,
     });
   } else {
     for (const key in params) {
@@ -297,7 +302,8 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
             parent,
             views: item.views,
             config,
-            generateConfig: {count: 3, param: true, data: true}
+            generateConfig: {count: 3, param: true, data: true},
+            param: params[key],
           };
           res.items = createParamList(params[key].items, itemType, paramType, itemPath, res);
           if (params[key].items instanceof Array) {
@@ -317,6 +323,7 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
               itemType,
               paramType,
               parent,
+              param: params[key],
               viewConfig: {
                 rows: 1,
                 cols: 1,
@@ -350,6 +357,7 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
               paramType,
               parent,
               config,
+              param: params[key],
               generateConfig: {data: true, param: true}
             });
           }
@@ -400,6 +408,25 @@ export function convertArcherToItem(item, param): ParamConfigurator {
     }
   };
 }
+
+
+export function prepareExternalJSON(json) {
+  for (const k in json) {
+    if (json.hasOwnProperty(k)) {
+      if (json[k].item_type && typeof json[k].item_type === 'string') {
+        json[k].item_type = ITEM_TYPE[json[k].item_type];
+      }
+      if (json[k].param_type && typeof json[k].param_type === 'string') {
+        json[k].param_type = PARAM_TYPE[json[k].param_type];
+      }
+      if (json[k].items) {
+        json[k].items = prepareExternalJSON(json[k].items);
+      }
+    }
+  }
+  return json;
+}
+
 
 
 export class Utils {

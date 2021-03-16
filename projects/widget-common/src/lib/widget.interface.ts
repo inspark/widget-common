@@ -28,6 +28,8 @@ export enum PARAM_TYPE {
 
   'custom_string' = 11,
   'custom_archer' = 12,
+  'custom_external' = 13, // загрузка параметров через внешний файл
+  'custom_file'// загрузка файлов
 }
 
 export const PARAM_TYPE_ITOS = {
@@ -125,6 +127,7 @@ export interface ParamConfigurator {
   viewConfig?: IWidgetParamConfig;
   config?: ParamConfigInterval | ParamConfigSeries | ParamConfigSingle | ParamConfigEvents | ParamConfigCustom;
   generateConfig?: GenerateConfig;
+  param?: WidgetParamChildren;
 }
 
 export interface GenerateConfig extends GenerateConfigItem {
@@ -220,6 +223,7 @@ export interface IWidgetParam {
   };
   files?: any;
   custom?: any;
+  custom_data?: any;
   borders?: Border[];
   dashboardLink?: { dashname?: string, id: number };
   isEditing?: boolean; // Параметр, обозначающий, что поле редактируется
@@ -403,6 +407,7 @@ export interface WidgetParam {
   items?: WidgetParamsChildren | WidgetArrayParam[];
   views?: string[]; // Перечисление возможных видов параметра
   available?: any[]; // Ограничение для генератора случайных чисел
+  custom_data?: any; // Пользовательские данные, которые пробрасываются напрямую
 }
 
 export interface WidgetParamChildren {
@@ -412,6 +417,7 @@ export interface WidgetParamChildren {
   items?: WidgetParamsChildren | WidgetArrayParam[];
   views?: string[]; // Перечисление возможных видов параметра
   available?: any[]; // Ограничение для генератора случайных чисел
+  custom_data?: any; // Пользовательские данные, которые пробрасываются напрямую
 }
 
 export interface WidgetArrayParam {
