@@ -154,20 +154,32 @@ export function validateArcherParams(variables) {
 }
 
 
-function getConfig(viewConfig, refName) {
+function getConfig(viewConfig, refName): IWidgetParamConfig {
   return viewConfig[refName] ? viewConfig[refName] : {};
 }
 
-function assignValuesArray(inputValues: WidgetArrayParam[], params: IWidgetParam[], viewConfigs: { [k: string]: IWidgetParamConfig }, path = []): WidgetItem[] {
+function assignValuesArray(inputValues: WidgetArrayParam[], params: IWidgetParam[], viewConfigs: { [k: string]: IWidgetParamConfig },
+                           path = []): WidgetItem[] {
   let result: WidgetItem[] = [];
   const sPath = path.join('.');
+  const inputValue = inputValues[0];
   params.forEach(val => {
     const valPath = val.refName.split('.');
     const ind: any = valPath.splice(valPath.length - 1, 1);
     if (valPath.join('.') === sPath) {
       const viewConfig = getConfig(viewConfigs, val.refName);
       if (val.itemType === ITEM_TYPE.custom) {
-        result[ind] = {...val, data: null, value: (val.config as ParamConfigCustom).value, viewConfig};
+        let value: any;
+        if (inputValue.param_type === PARAM_TYPE.custom_json) {
+          try {
+            value = JSON.parse((val.config as ParamConfigCustom).value);
+          } catch (e) {
+            value = {};
+          }
+        } else {
+          value = (val.config as ParamConfigCustom).value;
+        }
+        result[ind] = {...val, data: null, value, viewConfig};
       } else {
         result[ind] = {...val, data: null, value: null, viewConfig};
       }
@@ -178,7 +190,8 @@ function assignValuesArray(inputValues: WidgetArrayParam[], params: IWidgetParam
 }
 
 
-function assignValue(item: WidgetParamChildren, itemPath, params: IWidgetParam[], viewConfigs: { [k: string]: IWidgetParamConfig }): WidgetItem {
+function assignValue(item: WidgetParamChildren, itemPath, params: IWidgetParam[],
+                     viewConfigs: { [k: string]: IWidgetParamConfig }): WidgetItem {
   const path = itemPath.join('.');
 
   if (item.item_type === ITEM_TYPE.table) {
@@ -223,9 +236,26 @@ function assignValue(item: WidgetParamChildren, itemPath, params: IWidgetParam[]
     if (param) {
       const viewConfig = getConfig(viewConfigs, path);
       if (item.item_type === ITEM_TYPE.custom) {
-        return {...param, data: null, value: (param.config as ParamConfigCustom).value, custom_data: item.custom_data,  viewConfig, custom: {}};
+        let value: any;
+        if (item.param_type === PARAM_TYPE.custom_json) {
+          try {
+            value = JSON.parse((param.config as ParamConfigCustom).value);
+          } catch (e) {
+            value = {};
+          }
+        } else {
+          value = (param.config as ParamConfigCustom).value;
+        }
+        return {
+          ...param,
+          data: null,
+          value,
+          custom_data: item.custom_data,
+          viewConfig,
+          custom: {}
+        };
       } else {
-        return {...param, data: null, value: null,  custom_data: item.custom_data, viewConfig, custom: {}};
+        return {...param, data: null, value: null, custom_data: item.custom_data, viewConfig, custom: {}};
       }
     } else {
       return {data: null};
@@ -426,7 +456,6 @@ export function prepareExternalJSON(json) {
   }
   return json;
 }
-
 
 
 export class Utils {

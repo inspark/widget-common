@@ -29,7 +29,8 @@ export enum PARAM_TYPE {
   'custom_string' = 11,
   'custom_archer' = 12,
   'custom_external' = 13, // загрузка параметров через внешний файл
-  'custom_file'// загрузка файлов
+  'custom_file' = 14, // загрузка файлов
+  'custom_json' = 15, // Текст JSON
 }
 
 export const PARAM_TYPE_ITOS = {
@@ -538,7 +539,7 @@ export interface SocketIntervalData extends IntervalValue {
   refName: string;
 }
 
-export type WidgetDataList = Array<SocketSingleData | SocketIntervalData | SocketEventData> ;
+export type WidgetDataList = Array<SocketSingleData | SocketIntervalData | SocketEventData>;
 
 export interface WidgetSocketData {
   dataList: WidgetDataList;

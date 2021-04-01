@@ -384,8 +384,8 @@ function generateEventsParams(index: number, paramType: PARAM_TYPE, item: Widget
 
 function generateCustomParams(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemCustom {
   const config = getConfig(param, index);
-  const value = BIG_TEXT.slice(0, Math.min(config.paragraphCount || 2, 5)).join('\n');
   if (paramType === PARAM_TYPE.custom_string) {
+    const defValue = BIG_TEXT.slice(0, Math.min(config.paragraphCount || 2, 5)).join('\n');
     return {
       device: null,
       refName: '',
@@ -393,7 +393,31 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
       widgetId: null,
       title: config.title !== null ? config.title : 'Title param',
       config: generateParamConfig(ITEM_TYPE.custom, param, paramType),
-      value: config.value ? config.value : value,
+      value: config.value ? config.value : defValue,
+      viewConfig: {},
+      dashboardLink: config.pageLink ? {dashname: 'Test dashname', id: 2} : null,
+      custom: {},
+      canEditable: config.editable,
+      isEditing: false,
+    };
+  }
+  if (paramType === PARAM_TYPE.custom_json) {
+
+    const defValue = {};
+    let json_value = {};
+    try {
+      json_value = config.value ? JSON.parse(config.value) : defValue;
+    } catch (e) {
+
+    }
+    return {
+      device: null,
+      refName: '',
+      itemType: ITEM_TYPE.custom,
+      widgetId: null,
+      title: config.title !== null ? config.title : 'Title param',
+      config: generateParamConfig(ITEM_TYPE.custom, param, paramType),
+      value: json_value,
       viewConfig: {},
       dashboardLink: config.pageLink ? {dashname: 'Test dashname', id: 2} : null,
       custom: {},
