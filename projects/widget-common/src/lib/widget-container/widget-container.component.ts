@@ -226,7 +226,6 @@ export class WidgetContainer {
           data.forEach(val => {
             const param: any = this.getParam(val.refName);
             if (!param) {
-              console.log('param', param, val.refName, this.values)
               console.error('Not Found param');
               return;
             }

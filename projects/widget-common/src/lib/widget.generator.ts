@@ -53,7 +53,6 @@ export function generateValues(inputValues: WidgetParamsChildren | WidgetArrayPa
       if (inputValues.hasOwnProperty(key)) {
         const itemPath = [...path, key];
         const param = findParam(params, itemPath.join('.'));
-
         const item = inputValues[key];
 
         itemType = item.item_type || itemType;
@@ -64,17 +63,18 @@ export function generateValues(inputValues: WidgetParamsChildren | WidgetArrayPa
             result[key] = {
               items: generateValues(inputValues[key].items, params, itemType, paramType, itemPath),
               config: generateParamConfig(itemType, param),
+              custom_data: inputValues[key].custom_data
             };
           } else {
             // Если элемент - объект
             result[key] = {
               ...generateValues(inputValues[key].items, params, itemType, paramType, itemPath),
               config: generateParamConfig(itemType, param),
+              custom_data: inputValues[key].custom_data
             };
           }
         } else {
           // Если элемент - простой
-
           result[key] = generateValue(0, item, paramType, itemType, param);
         }
       }
@@ -128,21 +128,35 @@ function generateParamConfig(itemType: ITEM_TYPE, param: ParamConfigurator, para
 }
 
 function generateValue(index: number, item: WidgetParamChildren, paramType: PARAM_TYPE, itemType: ITEM_TYPE, param: ParamConfigurator): WidgetItem {
-
+  let res;
   switch (itemType) {
     case ITEM_TYPE.series:
-      return generateSeriesParam(index, paramType, item, param);
+      res = generateSeriesParam(index, paramType, item, param);
+      break;
     case ITEM_TYPE.single:
-      return generateSingleParams(index, paramType, item, param);
+      res = generateSingleParams(index, paramType, item, param);
+      break;
     case ITEM_TYPE.table:
-      return generateTableParams(index, paramType, item, param);
+      res = generateTableParams(index, paramType, item, param);
+      break;
     case ITEM_TYPE.events:
-      return generateEventsParams(index, paramType, item, param);
+      res = generateEventsParams(index, paramType, item, param);
+      break;
     case ITEM_TYPE.custom:
-      return generateCustomParams(index, paramType, item, param);
+      if (paramType === PARAM_TYPE.custom_external) {
+        res = generateSingleParams(index, paramType, item, param);
+      } else {
+        res = generateCustomParams(index, paramType, item, param);
+      }
+      break;
     case ITEM_TYPE.interval:
-      return generateIntervalParams(index, paramType, item, param);
+      res = generateIntervalParams(index, paramType, item, param);
+      break;
   }
+  if (item.custom_data) {
+    res.custom_data = res;
+  }
+  return res;
 }
 
 function updateValue(value) {
@@ -370,8 +384,8 @@ function generateEventsParams(index: number, paramType: PARAM_TYPE, item: Widget
 
 function generateCustomParams(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemCustom {
   const config = getConfig(param, index);
-  const value = BIG_TEXT.slice(0, Math.min(config.paragraphCount || 2, 5)).join('\n');
   if (paramType === PARAM_TYPE.custom_string) {
+    const defValue = BIG_TEXT.slice(0, Math.min(config.paragraphCount || 2, 5)).join('\n');
     return {
       device: null,
       refName: '',
@@ -379,7 +393,31 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
       widgetId: null,
       title: config.title !== null ? config.title : 'Title param',
       config: generateParamConfig(ITEM_TYPE.custom, param, paramType),
-      value: config.value ? config.value : value,
+      value: config.value ? config.value : defValue,
+      viewConfig: {},
+      dashboardLink: config.pageLink ? {dashname: 'Test dashname', id: 2} : null,
+      custom: {},
+      canEditable: config.editable,
+      isEditing: false,
+    };
+  }
+  if (paramType === PARAM_TYPE.custom_json) {
+
+    const defValue = undefined;
+    let json_value: any = undefined;
+    try {
+      json_value = config.value ? JSON.parse(config.value) : defValue;
+    } catch (e) {
+
+    }
+    return {
+      device: null,
+      refName: '',
+      itemType: ITEM_TYPE.custom,
+      widgetId: null,
+      title: config.title !== null ? config.title : 'Title param',
+      config: generateParamConfig(ITEM_TYPE.custom, param, paramType),
+      value: json_value,
       viewConfig: {},
       dashboardLink: config.pageLink ? {dashname: 'Test dashname', id: 2} : null,
       custom: {},
@@ -401,6 +439,15 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
         }
       }
     }
+
+    return res as any;
+  }
+  if (paramType === PARAM_TYPE.custom_file) {
+    const res = {
+      files: config.files,
+      value: null,
+      viewConfig: {},
+    };
 
     return res as any;
   }
