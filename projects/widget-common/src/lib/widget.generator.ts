@@ -403,8 +403,8 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
   }
   if (paramType === PARAM_TYPE.custom_json) {
 
-    const defValue = {};
-    let json_value = {};
+    const defValue = undefined;
+    let json_value: any = undefined;
     try {
       json_value = config.value ? JSON.parse(config.value) : defValue;
     } catch (e) {
