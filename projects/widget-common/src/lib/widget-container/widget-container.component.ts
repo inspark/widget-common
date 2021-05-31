@@ -145,6 +145,7 @@ export class WidgetContainer {
         }
         // console.log('ngOnInit', this.prodOpts.widget, this.values);
         this.component.onInit(this.element);
+        this.component.onUpdate(this.values);
       }
 
       ngOnDestroy() {

@@ -31,6 +31,7 @@ export enum PARAM_TYPE {
   'custom_external' = 13, // загрузка параметров через внешний файл
   'custom_file' = 14, // загрузка файлов
   'custom_json' = 15, // Текст JSON
+  'custom_select' = 16, // Список
 }
 
 export const PARAM_TYPE_ITOS = {
@@ -173,6 +174,9 @@ export interface GenerateConfigItem {
   // Для арчера
   files?: { [k: string]: string };
   archer?: any;
+
+  // для списка
+  selectValue?: number | string;
 }
 
 // @ts-ignore
@@ -243,6 +247,7 @@ export interface IWidgetParamConfig {
   visibleCol?: boolean;
 
   files?: { [k: string]: any };
+  selectValue?: number | string;
 }
 
 

@@ -451,6 +451,27 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
 
     return res as any;
   }
+
+  if (paramType === PARAM_TYPE.custom_select) {
+
+    console.log('config', config);
+    console.log('item', item);
+    const defValue = null;
+    return {
+      device: null,
+      refName: '',
+      itemType: ITEM_TYPE.custom,
+      widgetId: null,
+      title: config.title !== null ? config.title : 'Title param',
+      config: generateParamConfig(ITEM_TYPE.custom, param, paramType),
+      value: item.custom_data.items.find(val => val.value === config.selectValue),
+      viewConfig: {},
+      dashboardLink: config.pageLink ? {dashname: 'Test dashname', id: 2} : null,
+      custom: {},
+      canEditable: config.editable,
+      isEditing: false,
+    };
+  }
 }
 
 function generateTableParams(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemTable {
