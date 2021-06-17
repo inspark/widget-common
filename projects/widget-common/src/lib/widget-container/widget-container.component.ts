@@ -30,7 +30,7 @@ import {updateWidgetMediaUrl} from '../loader';
 import {generateValues} from '../widget.generator';
 import {sprintf} from '../sprintf';
 import {common} from '../common';
-import {RouterModule} from "@angular/router";
+import {RouterModule} from '@angular/router';
 
 export interface WidgetContainerDevOptions {
   widgetPackage: WidgetPackage;
@@ -57,30 +57,32 @@ export interface WidgetContainerProduction {
 export class WidgetContainer {
 
   public createComponentModule(componentType: any): any {
-    @NgModule({
+    // @NgModule({
+    //   imports: [CommonModule, DashboardSharedModule, NgbModule, FormsModule, RouterModule],
+    //   declarations: [
+    //     componentType,
+    //   ],
+    //   entryComponents: [componentType]
+    // })
+    // class RuntimeComponentModule {
+    // }
+
+    const moduleClass = class RuntimeComponentModule {
+    };
+
+    const decoratedNgModule = NgModule({
       imports: [CommonModule, DashboardSharedModule, NgbModule, FormsModule, RouterModule],
-      declarations: [
-        componentType,
-      ],
-      entryComponents: [componentType]
-    })
-    class RuntimeComponentModule {
-    }
+      declarations: [componentType]
+    })(moduleClass);
 
     // a module for just this Type
-    return RuntimeComponentModule;
+    return decoratedNgModule;
   }
 
 
   public createNewComponent(opts: WidgetContainerDevOptions | WidgetContainerProduction): any {
 
-    @Component({
-      selector: 'widget-component',
-      template: opts.widgetPackage.template,
-      styles: [opts.widgetPackage.styles],
-      encapsulation: ViewEncapsulation.Emulated,
-    })
-    class WidgetComponent implements OnInit, OnDestroy {
+    const ComponentClass = class WidgetComponent implements OnInit, OnDestroy {
       component = opts.widgetPackage.component;
       media: any;
 
@@ -287,7 +289,7 @@ export class WidgetContainer {
       public getIconUrl(par: WidgetItem) {
         if (par && par.data && par.data.state && par.data.state.idIcon) {
           if (par.data.state.idIcon === -1) { // dev icon
-            return require('../assets/icon.svg');
+            return '';
           } else {
             return `${common.serviceUrl + '/'}db/icon/${par.data.state.idIcon}/img`;
           }
@@ -330,7 +332,14 @@ export class WidgetContainer {
       }
     }
 
-    return WidgetComponent;
+    const decoratedNgComponent = Component({
+      selector: 'widget-component',
+      template: opts.widgetPackage.template as any,
+      styles: [opts.widgetPackage.styles],
+      encapsulation: ViewEncapsulation.Emulated,
+    })(ComponentClass);
+
+    return decoratedNgComponent;
   }
 
 }

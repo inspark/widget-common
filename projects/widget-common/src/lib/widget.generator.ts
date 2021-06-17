@@ -98,7 +98,7 @@ function generateParamConfig(itemType: ITEM_TYPE, param: ParamConfigurator, para
         dailyRange: 'dailyRange',
         stateMap: false,
         valueType: VALUE_TYPE.absolute,
-        duration: 'day',
+        duration: SeriesDuration.day,
         count: 1,
       };
 
@@ -187,11 +187,11 @@ function getIconSet(needIcons: boolean) {
     return null;
   }
   return {
-    error: require('../assets/error.svg'),
-    falsevalue: require('../assets/falsevalue.svg'),
-    none: require('../assets/none.svg'),
-    success: require('../assets/success.svg'),
-    warning: require('../assets/warning.svg'),
+    error: '',
+    falsevalue: '',
+    none: '',
+    success: '',
+    warning: '',
   };
 }
 
