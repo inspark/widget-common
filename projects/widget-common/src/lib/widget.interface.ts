@@ -31,6 +31,7 @@ export enum PARAM_TYPE {
   'custom_external' = 13, // загрузка параметров через внешний файл
   'custom_file' = 14, // загрузка файлов
   'custom_json' = 15, // Текст JSON
+  'custom_select' = 16, // Список
 }
 
 export const PARAM_TYPE_ITOS = {
@@ -184,7 +185,14 @@ export enum PARAM_STATE {
   'error' = 3,
 }
 
-export const PARAM_STATE_INT = {'-1': 'falsevalue', 0: 'none', 1: 'success', 2: 'warning', 3: 'error'};
+export const PARAM_STATE_INT = [];
+
+PARAM_STATE_INT['-1'] = 'falsevalue';
+PARAM_STATE_INT[0] = 'none';
+PARAM_STATE_INT[1] = 'success';
+PARAM_STATE_INT[2] = 'warning';
+PARAM_STATE_INT[3] = 'error';
+
 
 export interface IWidgetDeviceParam {
   controller?: { id: number, serialnumber: string, isOnline?: boolean };
@@ -243,6 +251,7 @@ export interface IWidgetParamConfig {
   visibleCol?: boolean;
 
   files?: { [k: string]: any };
+  selectValue?: number | string;
 }
 
 

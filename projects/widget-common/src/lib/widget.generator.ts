@@ -98,7 +98,7 @@ function generateParamConfig(itemType: ITEM_TYPE, param: ParamConfigurator, para
         dailyRange: 'dailyRange',
         stateMap: false,
         valueType: VALUE_TYPE.absolute,
-        duration: 'day',
+        duration: SeriesDuration.day,
         count: 1,
       };
 
@@ -187,11 +187,11 @@ function getIconSet(needIcons: boolean) {
     return null;
   }
   return {
-    error: require('../assets/error.svg'),
-    falsevalue: require('../assets/falsevalue.svg'),
-    none: require('../assets/none.svg'),
-    success: require('../assets/success.svg'),
-    warning: require('../assets/warning.svg'),
+    error: '',
+    falsevalue: '',
+    none: '',
+    success: '',
+    warning: '',
   };
 }
 
@@ -450,6 +450,27 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
     };
 
     return res as any;
+  }
+
+  if (paramType === PARAM_TYPE.custom_select) {
+
+    console.log('config', config);
+    console.log('item', item);
+    const defValue = null;
+    return {
+      device: null,
+      refName: '',
+      itemType: ITEM_TYPE.custom,
+      widgetId: null,
+      title: config.title !== null ? config.title : 'Title param',
+      config: generateParamConfig(ITEM_TYPE.custom, param, paramType),
+      value: item.custom_data.items.find(val => val.value === config.selectValue),
+      viewConfig: {},
+      dashboardLink: config.pageLink ? {dashname: 'Test dashname', id: 2} : null,
+      custom: {},
+      canEditable: config.editable,
+      isEditing: false,
+    };
   }
 }
 
