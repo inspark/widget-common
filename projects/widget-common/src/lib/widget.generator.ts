@@ -454,8 +454,6 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
 
   if (paramType === PARAM_TYPE.custom_select) {
 
-    console.log('config', config);
-    console.log('item', item);
     const defValue = null;
     return {
       device: null,

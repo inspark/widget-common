@@ -174,6 +174,9 @@ export interface GenerateConfigItem {
   // Для арчера
   files?: { [k: string]: string };
   archer?: any;
+
+  // для списка
+  selectValue?: number | string;
 }
 
 // @ts-ignore
