@@ -341,6 +341,7 @@ export interface SingleValue {
   date: number;
   value: any;
   state: ParamState;
+  isProcessing?: boolean;
 }
 
 
