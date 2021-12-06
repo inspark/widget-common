@@ -13,3 +13,5 @@ export * from './lib/widget.interface';
 export * from './lib/chart/chart.component';
 export * from './lib/pie-chart/pie-chart.component';
 export * from './lib/widget-container/widget-container.component';
+export * from './lib/forge/forge.component';
+export * from './lib/forge/forge.interface';

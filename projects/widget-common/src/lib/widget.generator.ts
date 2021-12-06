@@ -13,7 +13,6 @@ import {
   PARAM_STATE_INT,
   PARAM_TYPE,
   ParamConfigCustom,
-  ParamConfigCustomType,
   ParamConfigEvents,
   ParamConfigInterval,
   ParamConfigSeries,
@@ -63,6 +62,7 @@ export function generateValues(inputValues: WidgetParamsChildren | WidgetArrayPa
             result[key] = {
               items: generateValues(inputValues[key].items, params, itemType, paramType, itemPath),
               config: generateParamConfig(itemType, param),
+              viewConfig: {...(param.param ? (param.param as ParamConfigurator).viewConfig : {})},
               custom_data: inputValues[key].custom_data
             };
           } else {
@@ -70,6 +70,7 @@ export function generateValues(inputValues: WidgetParamsChildren | WidgetArrayPa
             result[key] = {
               ...generateValues(inputValues[key].items, params, itemType, paramType, itemPath),
               config: generateParamConfig(itemType, param),
+              viewConfig: {...(param.param ? (param.param as ParamConfigurator).viewConfig : {})},
               custom_data: inputValues[key].custom_data
             };
           }
@@ -90,7 +91,7 @@ function generateParamConfig(itemType: ITEM_TYPE, param: ParamConfigurator, para
   switch (itemType) {
     case ITEM_TYPE.custom:
       return {
-        type: paramType === PARAM_TYPE.custom_string ? ParamConfigCustomType.string : null,
+        type: paramType,
         value: 'text'
       };
     case ITEM_TYPE.interval:
@@ -195,7 +196,7 @@ function getIconSet(needIcons: boolean) {
   };
 }
 
-function generateSingleParams(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemSingle {
+function generateSingleParams(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: any): ItemSingle {
 
   const config = getConfig(param, index);
   const value = (config.value === undefined || config.value === '') ? getRandomValue(paramType, item) : updateValue(config.value);
@@ -236,7 +237,7 @@ function generateSingleParams(index: number, paramType: PARAM_TYPE, item: Widget
     title: config.title !== null ? config.title : 'Title param',
     config: generateParamConfig(ITEM_TYPE.single, param),
     value: config.data ? value : null,
-    viewConfig: {view: config.view},
+    viewConfig: {view: config.view, ...(param.param ? (param.param as ParamConfigurator).viewConfig : {})},
     data: config.data ? {
       date: 1548968400000,
       value: value,
@@ -394,6 +395,22 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
       title: config.title !== null ? config.title : 'Title param',
       config: generateParamConfig(ITEM_TYPE.custom, param, paramType),
       value: config.value ? config.value : defValue,
+      viewConfig: {},
+      dashboardLink: config.pageLink ? {dashname: 'Test dashname', id: 2} : null,
+      custom: {},
+      canEditable: config.editable,
+      isEditing: false,
+    };
+  }
+  if (paramType === PARAM_TYPE.custom_forge) {
+    return {
+      device: null,
+      refName: '',
+      itemType: ITEM_TYPE.custom,
+      widgetId: null,
+      title: config.title !== null ? config.title : 'Title param',
+      config: generateParamConfig(ITEM_TYPE.custom, param, paramType),
+      value: config.value ? config.value : '',
       viewConfig: {},
       dashboardLink: config.pageLink ? {dashname: 'Test dashname', id: 2} : null,
       custom: {},

@@ -14,7 +14,7 @@ import {
   TableValues,
   WidgetArrayParam,
   WidgetItem,
-  WidgetItems,
+  WidgetItems, WidgetParam,
   WidgetParamChildren,
   WidgetParamsChildren,
 } from './widget.interface';
@@ -77,7 +77,7 @@ export class MakePictureUrl implements PipeTransform {
 export class MakeIconUrl implements PipeTransform {
   transform(id: number): string {
     if (id === -1) {
-      return '';
+      return '/assets/icon.svg';
     } else {
       return common.serviceUrl + `/db/icon/${id}/img`;
     }

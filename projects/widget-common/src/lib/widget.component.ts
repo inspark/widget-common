@@ -30,6 +30,10 @@ export class WidgetComponent {
     this.height = height;
   }
 
+  onRender(values) {
+
+  }
+
   onUpdate(values) {
   }
 

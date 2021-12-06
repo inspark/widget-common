@@ -12,6 +12,7 @@ import {
   PeriodFromDatePipe
 } from './widget.utils';
 import {InlineSVGModule} from 'ng-inline-svg';
+import {ForgeComponentModule} from './forge/forge.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import {InlineSVGModule} from 'ng-inline-svg';
     TranslateModule,
     NvD3Module,
     ChartComponentModule,
+    ForgeComponentModule,
     InlineSVGModule.forRoot({ baseUrl: '' }),
   ],
   exports: [
@@ -40,6 +42,7 @@ import {InlineSVGModule} from 'ng-inline-svg';
     MakeChartUrl,
     ChartUrl,
     ChartComponentModule,
+    ForgeComponentModule,
     InlineSVGModule
   ]
 })

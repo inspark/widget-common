@@ -1,6 +1,6 @@
 {
   "name": "@inspark/widget-common",
-  "version": "9.0.3",
+  "version": "9.0.5",
   "description": "",
   "author": "Inspark",
   "private": false,
@@ -14,6 +14,11 @@
     "nvd3": "^1.8.5",
     "ng-inline-svg": "^8.4.1",
     "@ngx-translate/http-loader": "^3.0.1",
-    "@ng-bootstrap/ng-bootstrap": "^6.2.0"
+    "@ng-bootstrap/ng-bootstrap": "^6.2.0",
+    "@types/forge-viewer": "^7.53.0",
+    "ng2-adsk-forge-viewer": "^1.5.0",
+    "ng2-cookies": "^1.0.12"
+  },
+  "dependencies": {
   }
 }

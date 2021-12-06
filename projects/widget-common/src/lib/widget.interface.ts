@@ -32,6 +32,7 @@ export enum PARAM_TYPE {
   'custom_file' = 14, // загрузка файлов
   'custom_json' = 15, // Текст JSON
   'custom_select' = 16, // Список
+  'custom_forge' = 17, // Работа с Autodesk Forge
 }
 
 export const PARAM_TYPE_ITOS = {
@@ -255,6 +256,8 @@ export interface IWidgetParamConfig {
 
   files?: { [k: string]: any };
   selectValue?: number | string;
+
+  name?: string; // Для хранение внутреннего названия
 }
 
 
@@ -314,12 +317,7 @@ export interface ParamConfigEvents {
 
 export interface ParamConfigCustom {
   value?: string;
-  type?: ParamConfigCustomType;
-}
-
-export enum ParamConfigCustomType {
-  'string',
-  'archer',
+  type?: PARAM_TYPE;
 }
 
 export type ParamConfig =
