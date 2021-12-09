@@ -9,15 +9,15 @@ const StyleStore: any[] = [
   {name: 'viewer', src: 'https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.min.css'},
 ];
 
+let promiseLoad: any = null;
+let isLoadedStyles = false;
+
 
 @Injectable()
 export class ScriptService {
 
   private scripts: any = {};
   private styles: any = {};
-
-  isLoaded = false;
-  isLoadedStyles = false;
 
   constructor() {
     ScriptStore.forEach((script: any) => {
@@ -29,8 +29,9 @@ export class ScriptService {
   }
 
   loadStyles() {
-    if (!this.isLoadedStyles) {
-      this.isLoadedStyles = true;
+
+    if (!isLoadedStyles) {
+      isLoadedStyles = true;
       StyleStore.forEach(style => {
         const el = document.createElement('link');
         el.rel = 'stylesheet';
@@ -42,12 +43,16 @@ export class ScriptService {
   }
 
   load(...scripts: string[]) {
-    const promises: any[] = [];
-    if (!this.isLoaded) {
-      this.isLoaded = true;
-      scripts.forEach((script) => promises.push(this.loadScript(script)));
+    if (!promiseLoad) {
+      promiseLoad = new Promise((resolve, reject) => {
+        const promises: any[] = [];
+        scripts.forEach((script) => promises.push(this.loadScript(script)));
+        Promise.all(promises).then(data => {
+          resolve(data);
+        });
+      });
     }
-    return Promise.all(promises);
+    return promiseLoad;
   }
 
   loadScript(name: string) {

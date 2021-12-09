@@ -4,7 +4,7 @@ import {Extension} from './extenstion';
 export interface ParamLabel {
   dbId: number;
   element: HTMLElement;
-  name: string
+  name: string;
 }
 
 interface Label {
@@ -35,6 +35,8 @@ export class ParamAssignExtension extends Extension {
 
   labels: Label[] = [];
 
+  container: HTMLDivElement | null = null;
+
   public static registerExtension(extensionName: string, callback: (ext: ParamAssignExtension) => void) {
     ParamAssignExtension.callback = callback;
     super.registerExtension(ParamAssignExtension.extensionName, ParamAssignExtension);
@@ -50,6 +52,7 @@ export class ParamAssignExtension extends Extension {
   }
 
   load() {
+    this.container = (this.viewer as any).clientContainer;
     this._enabled = true;
     if (this.viewer.model && this.viewer.model.getInstanceTree()) {
       this.customize();
@@ -86,10 +89,8 @@ export class ParamAssignExtension extends Extension {
 
 
   showIcons() {
-    const $viewer: HTMLDivElement = document.querySelector('#forge-viewer div.adsk-viewing-viewer');
-
-
-    const element = document.querySelector('#forge-viewer div.adsk-viewing-viewer label.markup');
+    const $viewer: HTMLDivElement = this.container;
+    const element = this.container.querySelector('label.markup');
     // remove previous...
     if (element) {
       element.remove();
@@ -154,7 +155,6 @@ export class ParamAssignExtension extends Extension {
       this.labels.push({id: icon.dbId, label: $label});
     }
     this.updateIcons(); // re-position for each fragId found
-
   }
 
   getModifiedWorldBoundingBox(dbId) {

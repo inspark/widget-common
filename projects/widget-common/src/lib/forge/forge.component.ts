@@ -78,9 +78,6 @@ export class ForgeComponent implements OnInit, OnDestroy {
 
   authForge(callback) {
     callback(Cookie.get('forge'), 3599);
-    // this.http.get<any>(`${url}/api/forge/oauth/token`).subscribe(res => {
-    //   callback(res.access_token, res.expires_in);
-    // });
   }
 
   launchViewer(urn) {
@@ -88,20 +85,19 @@ export class ForgeComponent implements OnInit, OnDestroy {
       env: 'AutodeskProduction',
       getAccessToken: this.authForge.bind(this)
     };
-
     this.ngZone.runOutsideAngular(() => {
       ParamAssignExtension.registerExtension(ParamAssignExtension.extensionName, this.extensionLoaded.bind(this));
       Autodesk.Viewing.Initializer(options, () => {
+        const documentId = 'urn:' + urn;
         this.viewer = new Autodesk.Viewing.GuiViewer3D(this.viewerDiv.nativeElement,
           {extensions: []});
-        this.viewer.start();
-        const documentId = 'urn:' + urn;
         Autodesk.Viewing.Document.load(documentId, this.onDocumentLoadSuccess.bind(this), this.onDocumentLoadFailure.bind(this));
       });
     });
   }
 
   extensionLoaded() {
+    console.log('extensionLoaded');
   }
 
 
@@ -116,24 +112,23 @@ export class ForgeComponent implements OnInit, OnDestroy {
         viewer.addEventListener(event, handler);
       }));
     });
-
     return Promise.all(promises);
   }
 
 
   onDocumentLoadSuccess(doc) {
+    this.viewer.start();
     const viewables = doc.getRoot().getDefaultGeometry();
     this.viewer.loadDocumentNode(doc, viewables, {}).then(async (model) => {
-      await this.afterViewerEvents(
-        this.viewer,
-        [
-          Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
-          Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT
-        ]
-      );
 
+      // await this.afterViewerEvents(
+      //   this.viewer,
+      //   [
+      //     Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
+      //     Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT
+      //   ]
+      // );
       this.loadParamExtension();
-
     });
   }
 
@@ -151,6 +146,7 @@ export class ForgeComponent implements OnInit, OnDestroy {
           }
         });
       }, true);
+
       this.viewer.loadExtension(ParamAssignExtension.extensionName, {
         icons,
         // onClick: (id) => {
