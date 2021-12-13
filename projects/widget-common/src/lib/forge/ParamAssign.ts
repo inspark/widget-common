@@ -89,7 +89,7 @@ export class ParamAssignExtension extends Extension {
 
 
   showIcons() {
-    const $viewer: HTMLDivElement = this.container;
+    const $viewer: HTMLDivElement = this.container.querySelector('.adsk-viewing-viewer');
     const element = this.container.querySelector('label.markup');
     // remove previous...
     if (element) {
