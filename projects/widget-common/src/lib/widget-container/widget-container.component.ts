@@ -7,6 +7,7 @@ export interface WidgetContainerDevOptions {
   isDev: boolean;
   theme: SiteTheme;
   element: Element;
+  locale: string;
 }
 
 
@@ -20,6 +21,7 @@ export interface WidgetContainerProduction {
   isDev: boolean;
   theme: SiteTheme;
   element: Element;
+  locale: string;
 }
 
 

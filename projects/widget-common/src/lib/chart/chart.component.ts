@@ -22,9 +22,7 @@ import 'nvd3';
 import {NvD3Module, NvD3Component} from 'ng2-nvd3';
 import {CommonModule} from '@angular/common';
 import {PieChartComponent} from '../pie-chart/pie-chart.component';
-import * as moment_ from 'moment';
 
-const moment = moment_;
 
 @Component({
   selector: 'app-chart',
@@ -467,7 +465,6 @@ export class ChartComponent implements OnInit, OnChanges, OnDestroy {
 @NgModule({
   declarations: [
     ChartComponent,
-    PieChartComponent,
   ],
   imports: [
     NvD3Module,
@@ -475,9 +472,8 @@ export class ChartComponent implements OnInit, OnChanges, OnDestroy {
   ],
   exports: [
     ChartComponent,
-    PieChartComponent,
   ],
-  entryComponents: [ChartComponent, PieChartComponent]
+  entryComponents: [ChartComponent]
 })
 export class ChartComponentModule {
 }

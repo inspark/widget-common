@@ -13,6 +13,9 @@ import {
 } from './widget.utils';
 import {InlineSVGModule} from 'ng-inline-svg';
 import {ForgeComponentModule} from './forge/forge.component';
+import {EChartComponentModule} from './echart/echart.component';
+import * as echarts from 'echarts/core';
+console.log('[echarts]', echarts);
 
 @NgModule({
   declarations: [
@@ -28,6 +31,7 @@ import {ForgeComponentModule} from './forge/forge.component';
     TranslateModule,
     NvD3Module,
     ChartComponentModule,
+    EChartComponentModule,
     ForgeComponentModule,
     InlineSVGModule.forRoot({ baseUrl: '' }),
   ],
@@ -42,8 +46,9 @@ import {ForgeComponentModule} from './forge/forge.component';
     MakeChartUrl,
     ChartUrl,
     ChartComponentModule,
+    EChartComponentModule,
     ForgeComponentModule,
-    InlineSVGModule
+    InlineSVGModule,
   ]
 })
 export class DashboardSharedModule {

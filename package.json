@@ -24,8 +24,10 @@
     "@angular/router": "^9.1.13",
     "@types/forge-viewer": "^7.53.0",
     "core-js": "^2.5.4",
+    "echarts": "^5.2.2",
     "link": "^0.1.5",
     "ng2-cookies": "^1.0.12",
+    "ngx-echarts": "^5.2.2",
     "node-sass": "^4.14.1",
     "zone.js": "~0.10.3"
   },
