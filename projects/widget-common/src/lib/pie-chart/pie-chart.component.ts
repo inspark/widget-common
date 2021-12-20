@@ -147,7 +147,7 @@ export class PieChartComponent implements OnInit, OnChanges, OnDestroy {
     res.push({
       name: 'Chart',
       type: 'pie',
-      radius: '55%',
+      radius: ['40%', '70%'],
       center: ['50%', '50%'],
       data: data,
       // roseType: 'radius',
