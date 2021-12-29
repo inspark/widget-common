@@ -7,9 +7,17 @@ import {
   NgModule,
   OnChanges,
   OnDestroy,
-  OnInit
+  OnInit, ViewEncapsulation
 } from '@angular/core';
-import {ChartTypes, ItemSeries, ParamConfigSeries, SeriesDuration, SeriesLineValue, SiteTheme} from '../widget.interface';
+import {
+  ChartTypes,
+  ItemSeries,
+  ParamConfigSeries,
+  SeriesCandleValue,
+  SeriesDuration,
+  SeriesLineValue,
+  SiteTheme
+} from '../widget.interface';
 import {CommonModule, DatePipe} from '@angular/common';
 import {NgxEchartsModule} from 'ngx-echarts';
 import {EChartsOption, SeriesOption} from 'echarts/types/dist/echarts';
@@ -77,11 +85,18 @@ const getGradient = (seed) => {
 };
 
 
+const BackGround = {
+  [SiteTheme.light]: '#FFFFFF',
+  [SiteTheme.dark]: '#494C55'
+};
+
+
 @Component({
   selector: 'app-echart',
   templateUrl: './echart.component.html',
   styleUrls: ['./echart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class EchartComponent implements OnInit, OnChanges, OnDestroy {
 
@@ -93,10 +108,10 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
   @Input() width = 250;
   @Input() height = 250;
   @Input() margin = {
-    top: 40,
-    right: 40,
-    bottom: 40,
-    left: 40
+    top: 70,
+    right: 20,
+    bottom: 60,
+    left: 20
   };
   @Input() theme: SiteTheme;
 
@@ -104,18 +119,22 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
   options: EChartsOption = {
     backgroundColor: 'transparent',
     tooltip: {
+      appendToBody: true,
+      // confine: true,
+      renderMode: 'html',
       trigger: 'axis',
+      axisPointer: {
+        type: 'cross'
+      },
       className: 'label-formatter',
       formatter: (params, ticket) => {
-        console.log('params', params, ticket);
-
         let res = 'No data';
         if (params[0]) {
-          res = `<div class="title">${new DatePipe(this.getLocale(this.locale)).transform(params[0].value[0], 'd MMM y, HH:mm:ss')}</div><table>`;
+          res = `<div class="title">${new DatePipe(this.getLocale(this.locale)).transform(params[0].value[0], 'd MMM y, HH:mm')}</div><table>`;
           res += params.map(val => {
-            return `<tr><td class="label">${val.marker} ${val.seriesName}</td><td class="value">${val.value[1]}</td></tr>`;
+            const unit = val.value[val.value.length - 1].device.param.measure.unit ? val.value[val.value.length - 1].device.param.measure.unit : '';
+            return `<tr><td class="label">${val.marker} ${val.seriesName}</td><td class="value">${this.roundData(val.value[1])}</td><td>${unit}</td></tr>`;
           }).join('') + '</table>';
-
         }
         return res;
       }
@@ -128,14 +147,48 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
       type: 'value',
     },
     toolbox: {
+      right: '20px',
       feature: {
         magicType: {
           type: ['line', 'bar', 'stack']
         },
+        saveAsImage: {show: true},
         mark: {show: true},
-        dataView: {show: true, readOnly: false},
-        restore: {show: true},
-        saveAsImage: {show: true}
+        dataView: {
+          show: true, readOnly: false,
+          optionToContent: (opt) => {
+            if (Array.isArray(opt.series) && opt.series.length) {
+              let table = '<table style="width:100%;text-align:center"><tbody><tr><td>Time:</td>' +
+                opt.series.map(val => '<td>' + val.name + '</td>').join('') + '</tr>';
+
+              const data: number[][] = [];
+              opt.series.forEach((val, ind) => {
+                val.data.forEach(item => {
+                  if (!data[item[0]]) {
+                    data[item[0]] = [];
+                  }
+                  data[item[0]][ind] = item[1];
+                });
+              });
+
+
+              for (const k in data) {
+                if (data.hasOwnProperty(k)) {
+                  table += `<tr><td>${new DatePipe(this.getLocale(this.locale)).transform(k, 'd MMM y, HH:mm')}</td>`;
+                  for (let j = 0; j < data[k].length; j++) {
+                    table += '<td>' + this.roundData(data[k][j]) + '</td>';
+                  }
+                  table += '</tr>';
+                }
+              }
+
+              table += '</tbody></table>';
+              return table;
+            }
+            return 'None';
+          }
+        },
+        // restore: {show: true},
       }
     },
     grid: {
@@ -236,18 +289,24 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  updateData(config: ParamConfigSeries, values: ItemSeries[]) {
+  roundData(value, numbers = 2) {
+    return Math.round(value * Math.pow(10, numbers)) / Math.pow(10, numbers);
+  }
 
+  updateData(config: ParamConfigSeries, values: ItemSeries[]) {
     const res: SeriesOption[] = [];
     const legend: string[] = [];
     const xAxis: any = {
       type: 'time',
       boundaryGap: false,
+      axisLabel: {
+        formatter: '{d} {MMM} {yy}\n{HH}:{mm}',
+      }
     };
+    let yAxis: any[] = [];
     this.uniqTitles = [];
 
     const value = values[0];
-    const times = this.getMaxMinTimeline(value);
     let period;
     switch (config.duration) {
       case SeriesDuration.day:
@@ -274,24 +333,73 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
       xAxis.min = period.startTime;
       xAxis.max = period.endTime;
     }
+    if (this.config.charttype !== ChartTypes.stackedAreaChart) {
+      const diff = Math.round((xAxis.max - xAxis.min) * 0.02);
+      xAxis.min = xAxis.min - diff;
+      xAxis.max = xAxis.max + diff;
+    }
+    const measures = values.map(val => val.device.param.measure.id).filter((value, index, self) => self.indexOf(value) === index);
+
+    if (measures.length > 1 && this.config.charttype !== ChartTypes.stackedAreaChart) {
+
+      yAxis = values.map((val, ind) => {
+
+        const maxmin = this.getMaxMin(val);
+        const diff = Math.round((maxmin.max - maxmin.min) * 0.1);
+        return {
+          type: 'value',
+          name: val.title,
+          min: Math.round(maxmin.min - diff),
+          max: Math.round(maxmin.max + diff),
+          position: ind % 2 === 0 ? 'left' : 'right',
+          offset: 80 * Math.floor(ind / 2),
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: this.getChartColor(ind)
+            },
+          },
+          splitLine: {show: false},
+          axisLabel: {
+            formatter: '{value} ' + (val.device.param.measure.unit ? val.device.param.measure.unit : '')
+          }
+        };
+      });
+
+    } else {
+      yAxis.push({
+        type: 'value',
+        splitLine: {
+          lineStyle: {
+            color: ['#aaa', '#aaa']
+          }
+        },
+        axisLine: {
+          show: true,
+        },
+        axisLabel: {
+          formatter: '{value} ' + (values[0].device.param.measure.unit ? values[0].device.param.measure.unit : '')
+        }
+      });
+    }
 
 
     if (config.charttype === ChartTypes.histogramChart) {
 
       values.forEach((value, ind) => {
-
         const title = this.findUniqName(value.title);
         legend.push(title);
         res.push({
           type: 'bar',
           data: value.data.map((val: any) => {
             // return {x: val.timestmp, y: val.value};
-            return [val.timestmp, val.value];
+            return [val.timestmp, val.value, value];
           }),
           itemStyle: {
             color: this.getChartColor(ind),
           },
           name: title,
+          yAxisIndex: yAxis.length > 1 ? ind : 0,
         });
       });
     } else if (config.charttype === ChartTypes.candlestickBarChart) {
@@ -302,9 +410,10 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
           type: 'candlestick',
           data: value.data.map((val: any) => {
             // return {x: val.timestmp, y: val.value};
-            return [val.timestmp, val.open, val.close, val.low, val.high];
+            return [val.timestmp, val.open, val.close, val.low, val.high, value];
           }),
           name: title,
+          yAxisIndex: yAxis.length > 1 ? ind : 0,
         });
       });
     } else {
@@ -318,9 +427,10 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
             stack: 'Total',
             smooth: true,
             name: title,
+            yAxisIndex: yAxis.length > 1 ? ind : 0,
             data: value.data.map((val: any) => {
               // return {x: val.timestmp, y: val.value};
-              return [val.timestmp, val.value];
+              return [val.timestmp, val.value, value];
             }),
             lineStyle: {
               width: 0
@@ -332,8 +442,13 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
             // itemStyle: {
             //   color: ({seriesIndex, dataIndex}) => this.getChartColor(seriesIndex),
             // },
+            itemStyle: {
+              // color: this.getChartColor(ind),
+              color: getGradient(ind)
+            },
             areaStyle: {
               opacity: 0.8,
+              // color: this.getChartColor(ind)
               color: getGradient(ind)
             },
           });
@@ -342,6 +457,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
             type: 'line',
             smooth: true,
             name: title,
+            yAxisIndex: yAxis.length > 1 ? ind : 0,
             lineStyle: {
               color: this.getChartColor(ind),
             },
@@ -350,13 +466,36 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
             },
             data: value.data.map((val: any) => {
               // return {x: val.timestmp, y: val.value};
-              return [val.timestmp, val.value];
+              return [val.timestmp, val.value, value];
             }),
           });
         }
       });
     }
-    this.options = {...this.options, xAxis, legend: {data: legend, top: `${this.margin.top}px`}, series: res};
+    const magicType = config.charttype === ChartTypes.candlestickBarChart ? {} : {
+      type: yAxis.length === 1 ? ['line', 'bar', 'stack'] : ['line', 'bar'],
+    };
+
+    this.options = {
+      ...this.options,
+      xAxis,
+      yAxis,
+      legend: {data: legend, bottom: `8px`},
+      series: res,
+      grid: {
+        ...this.options.grid,
+        left: this.margin.left + Math.floor(yAxis.length / 2) * 30,
+        right: this.margin.right + Math.floor(yAxis.length / 2) * 30,
+      },
+      toolbox: {
+        ...this.options.toolbox, feature: {
+          ...(this.options.toolbox as any).feature,
+          magicType,
+          dataView: {...(this.options.toolbox as any).feature.dataView, backgroundColor: BackGround[this.theme]},
+          saveAsImage: {show: true, backgroundColor: BackGround[this.theme]},
+        }
+      }
+    };
   }
 
   findUniqName(title, ind = 0) {
@@ -377,165 +516,20 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  // generateChartOptions(config: ParamConfigSeries, values: ItemSeries[]) {
-  //   const value = values[0];
-  //   let res: EChartsOption = {};
-  //   const zoom = {
-  //     'enabled': true,
-  //     'scaleExtent': [
-  //       1, 48
-  //     ],
-  //     'useFixedDomain': false,
-  //     'useNiceScale': false,
-  //     'horizontalOff': false,
-  //     'verticalOff': true,
-  //     'unzoomEventType': 'dblclick.zoom'
-  //   };
-  //
-  //
-  //   let period;
-  //   let xDomain = [];
-  //   let yDomain;
-  //   const chartdatamin = [];
-  //   const chartdatamax = [];
-  //
-  //   if (value.device.param.type === PARAM_TYPE.signal) {
-  //     chartdatamax[0] = 1.2;
-  //     chartdatamin[0] = -0.2;
-  //   } else {
-  //     const maxmin = this.getMaxMin(values);
-  //     chartdatamax[0] = maxmin.max;
-  //     chartdatamin[0] = maxmin.min;
-  //     if (chartdatamax[0] === chartdatamin[0]) {
-  //       chartdatamax[0] += 10;
-  //     }
-  //   }
-  //
-  //   if ([ChartTypes.lineChart, ChartTypes.histogramChart, ChartTypes.stackedAreaChart].indexOf(config.charttype) !== -1) {
-  //
-  //     if (config.charttype !== ChartTypes.stackedAreaChart) {
-  //       const delta: any = (chartdatamax[0] - chartdatamin[0]) / 10;
-  //       yDomain = [chartdatamin[0] - delta, chartdatamax[0] + delta];
-  //     }
-  //
-  //
-  //   }
-  //
-  //   switch (config.duration) {
-  //     case SeriesDuration.day:
-  //       zoom.scaleExtent = [1, 6];
-  //       period = this.getDay(config.count, value.device.object.timezone);
-  //       break;
-  //     case SeriesDuration.month:
-  //       period = this.getMonth(config.count, value.device.object.timezone);
-  //       zoom.scaleExtent = [1, 192];
-  //       break;
-  //     case SeriesDuration.week:
-  //       zoom.scaleExtent = [1, 48];
-  //       period = this.getWeek(config.count, value.device.object.timezone);
-  //       break;
-  //     default:
-  //       period = this.getDate();
-  //   }
-  //
-  //   if (config.generator) {
-  //     const times = this.getMaxMinTimeline(value);
-  //     xDomain = [times.min, times.max];
-  //   } else {
-  //     xDomain = [period.startTime, period.endTime];
-  //   }
-  //
-  //   if (config.charttype === ChartTypes.histogramChart) {
-  //
-  //     res = {
-  //       tooltip: {},
-  //       height: this.height,
-  //       margin: this.margin,
-  //       clipEdge: true,
-  //       duration: 300,
-  //       useInteractiveGuideline: false,
-  //       xAxis: {
-  //         text: 'Дата',
-  //         // showMaxMin: true,
-  //         // axisLabelDistance: 5,
-  //         tickFormat: (d) => {
-  //           return this.tickMultiFormat(new Date(d));
-  //         },
-  //       },
-  //       zoom,
-  //       yAxis: {
-  //         text: value.device.param.measure.title ? `${value.device.param.measure.title} [${value.device.param.measure.unit}]` : '',
-  //         tickFormat: tickFormat,
-  //         axisLabelDistance: 5
-  //       },
-  //     };
-  //   } else {
-  //
-  //     res = {
-  //       type: config.charttype,
-  //       tooltip: {enabled: false},
-  //       noData: this.noDataMessage,
-  //       xScale: d3.time.scale(),
-  //       showControls: true,
-  //       height: this.height,
-  //       margin: this.margin,
-  //       x: function (d) {
-  //         if (d) {
-  //           return d.timestmp;
-  //         } else {
-  //           return 0;
-  //         }
-  //       },
-  //       y: function (d) {
-  //         if (!d) {
-  //           return null;
-  //         }
-  //         return config.charttype === ChartTypes.candlestickBarChart ? d.close : d.value;
-  //       },
-  //       useVoronoi: true,
-  //       clipEdge: false,
-  //       duration: 300,
-  //       useInteractiveGuideline: false,
-  //       xAxis: {
-  //         axisLabel: 'Дата',
-  //         showMaxMin: false,
-  //         tickFormat: (d) => {
-  //           return this.tickMultiFormat(new Date(d));
-  //         },
-  //       },
-  //       xDomain,
-  //       yDomain,
-  //       yAxis: {
-  //         axisLabel: value.device.param.measure.title ? `${value.device.param.measure.title} [${value.device.param.measure.unit}]` : '',
-  //         tickFormat: tickFormat,
-  //         axisLabelDistance: 5
-  //       },
-  //       zoom,
-  //     };
-  //   }
-  //
-  //   function tickFormat(d) {
-  //     if (d == null) {
-  //       return null;
-  //       // return -10000000;
-  //     }
-  //     if (d > 9999) {
-  //       return d3.format(',.1e')(d);
-  //     } else if (d > 999) {
-  //       return d3.format('f')(d);
-  //     } else if (d > 99) {
-  //       return d3.format('.2f')(d);
-  //     }
-  //     return d3.format('.02f')(d);
-  //   }
-  //
-  //   return res;
-  // }
+  getMaxMin(values: ItemSeries) {
 
-  getMaxMin(values: ItemSeries[]) {
     let max = Number.MIN_VALUE, min = Number.MAX_VALUE;
-    values.forEach(value => {
-      value.data.forEach((val: SeriesLineValue) => {
+    if (this.config.charttype === ChartTypes.candlestickBarChart) {
+      values.data.forEach((val: SeriesCandleValue) => {
+        if (val.high > max) {
+          max = val.high;
+        }
+        if (val.low < min) {
+          min = val.low;
+        }
+      });
+    } else {
+      values.data.forEach((val: SeriesLineValue) => {
         if (val.value > max) {
           max = val.value;
         }
@@ -543,7 +537,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
           min = val.value;
         }
       });
-    });
+    }
     return {max, min};
   }
 

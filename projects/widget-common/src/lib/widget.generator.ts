@@ -215,7 +215,7 @@ function generateSingleParams(index: number, paramType: PARAM_TYPE, item: Widget
       param: {
         id: null,
         name: 'deviceParam name',
-        measure: {unit: generateMeasureUnit(), title: 'Электричество', id: 1},
+        measure: {unit: generateMeasureUnit(), title: 'Электричество', id: getRandom(10000, 99999)},
         type: PARAM_TYPE.value,
         calc: false,
         ctrability: config.ctrability,
@@ -276,7 +276,7 @@ function generateSeriesParam(index: number, paramType: PARAM_TYPE, item: WidgetP
       param: {
         id: null,
         name: 'deviceParam name',
-        measure: {unit: generateMeasureUnit(), title: 'Электричество', id: 1},
+        measure: {unit: generateMeasureUnit(), title: 'Электричество', id: getRandom(10000, 99999)},
         type: PARAM_TYPE.value,
         calc: false,
       },
@@ -322,7 +322,7 @@ function generateIntervalParams(index: number, paramType: PARAM_TYPE, item: Widg
       param: {
         id: null,
         name: 'deviceParam name',
-        measure: {unit: generateMeasureUnit(), title: 'Электричество', id: 1},
+        measure: {unit: generateMeasureUnit(), title: 'Электричество', id: getRandom(10000, 99999)},
         type: PARAM_TYPE.value,
         calc: false,
         ctrability: config.ctrability,
@@ -533,7 +533,7 @@ function generateTableParams(index: number, paramType: PARAM_TYPE, item: WidgetP
 
 function generateMeasureUnit() {
   const units = ['град', '°C', 'лит', 'км', '%'];
-  return units[getRandom(0, units.length)];
+  return units[getRandom(0, units.length - 1)];
 }
 
 // Возвращает случайное число между min (включительно) и max (включительно)

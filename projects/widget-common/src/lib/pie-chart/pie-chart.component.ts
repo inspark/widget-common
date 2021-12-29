@@ -30,7 +30,9 @@ export class PieChartComponent implements OnInit, OnChanges, OnDestroy {
   options: EChartsOption = {
     backgroundColor: 'transparent',
     tooltip: {
-      trigger: 'axis'
+      trigger: 'item',
+      confine: true,
+      appendToBody: true,
     },
     toolbox: {
       feature: {
