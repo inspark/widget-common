@@ -348,7 +348,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
         const diff = Math.round((maxmin.max - maxmin.min) * 0.1);
         return {
           type: 'value',
-          name: val.title,
+          // name: val.title,
           min: Math.round(maxmin.min - diff),
           max: Math.round(maxmin.max + diff),
           position: ind % 2 === 0 ? 'left' : 'right',
