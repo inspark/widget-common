@@ -11,18 +11,29 @@
   .title {
     padding-bottom: 8px;
   }
+
   table {
     color: #333;
+
     .label {
       padding-right: 8px;
     }
 
     .value {
       text-align: right;
-      font-weight: bold;
+      //font-weight: bold;
       color: #555;
       min-width: 100px;
+      display: flex;
 
+      & > div {
+        margin-right: 4px;
+
+        span {
+          opacity: .5;
+          font-size: 11px;
+        }
+      }
     }
   }
 

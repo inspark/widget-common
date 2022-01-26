@@ -274,6 +274,7 @@ export enum LineType {
   'commandlog' = 3
 }
 
+
 export enum ChartTypes {
   'lineChart' = 'lineChart',
   'candlestickBarChart' = 'candlestickBarChart',
@@ -282,6 +283,32 @@ export enum ChartTypes {
   'pieChart' = 'pieChart',
   'intervalPieChart' = 'intervalPieChart'
 }
+
+export enum ChartViews {
+  'lineChart' = 'lineChart',
+  'lineWeekend' = 'lineWeekend',
+  'candlestickBarChart' = 'candlestickBarChart',
+  'stackedAreaChart' = 'stackedAreaChart',
+  'histogramChart' = 'histogramChart',
+  'pieChart' = 'pieChart',
+}
+
+
+export const ChartViewToType = {
+  [ChartViews.lineChart]: ChartTypes.lineChart,
+  [ChartViews.candlestickBarChart]: ChartTypes.candlestickBarChart,
+  [ChartViews.stackedAreaChart]: ChartTypes.stackedAreaChart,
+  [ChartViews.histogramChart]: ChartTypes.histogramChart,
+  [ChartViews.lineWeekend]: ChartTypes.lineChart,
+};
+
+export const ChartTypeToView = {
+  [ChartTypes.lineChart]: ChartViews.lineChart,
+  [ChartTypes.candlestickBarChart]: ChartViews.candlestickBarChart,
+  [ChartTypes.stackedAreaChart]: ChartViews.stackedAreaChart,
+  [ChartTypes.histogramChart]: ChartViews.histogramChart,
+  [ChartTypes.lineChart]: ChartViews.lineWeekend,
+};
 
 export interface ParamConfigSingle {
   valueType?: number;
@@ -301,6 +328,7 @@ export interface ParamConfigSeries {
   duration?: SeriesDuration;  // временной интервал
   count?: number;  // смещение временного интервала от текущей даты в единицах <duration> (1 day, 2 week ...)
   charttype?: ChartTypes;
+  viewtype?: ChartViews;
   generator?: boolean;
 }
 
