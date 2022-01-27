@@ -351,13 +351,13 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
       xAxis.min = period.startTime;
       xAxis.max = period.endTime;
     }
-    if (this.config.charttype !== ChartTypes.stackedAreaChart) {
+    if (this.config.viewtype !== ChartViews.stackedAreaChart) {
       const diff = Math.round((xAxis.max - xAxis.min) * 0.02);
       xAxis.min = xAxis.min - diff;
       xAxis.max = xAxis.max + diff;
     }
     const measures = values.map(val => val.device.param.measure.id).filter((value, index, self) => self.indexOf(value) === index);
-    if (measures.length > 1 && this.config.charttype !== ChartTypes.stackedAreaChart) {
+    if (measures.length > 1 && this.config.viewtype !== ChartViews.stackedAreaChart) {
 
       yAxis = values.map((val, ind) => {
         const maxmin = this.getMaxMin(val);
@@ -541,7 +541,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
         }
       });
     }
-    const magicType = config.charttype === ChartTypes.candlestickBarChart ? {} : {
+    const magicType = config.viewtype === ChartViews.candlestickBarChart ? {} : {
       type: yAxis.length === 1 ? ['bar', 'stack', 'line'] : ['bar', 'line'],
     };
 

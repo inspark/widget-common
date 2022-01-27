@@ -1,6 +1,6 @@
 import {
   Border,
-  ChartTypes,
+  ChartTypes, ChartViews, ChartViewToType,
   EventValues,
   GenerateConfigItem,
   ITEM_TYPE,
@@ -111,7 +111,8 @@ function generateParamConfig(itemType: ITEM_TYPE, param: ParamConfigurator, para
     case ITEM_TYPE.series:
       const config = param.config as ParamConfigSeries;
       return {
-        charttype: (config && config.charttype) ? config.charttype : ChartTypes.lineChart,
+        charttype: ChartViewToType[(config && config.charttype) ? config.charttype : ChartViews.lineChart],
+        viewtype: (config && config.viewtype) ? config.viewtype : ChartViews.lineChart,
         duration: SeriesDuration.month,
         count: 0,
         generator: true
