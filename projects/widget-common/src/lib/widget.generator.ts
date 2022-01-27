@@ -290,7 +290,7 @@ function generateSeriesParam(index: number, paramType: PARAM_TYPE, item: WidgetP
     config: {...generateParamConfig(ITEM_TYPE.series, param), ...param.config},
     value,
     viewConfig: null,
-    data: (param.config && (param.config as ParamConfigSeries).charttype === ChartTypes.candlestickBarChart) ? CANDLE_CHART : generateChartValues(),
+    data: (param.config && (param.config as ParamConfigSeries).viewtype === ChartViews.candlestickBarChart) ? CANDLE_CHART : generateChartValues(),
     custom: {},
     borders: [],
     isEditing: false,
