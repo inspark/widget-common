@@ -111,7 +111,7 @@ function generateParamConfig(itemType: ITEM_TYPE, param: ParamConfigurator, para
     case ITEM_TYPE.series:
       const config = param.config as ParamConfigSeries;
       return {
-        charttype: ChartViewToType[(config && config.charttype) ? config.charttype : ChartViews.lineChart],
+        charttype: ChartViewToType[(config && config.viewtype) ? config.viewtype : ChartViews.lineChart],
         viewtype: (config && config.viewtype) ? config.viewtype : ChartViews.lineChart,
         duration: SeriesDuration.month,
         count: 0,
@@ -472,8 +472,8 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
 
   if (paramType === PARAM_TYPE.custom_select) {
 
-    console.log('config', config);
-    console.log('item', item);
+    // console.log('config', config);
+    // console.log('item', item);
     const defValue = null;
     return {
       device: null,

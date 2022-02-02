@@ -154,7 +154,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
 <td><div class="value"><div><span>ОТКР:</span> ${this.roundData(val.value[1])}</div><div><span>ЗАКР:</span> ${this.roundData(val.value[2])}</div><div><span>МИН:</span> ${this.roundData(val.value[3])}</div><div><span>МАКС:</span> ${this.roundData(val.value[4])}</div></div></td></tr>`;
             } else {
               return `<tr><td class="label">${val.marker} ${cutName(val.seriesName, 20)}</td>
-<td><div class="value">${this.roundData(val.value[1])} ${cutName(unit, 10)}</div></td></tr>`;
+<td><div class="value"><b>${this.roundData(val.value[1])}</b> ${cutName(unit, 10)}</div></td></tr>`;
             }
           }).join('') + '</table>';
         }
@@ -549,7 +549,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
       ...this.options,
       xAxis,
       yAxis,
-      legend: {data: legend, bottom: `8px`, show: true},
+      legend: {data: legend, bottom: `8px`, show: true, type: 'scroll'},
       series: res,
       grid: {
         ...this.options.grid,
@@ -565,11 +565,10 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
         }
       }
     };
-    console.log('this.options', this.options);
+    // console.log('this.options', this.options);
   }
 
   findUniqName(title, ind = 0) {
-
     if (ind === 0) {
       if (this.uniqTitles.indexOf(title) !== -1) {
         return this.findUniqName(title, ind + 1);

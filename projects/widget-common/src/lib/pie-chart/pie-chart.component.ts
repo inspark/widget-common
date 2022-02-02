@@ -36,9 +36,9 @@ export class PieChartComponent implements OnInit, OnChanges, OnDestroy {
     },
     toolbox: {
       feature: {
-        mark: {show: true},
-        dataView: {show: true, readOnly: false},
-        restore: {show: true},
+        // mark: {show: true},
+        // dataView: {show: true, readOnly: false},
+        // restore: {show: true},
         saveAsImage: {show: true}
       }
     },
@@ -136,14 +136,14 @@ export class PieChartComponent implements OnInit, OnChanges, OnDestroy {
 
   updateData(config: ParamConfigSingle, values: ItemInterval | ItemSingle) {
 
-    console.log('updateData', config, values);
+    // console.log('updateData', config, values);
     const res: SeriesOption[] = [];
 
     this.uniqTitles = [];
 
     const data = (values.data as any).map(val => ({
       value: val.value,
-      name: val.key
+      name: this.findUniqName(val.key)
     }));
 
     res.push({
