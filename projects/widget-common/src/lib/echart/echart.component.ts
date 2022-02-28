@@ -30,6 +30,7 @@ import langEN from './en';
 echarts.registerLocale('RU', langRU);
 echarts.registerLocale('EN', langEN);
 
+const FULL_DAY = 86400000;
 const GRADIENT = [
   new echarts.graphic.LinearGradient(0, 0, 0, 1, [
     {
@@ -295,6 +296,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
 
   onChartInit(ec) {
     this.echartsInstance = ec;
+
   }
 
   getLocale(locale) {
@@ -345,8 +347,9 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
 
     if (config.generator) {
       const times = this.getMaxMinTimeline(value);
-      xAxis.min = times.min;
-      xAxis.max = times.max;
+      const diff = Math.round((times.max - times.min) * 0.1);
+      xAxis.min = times.min - FULL_DAY;
+      xAxis.max = times.max + FULL_DAY;
     } else {
       xAxis.min = period.startTime;
       xAxis.max = period.endTime;
@@ -356,6 +359,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
       xAxis.min = xAxis.min - diff;
       xAxis.max = xAxis.max + diff;
     }
+    console.log('xAxis', xAxis);
     const measures = values.map(val => val.device.param.measure.id).filter((value, index, self) => self.indexOf(value) === index);
     if (measures.length > 1 && this.config.viewtype !== ChartViews.stackedAreaChart) {
 
@@ -478,31 +482,37 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
           if (config.viewtype === ChartViews.lineWeekend/* && config.duration === SeriesDuration.day*/) {
 
             const data = [];
-            const days = Math.ceil((xAxis.max - xAxis.min) / 86400000);
+            const days = Math.ceil((xAxis.max - xAxis.min) / FULL_DAY);
             if (days > 1) { // если интервал больше суток
               for (let i = 0; i < days; i++) {
-                const date = (new Date(xAxis.min + i * 86400000));
+                const date = (new Date(xAxis.min + i * FULL_DAY));
+                this.modifyTime(date, value.device.object.timezone);
                 const day = date.getDay();
                 if (day === 0) {// Воскресенье
+
+                  const d = (new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0));
+                  this.modifyTime(d, 0);
                   data.push([
                     {
                       // name: 'Peak',
-                      xAxis: (new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 0, 0, 0).getTime())
+                      xAxis: d.getTime()
                     },
                     {
-                      xAxis: (new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1, 0, 0, 0).getTime())
+                      xAxis: d.getTime() + FULL_DAY
                     }
                   ]);
                 }
 
                 if (day === 6) { // Суббота
+                  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
+                  // this.modifyTime(d, 0);
                   data.push([
                     {
                       // name: 'Peak',
-                      xAxis: (new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 0, 0, 0).getTime())
+                      xAxis: d.getTime()
                     },
                     {
-                      xAxis: (new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 2, 0, 0, 0).getTime())
+                      xAxis: d.getTime() + FULL_DAY * 2
                     }
                   ]);
                   i++;
@@ -520,6 +530,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
               data
             };
           }
+          console.log('markArea', markArea);
 
           res.push({
             type: 'line',
@@ -649,7 +660,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
     const res: any = {};
     const d: Date = new Date();
     d.setHours(0, 0, 0);
-    d.setTime(d.getTime() + (-d.getTimezoneOffset() - timezone * 60) * 60000); // set object timezone
+    this.modifyTime(d, timezone);
     d.setDate(d.getDate() - num);
     res.startTime = d.getTime();
     d.setDate(d.getDate() + 1);
@@ -673,7 +684,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
       firstDay.setDate(d.getDate() - day - num * 7 + 1);
     }
     firstDay.setHours(0, 0, 0);
-    firstDay.setTime(firstDay.getTime() + (-firstDay.getTimezoneOffset() - timezone * 60) * 60000); // set object timezone
+    this.modifyTime(firstDay, timezone);
     lastDay.setTime(firstDay.getTime() + 7 * 24 * 60 * 60 * 1000);
 
     res.startTime = firstDay.getTime();
@@ -685,6 +696,10 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
     return res;
   }
 
+  modifyTime(date, timezone) {
+    date.setTime(date.getTime() + (-date.getTimezoneOffset() - timezone * 60) * 60000); // set object timezone
+  }
+
 
   getMonth(num, timezone) {
     const res: any = {};
@@ -692,7 +707,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
     d.setHours(0, 0, 0);
     d.setDate(1);
     d.setMonth(d.getMonth() - num);
-    d.setTime(d.getTime() + (-d.getTimezoneOffset() - timezone * 60) * 60000); // set object timezone
+    this.modifyTime(d, timezone);
     const firstDay = d;
     res.startTime = d.getTime();
     d.setMonth(d.getMonth() + 1);
@@ -734,4 +749,57 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
   entryComponents: [EchartComponent, PieChartComponent]
 })
 export class EChartComponentModule {
+}
+
+
+function makeTimeScaleOption(data, opt) {
+  opt = opt || {};
+  const useUTC = opt.useUTC;
+  const tooltipFormatter = opt.tooltipFormatter;
+  return {
+    useUTC: useUTC,
+    tooltip: {
+      trigger: 'axis',
+      // test in Safari (NaN-NaN-NaN NaN:NaN:NaN)
+      formatter: tooltipFormatter
+    },
+    xAxis: [{
+      type: 'time',
+      splitNumber: 7,
+      axisLabel: {
+        formatter: function (tick) {
+          return echarts.time.format(
+            tick,
+            '{yyyy}-{MM}-{dd} {HH}:{mm}:{ss}',
+            useUTC
+          );
+        },
+        rotate: 10
+      },
+      splitLine: {
+        show: false
+      }
+    }],
+    yAxis: [{
+      type: 'value',
+      splitLine: {
+        show: false
+      }
+    }],
+    series: [{
+      type: 'line',
+      smooth: true,
+      data: data,
+      label: {
+        show: true,
+        formatter: function (params) {
+          return echarts.time.format(
+            params.value[0],
+            '{yyyy}-{MM}-{dd} {HH}:{mm}:{ss}',
+            useUTC
+          );
+        }
+      }
+    }]
+  };
 }

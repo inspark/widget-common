@@ -1,6 +1,6 @@
 {
   "name": "@inspark/widget-common",
-  "version": "9.1.6",
+  "version": "9.1.7",
   "description": "",
   "author": "Inspark",
   "private": false,
@@ -17,7 +17,9 @@
     "@ng-bootstrap/ng-bootstrap": "^6.2.0",
     "@types/forge-viewer": "^7.53.0",
     "ng2-adsk-forge-viewer": "^1.5.0",
-    "ng2-cookies": "^1.0.12"
+    "ng2-cookies": "^1.0.12",
+    "ngx-echarts": "^5.2.2",
+    "echarts": "^5.2.2"
   },
   "dependencies": {
   }
