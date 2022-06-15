@@ -4,6 +4,7 @@ import {WidgetPackage} from '../widget.component';
 export interface WidgetContainerDevOptions {
   widgetPackage: WidgetPackage;
   setManual: (param: ItemSingle, value: boolean) => {};
+  paramEdit: (param: ItemSingle, container?: HTMLElement) => {};
   isDev: boolean;
   theme: SiteTheme;
   element: Element;
@@ -18,6 +19,7 @@ export interface WidgetContainerProduction {
   params: IWidgetParam[];
   sendData: (param: ItemSingle) => {};
   setManual: (param: ItemSingle, value: boolean) => {};
+  paramEdit: (param: ItemSingle, container?: HTMLElement) => {};
   isDev: boolean;
   theme: SiteTheme;
   element: Element;

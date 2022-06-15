@@ -172,42 +172,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
     toolbox: {
       right: '20px',
       feature: {
-        // mark: {show: true},
-        // dataView: {
-        //   show: true, readOnly: false,
-        //   optionToContent: (opt) => {
-        //     if (Array.isArray(opt.series) && opt.series.length) {
-        //       let table = '<table style="width:100%;text-align:center"><tbody><tr><td>Time:</td>' +
-        //         opt.series.map(val => '<td>' + val.name + '</td>').join('') + '</tr>';
-        //
-        //       const data: number[][] = [];
-        //       opt.series.forEach((val, ind) => {
-        //         val.data.forEach(item => {
-        //           if (!data[item[0]]) {
-        //             data[item[0]] = [];
-        //           }
-        //           data[item[0]][ind] = item[1];
-        //         });
-        //       });
-        //
-        //
-        //       for (const k in data) {
-        //         if (data.hasOwnProperty(k)) {
-        //           table += `<tr><td>${new DatePipe(this.getLocale(this.locale)).transform(k, 'd MMM y, HH:mm')}</td>`;
-        //           for (let j = 0; j < data[k].length; j++) {
-        //             table += '<td>' + this.roundData(data[k][j]) + '</td>';
-        //           }
-        //           table += '</tr>';
-        //         }
-        //       }
-        //
-        //       table += '</tbody></table>';
-        //       return table;
-        //     }
-        //     return 'None';
-        //   }
-        // },
-        // restore: {show: true},
+
       }
     },
     grid: {
@@ -326,6 +291,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
     let yAxis: any[] = [];
     this.uniqTitles = [];
 
+    values = this.updateValueTimeZone(values);
     const value = values[0];
     let period;
     switch (config.duration) {
@@ -347,7 +313,6 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
 
     if (config.generator) {
       const times = this.getMaxMinTimeline(value);
-      const diff = Math.round((times.max - times.min) * 0.1);
       xAxis.min = times.min - FULL_DAY;
       xAxis.max = times.max + FULL_DAY;
     } else {
@@ -359,7 +324,6 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
       xAxis.min = xAxis.min - diff;
       xAxis.max = xAxis.max + diff;
     }
-    console.log('xAxis', xAxis);
     const measures = values.map(val => val.device.param.measure.id).filter((value, index, self) => self.indexOf(value) === index);
     if (measures.length > 1 && this.config.viewtype !== ChartViews.stackedAreaChart) {
 
@@ -487,11 +451,11 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
               for (let i = 0; i < days; i++) {
                 const date = (new Date(xAxis.min + i * FULL_DAY));
                 this.modifyTime(date, value.device.object.timezone);
-                const day = date.getDay();
+                const day = date.getUTCDay();
                 if (day === 0) {// Воскресенье
 
                   const d = (new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0));
-                  this.modifyTime(d, 0);
+                  // this.modifyTime(d, 0);
                   data.push([
                     {
                       // name: 'Peak',
@@ -530,7 +494,6 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
               data
             };
           }
-          console.log('markArea', markArea);
 
           res.push({
             type: 'line',
@@ -621,6 +584,25 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
     return {max, min};
   }
 
+  updateValueTimeZone(values: ItemSeries[]): ItemSeries[] {
+    return values.map(value => {
+      if (value.data) {
+        return {
+          ...value,
+          data: value.data.map((val: SeriesLineValue) => {
+            const date = new Date(val.timestmp);
+            this.modifyTime(date, 0);
+            return {
+              value: val.value,
+              timestmp: date.getTime(),
+            };
+          })
+        };
+      }
+      return value;
+    });
+  }
+
   getMaxMinTimeline(values: ItemSeries) {
     let max = Number.MIN_VALUE, min = Number.MAX_VALUE;
     if (values.data) {
@@ -697,7 +679,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   modifyTime(date, timezone) {
-    date.setTime(date.getTime() + (-date.getTimezoneOffset() - timezone * 60) * 60000); // set object timezone
+    return date.setTime(date.getTime() + (date.getTimezoneOffset() - timezone * 60) * 60000); // set object timezone
   }
 
 
