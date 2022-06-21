@@ -18,7 +18,7 @@ import {
   ParamConfigSeries,
   ParamConfigSingle,
   ParamConfigurator,
-  SeriesDuration,
+  SeriesDuration, SysInfoValue,
   VALUE_TYPE,
   WidgetArrayParam,
   WidgetItem,
@@ -153,6 +153,9 @@ function generateValue(index: number, item: WidgetParamChildren, paramType: PARA
       break;
     case ITEM_TYPE.interval:
       res = generateIntervalParams(index, paramType, item, param);
+      break;
+    case ITEM_TYPE.sysinfo:
+      res = generateSysInfoParam(index, paramType, item, param);
       break;
   }
   if (item.custom_data) {
@@ -529,6 +532,15 @@ function generateTableParams(index: number, paramType: PARAM_TYPE, item: WidgetP
     custom: {},
     borders: [],
     isEditing: false,
+  };
+}
+
+function generateSysInfoParam(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): SysInfoValue {
+  return {
+    data: {
+      controllersInfo: {total: getRandom(0, 10), online: getRandom(0, 10), offline: getRandom(0, 10)},
+      date: Date.now()
+    }
   };
 }
 

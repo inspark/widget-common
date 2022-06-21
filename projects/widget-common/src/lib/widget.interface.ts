@@ -2,6 +2,7 @@ export enum ITEM_TYPE {
   'single' = 1, // Единичные значения параметров
   'series' = 2, // Ряды данных
   'events' = 3, // Лента событий
+  'sysinfo' = 4, // Системные событий
   'interval' = 5, // Значения параметров на заданном интервале
   'table' = 6, // Таблица значений параметров
   'custom' = 7, // Поле не требующее обработки сервера
@@ -11,6 +12,7 @@ export const ITEM_TYPE_ITOS = {
   1: 'single',
   2: 'series',
   3: 'events',
+  4: 'sysinfo',
   5: 'interval',
   6: 'table',
   7: 'custom',
@@ -80,6 +82,10 @@ export interface ItemInterval extends IWidgetParam {
   data: IntervalValue;
 }
 
+export interface ItemSysInfo extends IWidgetParam {
+  data: SysInfoValue;
+}
+
 export interface ItemSeries extends IWidgetParam {
   value: any;
   data: SeriesValue;
@@ -98,7 +104,7 @@ export interface ItemParent {
   [k: string]: WidgetItem | WidgetItem[] | ParamConfig;
 }
 
-export type WidgetItem = any | ItemSingle | ItemTable | ItemSeries | ItemInterval | ItemParent | EventValues;
+export type WidgetItem = any | ItemSingle | ItemTable | ItemSeries | ItemInterval | ItemParent | EventValues | SysInfoValue;
 
 export interface WidgetItems {
   [k: string]: WidgetItem;
@@ -394,6 +400,18 @@ export interface IntervalValue {
   valueMap: Array<{ interval: number; value: number }>;
 }
 
+export interface ControllersInfo {
+  total: number;
+  online: number;
+  offline: number;
+}
+
+export interface SysInfoValue {
+  data: {
+    date: number;
+    controllersInfo: ControllersInfo;
+  };
+}
 
 export type SeriesValue = Array<SeriesCandleValue | SeriesLineValue>;
 
@@ -585,11 +603,22 @@ export interface WidgetSocketData {
   exwidget: number;
 }
 
+export enum ControllerState {
+  ONLINE = 'ONLINE',
+  OFFLINE = 'OFFLINE',
+}
+
+export interface ControllerPayload {
+  controllerId: number;
+  state: ControllerState;
+}
+
 export interface WidgetSocketDataCommand {
   command: string;
   widgetDataList: WidgetSocketData[];
   message?: string;
   error?: string;
+  payload?: ControllerPayload | any;
 }
 
 export interface IWidgetFile {
