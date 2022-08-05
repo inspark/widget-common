@@ -149,6 +149,10 @@ export interface GenerateConfig extends GenerateConfigItem {
   rows?: number;
   visibleRow?: boolean;
   visibleCol?: boolean;
+
+
+  // Для событий
+  duration?: SeriesDuration;
 }
 
 export interface GenerateConfigItem {
@@ -342,10 +346,15 @@ export interface ParamConfigEvents {
   lineType?: number;  // События, команды, уставки
   attrList?: string[];       // Список и относительное расположение выдаваемых атрибутов
   titleList?: string[];        // Список и относительное расположение заголовков выдаваемых атрибутов
-  size?: number;     //  Максимальное количество выдаваемых строк в ленте
   objectIds?: string[];         // Идентификаторы объектов
   eventIds?: string[];          // Идентификаторы событий
   commands?: string[];          // Идентификаторы команд
+
+  // Можно использовать либо этот параметр
+  size?: number;     //  Максимальное количество выдаваемых строк в ленте
+
+  // Либо этот
+  duration?: SeriesDuration;  // временной интервал
 }
 
 
