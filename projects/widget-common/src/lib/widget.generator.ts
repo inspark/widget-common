@@ -381,8 +381,40 @@ function generateIntervalParams(index: number, paramType: PARAM_TYPE, item: Widg
 }
 
 function generateEventsParams(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): EventValues {
+
+  const event = {
+    'shortname': 'Test AlphaOpen',
+    'serialnumber': 'ALPHA1',
+    'eventid': 5105,
+    'name': 'Выход из строя ИБП, СБГЭ',
+    'timestmp': 1543484923979,
+    'paramname': 'Пожар',
+    'paramvalue': null,
+    'senttime': null,
+    'resulttime': null,
+    'state': null,
+    'commandcode': null,
+    'msg': 'Объект Test AlphaOpen, зона МЦА. Выход из строя ИБП или СБГЭ. «Пожар». 75,000000 вкл/выкл ',
+    'cdpid': 5690,
+    'ccpid': null,
+    'categoryid': 10
+  };
+
+  console.log('generateEventsParams', param);
+  const rowList: any[] = [];
+
+  if (param.generateConfig.duration) {
+    for (let i = 0; i < getRandom(6, 30); i++) {
+      rowList.push(event);
+    }
+  } else {
+    for (let i = 0; i < param.generateConfig.count ?? 20; i++) {
+      rowList.push(event);
+    }
+  }
+
   return {
-    data: EVENTS_DATA,
+    data: {rowList},
     config: {attrList: ['shortname', 'serialnumber', 'msg'], titleList: ['Объект', 'Сер.номер', 'Сообщение']}
   };
 }
@@ -1262,170 +1294,6 @@ const CANDLE_CHART = [{'timestmp': 1548968400000, 'open': 24.0, 'close': 84.0, '
   'high': 100.0
 }];
 
-
-const EVENTS_DATA = {
-  rowList: [{
-    'shortname': 'Test AlphaOpen',
-    'serialnumber': 'ALPHA1',
-    'eventid': 5105,
-    'name': 'Выход из строя ИБП, СБГЭ',
-    'timestmp': 1543484923979,
-    'paramname': 'Пожар',
-    'paramvalue': null,
-    'senttime': null,
-    'resulttime': null,
-    'state': null,
-    'commandcode': null,
-    'msg': 'Объект Test AlphaOpen, зона МЦА. Выход из строя ИБП или СБГЭ. «Пожар». 75,000000 вкл/выкл ',
-    'cdpid': 5690,
-    'ccpid': null,
-    'categoryid': 10
-  }, {
-    'shortname': 'Test AlphaOpen',
-    'serialnumber': 'ALPHA1',
-    'eventid': 5105,
-    'name': 'Выход из строя ИБП, СБГЭ',
-    'timestmp': 1543484608828,
-    'paramname': 'Пожар',
-    'paramvalue': null,
-    'senttime': null,
-    'resulttime': null,
-    'state': null,
-    'commandcode': null,
-    'msg': 'Объект Test AlphaOpen, зона МЦА. Выход из строя ИБП или СБГЭ. «Пожар». 75,000000 вкл/выкл ',
-    'cdpid': 5690,
-    'ccpid': null,
-    'categoryid': 10
-  }, {
-    'shortname': 'Test AlphaOpen',
-    'serialnumber': 'ALPHA1',
-    'eventid': 5105,
-    'name': 'Выход из строя ИБП, СБГЭ',
-    'timestmp': 1543484293819,
-    'paramname': 'Пожар',
-    'paramvalue': null,
-    'senttime': null,
-    'resulttime': null,
-    'state': null,
-    'commandcode': null,
-    'msg': 'Объект Test AlphaOpen, зона МЦА. Выход из строя ИБП или СБГЭ. «Пожар». 75,000000 вкл/выкл ',
-    'cdpid': 5690,
-    'ccpid': null,
-    'categoryid': 10
-  }, {
-    'shortname': 'Test AlphaOpen',
-    'serialnumber': 'ALPHA1',
-    'eventid': 5105,
-    'name': 'Выход из строя ИБП, СБГЭ',
-    'timestmp': 1543483978891,
-    'paramname': 'Пожар',
-    'paramvalue': null,
-    'senttime': null,
-    'resulttime': null,
-    'state': null,
-    'commandcode': null,
-    'msg': 'Объект Test AlphaOpen, зона МЦА. Выход из строя ИБП или СБГЭ. «Пожар». 75,000000 вкл/выкл ',
-    'cdpid': 5690,
-    'ccpid': null,
-    'categoryid': 10
-  }, {
-    'shortname': 'Test AlphaOpen',
-    'serialnumber': 'ALPHA1',
-    'eventid': 5105,
-    'name': 'Выход из строя ИБП, СБГЭ',
-    'timestmp': 1543483663713,
-    'paramname': 'Пожар',
-    'paramvalue': null,
-    'senttime': null,
-    'resulttime': null,
-    'state': null,
-    'commandcode': null,
-    'msg': 'Объект Test AlphaOpen, зона МЦА. Выход из строя ИБП или СБГЭ. «Пожар». 75,000000 вкл/выкл ',
-    'cdpid': 5690,
-    'ccpid': null,
-    'categoryid': 10
-  }, {
-    'shortname': 'Test AlphaOpen',
-    'serialnumber': 'ALPHA1',
-    'eventid': 5105,
-    'name': 'Выход из строя ИБП, СБГЭ',
-    'timestmp': 1543483348410,
-    'paramname': 'Пожар',
-    'paramvalue': null,
-    'senttime': null,
-    'resulttime': null,
-    'state': null,
-    'commandcode': null,
-    'msg': 'Объект Test AlphaOpen, зона МЦА. Выход из строя ИБП или СБГЭ. «Пожар». 75,000000 вкл/выкл ',
-    'cdpid': 5690,
-    'ccpid': null,
-    'categoryid': 10
-  }, {
-    'shortname': 'Test AlphaOpen',
-    'serialnumber': 'ALPHA1',
-    'eventid': 5105,
-    'name': 'Выход из строя ИБП, СБГЭ',
-    'timestmp': 1543483033263,
-    'paramname': 'Пожар',
-    'paramvalue': null,
-    'senttime': null,
-    'resulttime': null,
-    'state': null,
-    'commandcode': null,
-    'msg': 'Объект Test AlphaOpen, зона МЦА. Выход из строя ИБП или СБГЭ. «Пожар». 75,000000 вкл/выкл ',
-    'cdpid': 5690,
-    'ccpid': null,
-    'categoryid': 10
-  }, {
-    'shortname': 'Test AlphaOpen',
-    'serialnumber': 'ALPHA1',
-    'eventid': 5105,
-    'name': 'Выход из строя ИБП, СБГЭ',
-    'timestmp': 1543482718006,
-    'paramname': 'Пожар',
-    'paramvalue': null,
-    'senttime': null,
-    'resulttime': null,
-    'state': null,
-    'commandcode': null,
-    'msg': 'Объект Test AlphaOpen, зона МЦА. Выход из строя ИБП или СБГЭ. «Пожар». 75,000000 вкл/выкл ',
-    'cdpid': 5690,
-    'ccpid': null,
-    'categoryid': 10
-  }, {
-    'shortname': 'Test AlphaOpen',
-    'serialnumber': 'ALPHA1',
-    'eventid': 5105,
-    'name': 'Выход из строя ИБП, СБГЭ',
-    'timestmp': 1543482402900,
-    'paramname': 'Пожар',
-    'paramvalue': null,
-    'senttime': null,
-    'resulttime': null,
-    'state': null,
-    'commandcode': null,
-    'msg': 'Объект Test AlphaOpen, зона МЦА. Выход из строя ИБП или СБГЭ. «Пожар». 75,000000 вкл/выкл ',
-    'cdpid': 5690,
-    'ccpid': null,
-    'categoryid': 10
-  }, {
-    'shortname': 'Test AlphaOpen',
-    'serialnumber': 'ALPHA1',
-    'eventid': 5105,
-    'name': 'Выход из строя ИБП, СБГЭ',
-    'timestmp': 1543482087815,
-    'paramname': 'Пожар',
-    'paramvalue': null,
-    'senttime': null,
-    'resulttime': null,
-    'state': null,
-    'commandcode': null,
-    'msg': 'Объект Test AlphaOpen, зона МЦА. Выход из строя ИБП или СБГЭ. «Пожар». 75,000000 вкл/выкл ',
-    'cdpid': 5690,
-    'ccpid': null,
-    'categoryid': 10
-  }]
-};
 
 const BIG_TEXT = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi convallis congue nisi vel congue. Nulla vel sem non diam condimentum consectetur. Vivamus venenatis vehicula arcu, nec porta nisl. Aliquam vitae euismod arcu. Aenean fringilla, ligula et convallis fermentum, felis ligula commodo ante, non bibendum arcu diam vel ligula. Nullam lobortis interdum lorem ut convallis. Suspendisse potenti. Sed malesuada suscipit odio. Morbi a magna quis arcu semper consequat.',
