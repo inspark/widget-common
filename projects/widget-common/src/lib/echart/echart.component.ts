@@ -171,8 +171,16 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
     },
     toolbox: {
       right: '20px',
+      showTitle: false,
       feature: {
-
+      },
+      tooltip: {
+        show: true,
+        formatter: function (param) {
+          return '<div>' + param.title + '</div>';
+        },
+        backgroundColor: '#222',
+        extraCssText: 'color: #fff'
       }
     },
     grid: {
