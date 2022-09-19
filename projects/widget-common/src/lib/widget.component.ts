@@ -7,11 +7,13 @@ import {
   WidgetParams,
   WidgetSize
 } from './widget.interface';
+import {WidgetApi} from './widget.api';
 
 export const _ = (str: string) => str;
 
 export class WidgetComponent {
 
+  API: WidgetApi;
   media: any;
   width: number;
   height: number;

@@ -212,8 +212,9 @@ function assignValue(item: WidgetParamChildren, itemPath, params: IWidgetParam[]
           data: null,
           value: null,
           custom: {},
+          config: {},
           viewConfig: getConfig(viewConfigs, path.join('.')),
-          custom_data: item.custom_data
+          custom_data: item.custom_data,
         };
         if (i > rows) {
           rows = i;

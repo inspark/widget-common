@@ -72,21 +72,21 @@ export interface Border {
 }
 
 
-export interface ItemSingle extends IWidgetParam {
+export interface ItemSingle extends IWidgetParam<ParamConfigSingle> {
   value: any;
   data: SingleValue;
 }
 
-export interface ItemInterval extends IWidgetParam {
+export interface ItemInterval extends IWidgetParam<ParamConfigInterval> {
   value: any;
   data: IntervalValue;
 }
 
-export interface ItemSysInfo extends IWidgetParam {
+export interface ItemSysInfo extends IWidgetParam<ParamConfigSysInfo> {
   data: SysInfoValue;
 }
 
-export interface ItemSeries extends IWidgetParam {
+export interface ItemSeries extends IWidgetParam<ParamConfigSeries> {
   value: any;
   data: SeriesValue;
 }
@@ -95,7 +95,7 @@ export interface ItemTable extends IWidgetParam {
   values: TableValues;
 }
 
-export interface ItemCustom extends IWidgetParam {
+export interface ItemCustom extends IWidgetParam<ParamConfigCustom> {
   value: any;
   files?: any; //  For Archer
 }
@@ -117,17 +117,17 @@ export enum SiteTheme {
 }
 
 
-export type IWidgetParamTable = IWidgetParam[][];
+export type IWidgetParamTable<TConfig = any> = IWidgetParam<TConfig>[][];
 
 
 // структура для конфигуратора
-export interface ParamConfigurator {
+export interface ParamConfigurator<TConfig = any> {
   name: string;
   title: string;
   itemType: ITEM_TYPE;
   paramType: PARAM_TYPE;
-  value?: IWidgetParam; // Для обычных значений
-  values?: IWidgetParamTable; // Для табличных значений
+  value?: IWidgetParam<TConfig>; // Для обычных значений
+  values?: IWidgetParamTable<TConfig>; // Для табличных значений
   items?: ParamConfigurator[];
   isArray?: boolean;
   maxItems?: number;
@@ -228,14 +228,14 @@ export interface IWidgetDeviceParamData {
 }
 
 // Структура для хранения информации о параметры для виджетов
-export interface IWidgetParam {
+export interface IWidgetParam<TConfig = any> {
   id?: number;
   device: IWidgetDeviceParam;
   widgetId: number;
   refName: string;
   itemType: ITEM_TYPE;
   title: string;
-  config: ParamConfig;
+  config: TConfig;
   viewConfig?: IWidgetParamConfig;
   icons?: {
     falsevalue: string;
@@ -363,12 +363,17 @@ export interface ParamConfigCustom {
   type?: PARAM_TYPE;
 }
 
+export interface ParamConfigSysInfo {
+  rubricId: number;
+}
+
 export type ParamConfig =
   ParamConfigInterval
   | ParamConfigSeries
   | ParamConfigSingle
   | ParamConfigEvents
-  | ParamConfigCustom;
+  | ParamConfigCustom
+  | ParamConfigSysInfo;
 
 
 /**
@@ -416,10 +421,8 @@ export interface ControllersInfo {
 }
 
 export interface SysInfoValue {
-  data: {
-    date: number;
-    controllersInfo: ControllersInfo;
-  };
+  date: number;
+  controllersInfo: ControllersInfo;
 }
 
 export type SeriesValue = Array<SeriesCandleValue | SeriesLineValue>;

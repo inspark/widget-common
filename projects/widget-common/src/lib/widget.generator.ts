@@ -7,7 +7,7 @@ import {
   ItemCustom,
   ItemInterval,
   ItemSeries,
-  ItemSingle,
+  ItemSingle, ItemSysInfo,
   ItemTable,
   LineType,
   PARAM_STATE_INT,
@@ -86,14 +86,14 @@ export function generateValues(inputValues: WidgetParamsChildren | WidgetArrayPa
 }
 
 
-function generateParamConfig(itemType: ITEM_TYPE, param: ParamConfigurator, paramType: PARAM_TYPE = null)
-  : ParamConfigSeries | ParamConfigInterval | ParamConfigSingle | ParamConfigEvents | ParamConfigCustom {
+function generateParamConfig<T>(itemType: ITEM_TYPE, param: ParamConfigurator, paramType: PARAM_TYPE = null)
+  : T {
   switch (itemType) {
     case ITEM_TYPE.custom:
       return {
         type: paramType,
         value: 'text'
-      };
+      } as any;
     case ITEM_TYPE.interval:
       return {
         dailyRange: 'dailyRange',
@@ -101,12 +101,12 @@ function generateParamConfig(itemType: ITEM_TYPE, param: ParamConfigurator, para
         valueType: VALUE_TYPE.absolute,
         duration: SeriesDuration.day,
         count: 1,
-      };
+      } as any;
 
     case ITEM_TYPE.single:
       return {
         valueType: VALUE_TYPE.absolute,
-      };
+      } as any;
 
     case ITEM_TYPE.series:
       const config = param.config as ParamConfigSeries;
@@ -116,14 +116,14 @@ function generateParamConfig(itemType: ITEM_TYPE, param: ParamConfigurator, para
         duration: SeriesDuration.week,
         count: 0,
         generator: true
-      };
+      } as any;
     case ITEM_TYPE.events:
       return {
         lineType: LineType.eventlog,
         attrList: ['shortname', 'serialnumber', 'eventid', 'name', 'timestmp', 'msg'],
         titleList: ['Short name', 'Serial number', 'Event', 'Full name', 'Time', 'Message'],
         size: 10
-      };
+      } as any;
 
   }
 
@@ -567,8 +567,15 @@ function generateTableParams(index: number, paramType: PARAM_TYPE, item: WidgetP
   };
 }
 
-function generateSysInfoParam(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): SysInfoValue {
+function generateSysInfoParam(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemSysInfo {
   return {
+    id: 1,
+    device: null,
+    refName: '',
+    itemType: ITEM_TYPE.sysinfo,
+    widgetId: null,
+    title: 'Title param',
+    config: {rubricId: 1174},
     data: {
       controllersInfo: {total: getRandom(0, 10), online: getRandom(0, 10), offline: getRandom(0, 10)},
       date: Date.now()
