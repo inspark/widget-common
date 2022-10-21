@@ -15,8 +15,6 @@ export interface WidgetContainerDevOptions {
 export interface WidgetContainerProduction {
   widget: IWidget;
   widgetPackage: WidgetPackage;
-  widgetClass: IWidgetClass;
-  params: IWidgetParam[];
   sendData: (param: ItemSingle) => {};
   setManual: (param: ItemSingle, value: boolean) => {};
   paramEdit: (param: ItemSingle, container?: HTMLElement) => {};

@@ -29,6 +29,7 @@
     "ng2-cookies": "^1.0.12",
     "ngx-echarts": "^5.2.2",
     "node-sass": "^4.14.1",
+    "resize-observer-polyfill": "^1.5.1",
     "zone.js": "~0.10.3"
   },
   "devDependencies": {

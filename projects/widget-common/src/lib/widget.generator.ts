@@ -1,24 +1,22 @@
 import {
   Border,
-  ChartTypes, ChartViews, ChartViewToType,
+  ChartViews,
+  ChartViewToType,
   EventValues,
   GenerateConfigItem,
   ITEM_TYPE,
   ItemCustom,
   ItemInterval,
   ItemSeries,
-  ItemSingle, ItemSysInfo,
-  ItemTable,
+  ItemSingle,
+  ItemSysInfo,
+  ItemTable, IWidget,
   LineType,
   PARAM_STATE_INT,
   PARAM_TYPE,
-  ParamConfigCustom,
-  ParamConfigEvents,
-  ParamConfigInterval,
   ParamConfigSeries,
-  ParamConfigSingle,
   ParamConfigurator,
-  SeriesDuration, SysInfoValue,
+  SeriesDuration,
   VALUE_TYPE,
   WidgetArrayParam,
   WidgetItem,
@@ -506,9 +504,6 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
   }
 
   if (paramType === PARAM_TYPE.custom_select) {
-
-    // console.log('config', config);
-    // console.log('item', item);
     const defValue = null;
     return {
       device: null,
@@ -523,6 +518,59 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
       custom: {},
       canEditable: config.editable,
       isEditing: false,
+    };
+  }
+
+  if (paramType === PARAM_TYPE.custom_dashboard) {
+    const widgets: IWidget[] = [
+      {
+        title: 'Widget 1',
+        dashboard: {
+          id: 1,
+          dashname: 'Dash 1',
+        },
+        widgetclass: {
+          id: 1,
+          name: 'text',
+          storeId: 'text',
+        }
+      },
+      {
+        title: 'Widget 2',
+        dashboard: {
+          id: 1,
+          dashname: 'Dash 1',
+        },
+        widgetclass: {
+          id: 1,
+          name: 'text',
+          storeId: 'text',
+        }
+      },
+      {
+        title: 'Widget 3',
+        dashboard: {
+          id: 1,
+          dashname: 'Dash 1',
+        },
+        widgetclass: {
+          id: 1,
+          name: 'text',
+          storeId: 'text',
+        }
+      },
+    ];
+    return {
+      device: null,
+      refName: '',
+      itemType: ITEM_TYPE.custom,
+      widgetId: null,
+      title: config.title !== null ? config.title : 'Title param',
+      config: generateParamConfig(ITEM_TYPE.custom, param, paramType),
+      value: widgets,
+      viewConfig: {},
+      dashboardLink: config.pageLink ? {dashname: 'Test dashname', id: 2} : null,
+      custom: {},
     };
   }
 }

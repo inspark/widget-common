@@ -35,6 +35,7 @@ export enum PARAM_TYPE {
   'custom_json' = 15, // Текст JSON
   'custom_select' = 16, // Список
   'custom_forge' = 17, // Работа с Autodesk Forge
+  'custom_dashboard' = 18,
 }
 
 export const PARAM_TYPE_ITOS = {
