@@ -398,7 +398,6 @@ function generateEventsParams(index: number, paramType: PARAM_TYPE, item: Widget
     'categoryid': 10
   };
 
-  console.log('generateEventsParams', param);
   const rowList: any[] = [];
 
   if (param.generateConfig.duration) {
@@ -406,7 +405,7 @@ function generateEventsParams(index: number, paramType: PARAM_TYPE, item: Widget
       rowList.push(event);
     }
   } else {
-    for (let i = 0; i < param.generateConfig.count ?? 20; i++) {
+    for (let i = 0; i < (param.generateConfig.count ?? 20); i++) {
       rowList.push(event);
     }
   }

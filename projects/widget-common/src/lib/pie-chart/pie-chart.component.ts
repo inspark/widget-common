@@ -136,7 +136,6 @@ export class PieChartComponent implements OnInit, OnChanges, OnDestroy {
 
   updateData(config: ParamConfigSingle, values: ItemInterval | ItemSingle) {
 
-    // console.log('updateData', config, values);
     const res: SeriesOption[] = [];
 
     this.uniqTitles = [];

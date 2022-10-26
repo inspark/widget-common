@@ -6,6 +6,8 @@ export enum CommunicationCommand {
   'params' = 'params',
   'locale' = 'locale',
   'theme' = 'theme',
+  'widget' = 'widget',
+  'resize' = 'resize',
 }
 
 export interface CommunicationValue {

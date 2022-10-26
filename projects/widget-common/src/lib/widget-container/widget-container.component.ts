@@ -2,6 +2,7 @@ import {ItemSingle, IWidget, IWidgetClass, IWidgetParam, SiteTheme} from '../wid
 import {WidgetPackage} from '../widget.component';
 
 export interface WidgetContainerDevOptions {
+  widget: IWidget;
   widgetPackage: WidgetPackage;
   setManual: (param: ItemSingle, value: boolean) => {};
   paramEdit: (param: ItemSingle, container?: HTMLElement) => {};

@@ -547,7 +547,6 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
         }
       }
     };
-    // console.log('this.options', this.options);
   }
 
   findUniqName(title, ind = 0) {

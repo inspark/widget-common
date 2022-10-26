@@ -110,7 +110,6 @@ export class ParamAssignExtension extends Extension {
     }
 
     const onClick = (e) => {
-      console.log('onClick');
       // this.viewer.select($(e.currentTarget).data('id'));
       // this.viewer.utilities.fitToView();
     };

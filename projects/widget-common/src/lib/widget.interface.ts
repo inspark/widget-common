@@ -578,13 +578,13 @@ export interface Objrubric {
 
 export interface IWidgetConfig {
   widget: {
-    picture: {
-      setId: number;
-      pictureId: number
+    picture?: {
+      setId?: number;
+      pictureId?: number
     },
     floatingHeader?: boolean;
   };
-  position: WidgetSize;
+  position?: WidgetSize;
   items: { [k: string]: IWidgetParamConfig };
 }
 
