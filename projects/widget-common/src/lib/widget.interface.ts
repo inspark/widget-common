@@ -223,7 +223,8 @@ export interface IWidgetDeviceParamData {
   calc?: boolean;
   name?: string;
   type?: PARAM_TYPE;
-  value?: number;
+  value?: any;
+  valueDate?: number;
   measure?: { title: string, unit: string, id: number };
   ctrability?: boolean;
 }

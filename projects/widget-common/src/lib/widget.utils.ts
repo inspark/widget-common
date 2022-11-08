@@ -14,7 +14,7 @@ import {
   TableValues,
   WidgetArrayParam,
   WidgetItem,
-  WidgetItems, WidgetParam,
+  WidgetItems,
   WidgetParamChildren,
   WidgetParamsChildren,
 } from './widget.interface';
@@ -181,7 +181,8 @@ function assignValuesArray(inputValues: WidgetArrayParam[], params: IWidgetParam
         }
         result[ind] = {...val, data: null, value, viewConfig};
       } else {
-        result[ind] = {...val, data: null, value: null, viewConfig};
+        const value = (val.itemType === ITEM_TYPE.single && val?.device?.param?.value) ? val.device.param.value : null;
+        result[ind] = {...val, data: value, value, viewConfig};
       }
     }
   });
@@ -256,7 +257,16 @@ function assignValue(item: WidgetParamChildren, itemPath, params: IWidgetParam[]
           custom: {}
         };
       } else {
-        return {...param, data: null, value: null, custom_data: item.custom_data, viewConfig, custom: {}};
+        const value = (param.itemType === ITEM_TYPE.single && param?.device?.param?.value) ? param.device.param.value : null;
+
+        return {
+          ...param,
+          data: value,
+          value,
+          custom_data: item.custom_data,
+          viewConfig,
+          custom: {}
+        };
       }
     } else {
       return {data: null};
