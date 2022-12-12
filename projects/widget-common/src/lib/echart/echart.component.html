@@ -1,2 +1,2 @@
 <div echarts [options]="options" *ngIf="display" [initOpts]="initOpts" style="width:100%; height: 100%" [theme]="theme" (chartInit)="onChartInit($event)"></div>
-<div class="no-data-message" *ngIf="!values">{{noDataMessage}}</div>
+<div class="no-data-message" *ngIf="!values && !simpleData">{{noDataMessage}}</div>

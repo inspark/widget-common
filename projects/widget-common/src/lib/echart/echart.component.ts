@@ -106,6 +106,10 @@ const RedZone = {
   [SiteTheme.dark]: 'rgba(145, 30, 49, 0.2)'
 };
 
+export interface SimpleData {
+  title?: string;
+  data: number[];
+}
 
 @Component({
   selector: 'app-echart',
@@ -118,6 +122,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
 
 
   @Input() values: ItemSeries[];
+  @Input() simpleData: SimpleData[];
   @Input() config: ParamConfigSeries;
   @Input() locale = 'en';
   @Input() noDataMessage = 'No data';
@@ -148,16 +153,25 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
         if (params[0]) {
           res = `<div class="title">${new DatePipe(this.getLocale(this.locale)).transform(params[0].value[0], 'd MMM y, HH:mm')}</div><table>`;
           res += params.map(val => {
-            const unit = val.value[val.value.length - 1].device.param.measure.unit ? val.value[val.value.length - 1].device.param.measure.unit : '';
-            if (val.seriesType === 'candlestick') {
-              // val.open, val.close, val.low, val.high, value]
+
+            if (typeof val.value[val.value.length - 1] === 'number') {
               return `<tr><td class="label">${val.marker} ${cutName(val.seriesName, 20)}</td>
-<td><div class="value"><div><span>ОТКР:</span> ${this.roundData(val.value[1])}</div><div><span>ЗАКР:</span> ${this.roundData(val.value[2])}</div><div><span>МИН:</span> ${this.roundData(val.value[3])}</div><div><span>МАКС:</span> ${this.roundData(val.value[4])}</div></div></td></tr>`;
+<td><div class="value"><b>${this.roundData(val.value[1])}</b> </div></td></tr>`;
             } else {
-              return `<tr><td class="label">${val.marker} ${cutName(val.seriesName, 20)}</td>
+
+              const unit = val.value[val.value.length - 1].device.param.measure.unit ? val.value[val.value.length - 1].device.param.measure.unit : '';
+              if (val.seriesType === 'candlestick') {
+                // val.open, val.close, val.low, val.high, value]
+                return `<tr><td class="label">${val.marker} ${cutName(val.seriesName, 20)}</td>
+<td><div class="value"><div><span>ОТКР:</span> ${this.roundData(val.value[1])}</div><div><span>ЗАКР:</span> ${this.roundData(val.value[2])}</div><div><span>МИН:</span> ${this.roundData(val.value[3])}</div><div><span>МАКС:</span> ${this.roundData(val.value[4])}</div></div></td></tr>`;
+              } else {
+                return `<tr><td class="label">${val.marker} ${cutName(val.seriesName, 20)}</td>
 <td><div class="value"><b>${this.roundData(val.value[1])}</b> ${cutName(unit, 10)}</div></td></tr>`;
+              }
             }
           }).join('') + '</table>';
+
+
         }
         return res;
       }
@@ -172,8 +186,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
     toolbox: {
       right: '20px',
       showTitle: false,
-      feature: {
-      },
+      feature: {},
       tooltip: {
         show: true,
         formatter: function (param) {
@@ -250,11 +263,14 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
     if (this.echartsInstance && (changes.width || changes.height)) {
       this.resizeChart();
     }
-    if (changes.config || changes.values || changes.theme) {
+    if (changes.config || changes.values || changes.theme || changes.simpleData) {
       this.data = [];
-      if (this.config && this.values) {
-        if (this.values.length && this.values[0].data) {
+      if (this.config && (this.values || this.simpleData)) {
+        if (this.values && this.values.length && this.values[0].data) {
           this.updateData(this.config, this.values);
+        }
+        if (this.simpleData && this.simpleData.length) {
+          this.updateArrayData(this.config, this.simpleData);
         }
       }
     }
@@ -284,6 +300,76 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
 
   roundData(value, numbers = 2) {
     return Math.round(value * Math.pow(10, numbers)) / Math.pow(10, numbers);
+  }
+
+  updateArrayData(config: ParamConfigSeries, values: SimpleData[]) {
+    const res: SeriesOption[] = [];
+    const xAxis: any = {
+      type: 'value',
+      boundaryGap: true,
+      max: values[0].data.length,
+      axisLabel: {
+        formatter: function (value, index) {
+          return value / 1000 + 'kGhz';
+        }
+      }
+    };
+    const legend: string[] = values.map((val, ind) => val.title);
+    const yAxis: any = {
+      type: 'value',
+    };
+
+    values.forEach((value, ind) => {
+
+      res.push({
+        type: 'line',
+        name: value.title,
+        lineStyle: {
+          color: this.getChartColor(ind),
+        },
+        itemStyle: {
+          color: this.getChartColor(ind),
+        },
+        data: value.data.map((val, ind) => {
+          // return {x: val.timestmp, y: val.value};
+          return [ind, val];
+        }),
+      });
+    });
+
+    const magicType = {
+      type: ['bar', 'line'],
+    };
+
+    this.options = {
+      ...this.options,
+      xAxis,
+      yAxis,
+      legend: {data: legend, bottom: `8px`, show: true, type: 'scroll'},
+      series: res,
+      // dataZoom: [
+      //   {
+      //     type: 'slider'
+      //   },
+      //   {
+      //     type: 'inside'
+      //   }
+      // ],
+      grid: {
+        ...this.options.grid,
+        left: this.margin.left + 30,
+        right: this.margin.right + 30,
+      },
+      toolbox: {
+        ...this.options.toolbox, feature: {
+          ...(this.options.toolbox as any).feature,
+          saveAsImage: {show: true, backgroundColor: BackGround[this.theme]},
+          magicType,
+          // dataView: {...(this.options.toolbox as any).feature.dataView, backgroundColor: BackGround[this.theme]},
+        }
+      }
+    };
+
   }
 
   updateData(config: ParamConfigSeries, values: ItemSeries[]) {
@@ -327,13 +413,13 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
       xAxis.min = period.startTime;
       xAxis.max = period.endTime;
     }
-    if (this.config.viewtype !== ChartViews.stackedAreaChart) {
+    if (config.viewtype !== ChartViews.stackedAreaChart) {
       const diff = Math.round((xAxis.max - xAxis.min) * 0.02);
       xAxis.min = xAxis.min - diff;
       xAxis.max = xAxis.max + diff;
     }
     const measures = values.map(val => val.device.param.measure.id).filter((value, index, self) => self.indexOf(value) === index);
-    if (measures.length > 1 && this.config.viewtype !== ChartViews.stackedAreaChart) {
+    if (measures.length > 1 && config.viewtype !== ChartViews.stackedAreaChart) {
 
       yAxis = values.map((val, ind) => {
         const maxmin = this.getMaxMin(val);
@@ -566,8 +652,20 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  getMaxMin(values: ItemSeries) {
+  getMaxMinSimple(values: SimpleData['data']) {
+    let max = Number.MIN_VALUE, min = Number.MAX_VALUE;
+    values.forEach((value) => {
+      if (value > max) {
+        max = value;
+      }
+      if (value < min) {
+        min = value;
+      }
+    });
+    return {max, min};
+  }
 
+  getMaxMin(values: ItemSeries) {
     let max = Number.MIN_VALUE, min = Number.MAX_VALUE;
     if (this.config.charttype === ChartTypes.candlestickBarChart) {
       values.data.forEach((val: SeriesCandleValue) => {

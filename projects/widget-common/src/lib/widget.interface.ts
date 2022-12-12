@@ -27,6 +27,10 @@ export enum PARAM_TYPE {
   'signal' = 1, // сигнальный
   'value' = 2, // мгновенное значение
   'increment' = 3, // нарастающий итог
+  'pulse_counter' = 4, // счетчик импульсов
+  'string' = 5, // строковый
+  'image' = 6, // изображение
+  'text' = 7, // текстовый
 
   'custom_string' = 11,
   'custom_archer' = 12,
