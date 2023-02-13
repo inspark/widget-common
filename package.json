@@ -28,7 +28,7 @@
     "link": "^0.1.5",
     "ng2-cookies": "^1.0.12",
     "ngx-echarts": "^5.2.2",
-    "node-sass": "^4.14.1",
+    "node-sass": "^7.0.3",
     "resize-observer-polyfill": "^1.5.1",
     "zone.js": "~0.10.3"
   },
