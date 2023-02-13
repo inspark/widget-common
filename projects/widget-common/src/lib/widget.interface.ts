@@ -6,6 +6,7 @@ export enum ITEM_TYPE {
   'interval' = 5, // Значения параметров на заданном интервале
   'table' = 6, // Таблица значений параметров
   'custom' = 7, // Поле не требующее обработки сервера
+  'object' = 8 // Объект
 }
 
 export const ITEM_TYPE_ITOS = {
@@ -220,6 +221,12 @@ export interface IWidgetDeviceParam {
   zone?: { name: string };
   isWorking?: boolean;
   state?: { id?: number, name?: string, comment?: string };
+  sysState?: {
+    comment: string;
+    id: number;
+    color: string;
+    name: string
+  };
 }
 
 export interface IWidgetDeviceParamData {
