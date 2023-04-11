@@ -32,6 +32,7 @@ export enum PARAM_TYPE {
   'string' = 5, // строковый
   'image' = 6, // изображение
   'text' = 7, // текстовый
+  'coordinates' = 8, // Координаты
 
   'custom_string' = 11,
   'custom_archer' = 12,
