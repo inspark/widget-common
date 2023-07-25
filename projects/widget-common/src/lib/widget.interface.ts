@@ -662,3 +662,8 @@ export const Component = (opts) => {
     return component;
   };
 };
+
+export interface ModalOptions {
+  header: string;
+  width?: string;
+}

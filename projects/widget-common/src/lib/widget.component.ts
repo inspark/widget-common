@@ -1,12 +1,4 @@
-import {
-  ChartTypes,
-  ItemSingle,
-  SiteTheme,
-  VALUE_TYPE, WidgetCustomField,
-  WidgetItem,
-  WidgetParams,
-  WidgetSize
-} from './widget.interface';
+import {ChartTypes, SiteTheme, VALUE_TYPE, WidgetCustomField, WidgetItem, WidgetParams, WidgetSize} from './widget.interface';
 import {WidgetApi} from './widget.api';
 
 export const _ = (str: string) => str;
@@ -38,7 +30,6 @@ export class WidgetComponent {
 
   onUpdate(values) {
   }
-
 }
 
 
@@ -84,5 +75,9 @@ export interface WidgetPackage {
   locales?: { code: string, file: string }[];
   needPicture?: boolean;
   fields?: WidgetCustomField[];
+  // Для мобильных дашей. Будет ли виджет учитывать высоту заданную в настройках или подстроит автоматически
+  autoAdjustHeight?: boolean;
+  // Будет ли фрейм вокруг виджета
+  showFrame?: boolean;
 }
 

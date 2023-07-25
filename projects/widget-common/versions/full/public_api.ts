@@ -11,6 +11,7 @@ export * from './lib/widget.generator';
 export * from './lib/widget.utils';
 export * from './lib/widget.interface';
 export * from './lib/widget.api';
+export * from './lib/widget.dialog';
 export * from './lib/chart/chart.component';
 export * from './lib/echart/echart.component';
 export * from './lib/pie-chart/pie-chart.component';

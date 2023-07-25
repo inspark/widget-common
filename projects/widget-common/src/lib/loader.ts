@@ -1,6 +1,5 @@
-import {from, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {WidgetPackage} from './widget.component';
-import {IWidgetClass} from './widget.interface';
 
 
 const WIDGET_CACHE: {
