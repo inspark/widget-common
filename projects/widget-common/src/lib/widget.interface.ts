@@ -569,6 +569,7 @@ export interface IWidget {
   conflict?: boolean;
   hidden?: boolean;
   config?: IWidgetConfig;
+  path?: string; // Путь при загрузке виджета(для дашей которые загружаются в дашах)
 }
 
 export interface ServiceDashboardClass {
