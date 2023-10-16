@@ -11,7 +11,7 @@ import {
   ItemSingle,
   ItemSysInfo,
   ItemTable, IWidget,
-  LineType,
+  LineType, ObjStateValues,
   PARAM_STATE_INT,
   PARAM_TYPE,
   ParamConfigSeries,
@@ -141,6 +141,9 @@ function generateValue(index: number, item: WidgetParamChildren, paramType: PARA
       break;
     case ITEM_TYPE.events:
       res = generateEventsParams(index, paramType, item, param);
+      break;
+    case ITEM_TYPE.objstate:
+      res = generateObjStateParams(index, paramType, item, param);
       break;
     case ITEM_TYPE.custom:
       if (paramType === PARAM_TYPE.custom_external) {
@@ -380,39 +383,65 @@ function generateIntervalParams(index: number, paramType: PARAM_TYPE, item: Widg
 
 function generateEventsParams(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): EventValues {
 
-  const event = {
-    'shortname': 'Test AlphaOpen',
-    'serialnumber': 'ALPHA1',
-    'eventid': 5105,
-    'name': 'Выход из строя ИБП, СБГЭ',
-    'timestmp': 1543484923979,
-    'paramname': 'Пожар',
-    'paramvalue': null,
-    'senttime': null,
-    'resulttime': null,
-    'state': null,
-    'commandcode': null,
-    'msg': 'Объект Test AlphaOpen, зона МЦА. Выход из строя ИБП или СБГЭ. «Пожар». 75,000000 вкл/выкл ',
-    'cdpid': 5690,
-    'ccpid': null,
-    'categoryid': 10
+  const getEvent = () => {
+    return {
+      'id': Math.round(Math.random() * 100000),
+      'shortname': 'БЕЛКА',
+      'serialnumber': 'SQUIRREL',
+      'eventid': Math.round(Math.random() * 100000),
+      'name': '0pus334',
+      'timestmp': 1694157120464,
+      'paramname': null,
+      'paramvalue': null,
+      'msg': '0pus334',
+      'cdpid': null,
+      'ccpid': null,
+      'categoryid': null,
+      'media': [],
+      'criticalId': 4,
+      'criticalName': 'success',
+      'closeTime': 1694157120464,
+      'closed': Math.random() > 0.5,
+      'processed': Math.random() > 0.5,
+      'value': null
+    };
   };
-
   const rowList: any[] = [];
 
   if (param.generateConfig.duration) {
     for (let i = 0; i < getRandom(6, 30); i++) {
-      rowList.push(event);
+      rowList.push(getEvent());
     }
   } else {
     for (let i = 0; i < (param.generateConfig.count ?? 20); i++) {
-      rowList.push(event);
+      rowList.push(getEvent());
     }
   }
 
   return {
     data: {rowList},
     config: {attrList: ['shortname', 'serialnumber', 'msg'], titleList: ['Объект', 'Сер.номер', 'Сообщение']}
+  };
+}
+
+function generateObjStateParams(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ObjStateValues {
+  return {
+    config: {rubricId: 1},
+    data: {
+      date: 1697487855625,
+      states: [
+        {
+          count: 5,
+          id: 3,
+          name: 'активен',
+        },
+        {
+          count: 25,
+          id: 2,
+          name: 'не работает',
+        }
+      ]
+    }
   };
 }
 
@@ -435,6 +464,25 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
       isEditing: false,
     };
   }
+
+  if (paramType === PARAM_TYPE.custom_objstate) {
+    const defValue = 3;
+    return {
+      device: null,
+      refName: '',
+      itemType: ITEM_TYPE.custom,
+      widgetId: null,
+      title: config.title !== null ? config.title : 'Title param',
+      config: generateParamConfig(ITEM_TYPE.custom, param, paramType),
+      value: config.value ? config.value : defValue,
+      viewConfig: {},
+      dashboardLink: config.pageLink ? {dashname: 'Test dashname', id: 2} : null,
+      custom: {},
+      canEditable: config.editable,
+      isEditing: false,
+    };
+  }
+
   if (paramType === PARAM_TYPE.custom_forge) {
     return {
       device: null,

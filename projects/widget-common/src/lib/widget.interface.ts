@@ -6,19 +6,9 @@ export enum ITEM_TYPE {
   'interval' = 5, // Значения параметров на заданном интервале
   'table' = 6, // Таблица значений параметров
   'custom' = 7, // Поле не требующее обработки сервера
-  'object' = 8 // Объект
+  'object' = 8, // Объект
+  'objstate' = 9, // Объект
 }
-
-export const ITEM_TYPE_ITOS = {
-  1: 'single',
-  2: 'series',
-  3: 'events',
-  4: 'sysinfo',
-  5: 'interval',
-  6: 'table',
-  7: 'custom',
-};
-
 
 // нет контроля, норма, отклонение, критическое, хз todo Скорей всего нужно перенести в css
 export const STATE_COLORS = ['#FFFAFA', '#00e4c8', '#ffd452', '#c95e46', '#f71800', '#008B8B', '#5F9EA0'];
@@ -42,6 +32,7 @@ export enum PARAM_TYPE {
   'custom_select' = 16, // Список
   'custom_forge' = 17, // Работа с Autodesk Forge
   'custom_dashboard' = 18,
+  'custom_objstate' = 19,
 }
 
 export const PARAM_TYPE_ITOS = {
@@ -111,7 +102,8 @@ export interface ItemParent {
   [k: string]: WidgetItem | WidgetItem[] | ParamConfig;
 }
 
-export type WidgetItem = any | ItemSingle | ItemTable | ItemSeries | ItemInterval | ItemParent | EventValues | SysInfoValue;
+export type WidgetItem = any | ItemSingle | ItemTable | ItemSeries | ItemInterval | ItemParent
+  | EventValues | SysInfoValue | ObjStateValues;
 
 export interface WidgetItems {
   [k: string]: WidgetItem;
@@ -371,6 +363,10 @@ export interface ParamConfigEvents {
   duration?: SeriesDuration;  // временной интервал
 }
 
+export interface ParamConfigObjState {
+  rubricId: number;
+}
+
 
 export interface ParamConfigCustom {
   value?: string;
@@ -481,6 +477,20 @@ export interface EventValues {
     rowList: Array<EventValue>;
   };
   config: ParamConfigEvents;
+}
+
+export interface ObjStateValuesState {
+  id: number;
+  name: string;
+  count: number;
+}
+
+export interface ObjStateValues {
+  data: {
+    date: number;
+    states: ObjStateValuesState[];
+  };
+  config: ParamConfigObjState;
 }
 
 // У корневых элементов необходимо указать item_type
