@@ -51,7 +51,7 @@ export class PieChartComponent implements OnInit, OnChanges, OnDestroy {
     },
     series: [],
     legend: {
-      top: 'bottom'
+      show: false,
     },
   };
 
@@ -146,12 +146,14 @@ export class PieChartComponent implements OnInit, OnChanges, OnDestroy {
         return {
           value: val.value,
           name: this.findUniqName(val.key)
-        }
+        };
       });
-
+      if ((this.config as any).legend) {
+        this.options.legend = {show: true, bottom: '16px'};
+      }
       if ((config as any).charttype === ChartTypes.intervalPieChart) {
-        this.options.legend = {show: false};
         this.options.tooltip = {show: false};
+        this.options.legend = {show: false};
         this.options.grid = {show: false};
 
 
