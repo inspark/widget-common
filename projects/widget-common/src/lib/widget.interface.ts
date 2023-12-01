@@ -118,7 +118,6 @@ export enum SiteTheme {
 
 export type IWidgetParamTable<TConfig = any> = IWidgetParam<TConfig>[][];
 
-
 // структура для конфигуратора
 export interface ParamConfigurator<TConfig = any> {
   name: string;
@@ -134,6 +133,7 @@ export interface ParamConfigurator<TConfig = any> {
   views?: string[]; // Варианты представлений параметра
   viewConfig?: IWidgetParamConfig;
   config?: ParamConfigInterval | ParamConfigSeries | ParamConfigSingle | ParamConfigEvents | ParamConfigCustom;
+  filter?: any;
   generateConfig?: GenerateConfig;
   param?: WidgetParamChildren;
 }
@@ -242,6 +242,7 @@ export interface IWidgetParam<TConfig = any> {
   itemType: ITEM_TYPE;
   title: string;
   config: TConfig;
+  filter?: any;
   viewConfig?: IWidgetParamConfig;
   icons?: {
     falsevalue: string;
