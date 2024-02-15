@@ -107,7 +107,7 @@ export class ForgeComponent implements OnInit, OnDestroy {
       promises.push(new Promise((resolve, reject) => {
         const handler = () => {
           viewer.removeEventListener(event, handler);
-          resolve();
+          resolve(null);
         };
         viewer.addEventListener(event, handler);
       }));
