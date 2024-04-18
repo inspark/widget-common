@@ -398,6 +398,7 @@ export interface SingleValue {
   date: number;
   value: any;
   state: ParamState;
+  unit: { id: number, name: string, available: boolean, unavailabilityDate: number };
   isProcessing?: boolean;
 }
 

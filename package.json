@@ -28,7 +28,6 @@
     "link": "^0.1.5",
     "ng2-cookies": "^1.0.12",
     "ngx-echarts": "^5.2.2",
-    "node-sass": "^4.14.1",
     "resize-observer-polyfill": "^1.5.1",
     "zone.js": "~0.10.3"
   },
@@ -61,6 +60,7 @@
     "ng2-nvd3": "^2.0.0",
     "protractor": "~5.4.0",
     "rxjs": "^6.3.3",
+    "sass": "^1.75.0",
     "ts-node": "^9.1.1",
     "tsickle": ">=0.29.0",
     "tslib": "^1.9.0",

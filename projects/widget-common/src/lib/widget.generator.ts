@@ -248,6 +248,7 @@ function generateSingleParams(index: number, paramType: PARAM_TYPE, item: Widget
       value: value,
       locked: config.locked,
       manually: config.editable,
+      unit: {id: 2, available: true, name: '', unavailabilityDate: 0},
       state: config.state ? {
         color: PARAM_STATE_INT[config.state],
         comment: 'comment',
