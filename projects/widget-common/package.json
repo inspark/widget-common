@@ -1,25 +1,22 @@
 {
   "name": "@inspark/widget-common",
-  "version": "9.1.36",
+  "version": "14.0.5",
   "description": "",
   "author": "Inspark",
   "private": false,
   "peerDependencies": {
-    "@angular/common": "^9.1.13",
-    "@angular/core": "^9.1.13",
-    "ng2-nvd3": "^2.0.0",
-    "moment": "^2.24.0",
-    "rxjs": "^6.3.3",
-    "d3": "^3.5.15",
-    "nvd3": "^1.8.5",
+    "@angular/common": "^14.3.0",
+    "@angular/core": "^14.3.0",
+    "moment": "^2.29.4",
+    "rxjs": "^7.8.0",
     "ng-inline-svg": "^8.4.1",
-    "@ngx-translate/http-loader": "^3.0.1",
-    "@ng-bootstrap/ng-bootstrap": "^6.2.0",
+    "@ngx-translate/http-loader": "^7.0.0",
+    "@ng-bootstrap/ng-bootstrap": "^14.2.0",
     "@types/forge-viewer": "^7.53.0",
     "ng2-adsk-forge-viewer": "^1.5.0",
-    "ng2-cookies": "^1.0.12",
     "ngx-echarts": "^5.2.2",
-    "echarts": "^5.2.2"
+    "js-cookie": "^3.0.5",
+    "echarts": "^5.4.3"
   },
   "dependencies": {
   }

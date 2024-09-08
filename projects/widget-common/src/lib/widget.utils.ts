@@ -132,7 +132,7 @@ export function assignValues(inputValues: WidgetParamsChildren, params: IWidgetP
             custom_data: item.custom_data
           } as ItemParent;
         }
-        if (param && param.config) {
+        if (param && param.config && (result[key] as ItemParent)) {
           (result[key] as ItemParent).config = param.config;
         }
       } else {
@@ -237,7 +237,7 @@ function assignValue(item: WidgetParamChildren, itemPath, params: IWidgetParam[]
     return res;
   } else {
     const param = params.find(val => val.refName === path);
-    if (param) {
+    if (param && param.config) {
       const viewConfig = getConfig(viewConfigs, path);
       if (item.item_type === ITEM_TYPE.custom) {
         let value: any;

@@ -627,6 +627,9 @@ export interface IWidgetClass {
   version?: string;
   name?: string;
   description?: string;
+  web?: boolean;
+  analytic?: boolean;
+  mobile?: boolean;
 }
 
 export interface SocketEventData {
