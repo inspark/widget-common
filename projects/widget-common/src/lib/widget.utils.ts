@@ -103,7 +103,9 @@ export class ChartUrl implements PipeTransform {
 
 
 // Добавляем значения для
-export function assignValues(inputValues: WidgetParamsChildren, params: IWidgetParam[], viewConfig: { [k: string]: IWidgetParamConfig }, path = []): ItemParent {
+export function assignValues(inputValues: WidgetParamsChildren, params: IWidgetParam[], viewConfig: {
+  [k: string]: IWidgetParamConfig
+}, path = []): ItemParent {
 
 
   const result: WidgetItems = {};
@@ -300,27 +302,34 @@ export function findParam(params: ParamConfigurator[], refname: string): ParamCo
 
 
 // Преобразует  структуру параметров виджета в структуру для конфигуратора
-export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[], itemType = ITEM_TYPE.single,
+export function createParamList(params: WidgetParamsChildren | WidgetParamsChildren[] | WidgetParamChildren[], itemType = ITEM_TYPE.single,
                                 paramType: PARAM_TYPE = PARAM_TYPE.value, path = [], parent = null): ParamConfigurator[] {
   const result: ParamConfigurator[] = [];
-
   if (params instanceof Array) {
     // Элемент масссива
     const item: any = params[0];
-    const itemPath = [...path, 1];
+
     itemType = item.item_type || itemType;
     paramType = item.param_type || paramType;
-    result.push({
-      name: itemPath.join('.'),
-      title: 'Item 1',
-      views: item.views,
-      itemType,
-      paramType,
-      parent,
-      config: null,
-      generateConfig: {count: 3, param: true, data: true},
-      param: params[0] as WidgetParamChildren,
-    });
+
+    if (paramType === PARAM_TYPE.virtual_object) {
+      const itemPath = [...path, 1];
+      result.push(createParam(item, itemPath, itemType, paramType, item));
+
+    } else {
+      const itemPath = [...path, 1];
+      result.push({
+        name: itemPath.join('.'),
+        title: 'Item 1',
+        views: item.views,
+        itemType,
+        paramType,
+        parent,
+        config: null,
+        generateConfig: {count: 3, param: true, data: true},
+        param: item,
+      });
+    }
   } else {
     for (const key in params) {
       if (params.hasOwnProperty(key)) {
@@ -331,29 +340,7 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
 
         if (params[key].items) {
           // Массив
-          let config: any = {};
-          if (ITEM_TYPE.series === itemType) {
-            config = {count: 0, charttype: ChartTypes.lineChart, duration: SeriesDuration.day};
-          }
-          const res: ParamConfigurator = {
-            name: itemPath.join('.'),
-            title: _(item.title),
-            itemType,
-            paramType,
-            parent,
-            views: item.views,
-            config,
-            generateConfig: {count: 3, param: true, data: true},
-            param: params[key],
-          };
-          res.items = createParamList(params[key].items, itemType, paramType, itemPath, res);
-          if (params[key].items instanceof Array) {
-            res.isArray = true;
-            if (params[key].items[0].max) {
-              res.maxItems = params[key].items[0].max;
-            }
-          }
-          result.push(res);
+          result.push(createParam(item, itemPath, itemType, paramType, parent));
         } else {
           // Таблица
           if (itemType === ITEM_TYPE.table) {
@@ -408,6 +395,39 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
   }
   return result;
 }
+
+
+function createParam(item, itemPath, itemType, paramType, parent) {
+  let config: any = {};
+  if (ITEM_TYPE.series === itemType) {
+    config = {count: 0, charttype: ChartTypes.lineChart, duration: SeriesDuration.day};
+  }
+  const res: ParamConfigurator = {
+    name: itemPath.join('.'),
+    title: _(item.title),
+    itemType,
+    paramType,
+    parent,
+    views: item.views,
+    config,
+    generateConfig: {count: 3, param: true, data: true},
+    param: item,
+  };
+  if (item.items) {
+    res.items = createParamList(item.items, itemType, paramType, itemPath, res);
+    if (item.items instanceof Array) {
+      res.isArray = true;
+      if (item.items[0].max) {
+        res.maxItems = item.items[0].max;
+      }
+    }
+  } else if (paramType === PARAM_TYPE.virtual_object) {
+    // Массив объектов
+    res.items = createParamList(item, itemType, paramType, itemPath, res);
+  }
+  return res;
+}
+
 
 export function createGenerateItemConfig(): GenerateConfigItem {
   return {
