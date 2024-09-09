@@ -308,6 +308,9 @@ export function createParamList(params: WidgetParamsChildren | WidgetParamsChild
   if (params instanceof Array) {
     // Элемент масссива
     const item: any = params[0];
+    if (!item.title) {
+      item.title = 'Item 1';
+    }
 
     itemType = item.item_type || itemType;
     paramType = item.param_type || paramType;
@@ -446,14 +449,62 @@ export function createGenerateItemConfig(): GenerateConfigItem {
 }
 
 export function addArrayItem(parent: ParamConfigurator) {
-  parent.items.push({
-    name: [parent.name, parent.items.length + 1].join('.'),
-    title: `Item ${parent.items.length + 1}`,
-    itemType: parent.itemType,
-    paramType: parent.paramType,
-    parent: parent,
-    config: {}
-  });
+  if (parent.paramType === PARAM_TYPE.virtual_object) {
+    parent.items.push({
+      ...clearValue(deepClone(parent.items[0])),
+      name: [parent.name, parent.items.length + 1].join('.'),
+      title: `Item ${parent.items.length + 1}`,
+    });
+  } else {
+    parent.items.push({
+      name: [parent.name, parent.items.length + 1].join('.'),
+      title: `Item ${parent.items.length + 1}`,
+      itemType: parent.itemType,
+      paramType: parent.paramType,
+      parent: parent,
+      config: {}
+    });
+  }
+}
+
+function deepClone(obj, map = new WeakMap()) {
+  if (obj === null || typeof obj !== 'object') {
+    return obj; // Если obj не объект или null, просто возвращаем его
+  }
+
+  if (obj instanceof Date) {
+    return new Date(obj.getTime()); // Клонируем даты
+  }
+
+  if (obj instanceof RegExp) {
+    return new RegExp(obj); // Клонируем регулярные выражения
+  }
+
+  if (map.has(obj)) {
+    return map.get(obj); // Обработка циклических ссылок
+  }
+
+  const result = Array.isArray(obj) ? [] : {}; // Создаем пустой объект или массив в зависимости от типа
+
+  map.set(obj, result); // Сохраняем объект в WeakMap для отслеживания циклических ссылок
+
+  for (const key of Object.keys(obj)) {
+    result[key] = deepClone(obj[key], map); // Рекурсивно клонируем все свойства
+  }
+
+  return result;
+}
+
+
+export function clearValue(param: ParamConfigurator) {
+  param.value = undefined;
+  if (param.items) {
+    param.items = param.items.map((p) => clearValue(p));
+    if (param.isArray && param.paramType !== PARAM_TYPE.virtual_object) {
+      param.items = param.items.slice(0, 1);
+    }
+  }
+  return param;
 }
 
 export function convertArcherToItem(item, param): ParamConfigurator {
