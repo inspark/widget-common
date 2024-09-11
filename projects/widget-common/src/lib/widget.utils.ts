@@ -107,7 +107,6 @@ export function assignValues(inputValues: WidgetParamsChildren, params: IWidgetP
   [k: string]: IWidgetParamConfig
 }, path = []): ItemParent {
 
-
   const result: WidgetItems = {};
   for (const key in inputValues) {
     if (inputValues.hasOwnProperty(key)) {
@@ -119,7 +118,7 @@ export function assignValues(inputValues: WidgetParamsChildren, params: IWidgetP
         const cfg = getConfig(viewConfig, refName);
         if (item.items instanceof Array) {
           result[key] = {
-            items: assignValuesArray(item.items as WidgetArrayParam[], params, viewConfig, itemPath),
+            items: assignValuesArray(item.items as WidgetArrayParam[], params, viewConfig, itemPath, item.param_type),
             viewConfig: cfg,
             files: cfg.files ? cfg.files : null,
             custom_data: item.custom_data
@@ -161,18 +160,19 @@ function getConfig(viewConfig, refName): IWidgetParamConfig {
 }
 
 function assignValuesArray(inputValues: WidgetArrayParam[], params: IWidgetParam[], viewConfigs: { [k: string]: IWidgetParamConfig },
-                           path = []): WidgetItem[] {
+                           path = [], paramType: PARAM_TYPE = PARAM_TYPE.value): WidgetItem[] {
   let result: WidgetItem[] = [];
   const sPath = path.join('.');
   const inputValue = inputValues[0];
   params.forEach(val => {
     const valPath = val.refName.split('.');
     const ind: any = valPath.splice(valPath.length - 1, 1);
+    const pType = inputValue.param_type ?? paramType;
     if (valPath.join('.') === sPath) {
       const viewConfig = getConfig(viewConfigs, val.refName);
       if (val.itemType === ITEM_TYPE.custom) {
         let value: any;
-        if (inputValue.param_type === PARAM_TYPE.custom_json) {
+        if (pType === PARAM_TYPE.custom_json) {
           try {
             value = JSON.parse((val.config as ParamConfigCustom).value);
           } catch (e) {
@@ -181,7 +181,11 @@ function assignValuesArray(inputValues: WidgetArrayParam[], params: IWidgetParam
         } else {
           value = (val.config as ParamConfigCustom).value;
         }
-        result[ind] = {...val, data: null, value, viewConfig};
+        if (pType === PARAM_TYPE.virtual_object) {
+          result[ind] = assignValues(inputValue as any, params, viewConfigs, [...path, ...ind]);
+        } else {
+          result[ind] = {...val, data: null, value, viewConfig};
+        }
       } else {
         const value = (val.itemType === ITEM_TYPE.single && val?.device?.param?.value) ? val.device.param.value : null;
         result[ind] = {...val, data: value, value, viewConfig};
@@ -454,6 +458,7 @@ export function addArrayItem(parent: ParamConfigurator) {
       ...clearValue(deepClone(parent.items[0])),
       name: [parent.name, parent.items.length + 1].join('.'),
       title: `Item ${parent.items.length + 1}`,
+      parent: parent,
     });
   } else {
     parent.items.push({
