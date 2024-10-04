@@ -312,9 +312,9 @@ export function createParamList(params: WidgetParamsChildren | WidgetParamsChild
   if (params instanceof Array) {
     // Элемент масссива
     const item: any = params[0];
-    if (!item.title) {
-      item.title = 'Item 1';
-    }
+    // if (!item.title) {
+    //   item.title = 'Item 1';
+    // }
 
     itemType = item.item_type || itemType;
     paramType = item.param_type || paramType;
