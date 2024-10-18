@@ -455,7 +455,7 @@ export function createGenerateItemConfig(): GenerateConfigItem {
 export function addArrayItem(parent: ParamConfigurator) {
   if (parent.paramType === PARAM_TYPE.virtual_object) {
     parent.items.push({
-      ...clearValue(deepClone(parent.items[0])),
+      ...updateIndex(clearValue(deepClone(parent.items[0])), parent.items[0].name, [parent.name, parent.items.length + 1].join('.')),
       name: [parent.name, parent.items.length + 1].join('.'),
       title: `Item ${parent.items.length + 1}`,
       parent: parent,
@@ -505,6 +505,17 @@ export function clearValue(param: ParamConfigurator) {
   param.value = undefined;
   if (param.items) {
     param.items = param.items.map((p) => clearValue(p));
+    if (param.isArray && param.paramType !== PARAM_TYPE.virtual_object) {
+      param.items = param.items.slice(0, 1);
+    }
+  }
+  return param;
+}
+
+export function updateIndex(param: ParamConfigurator, oldName, newName) {
+  param.name = param.name.replace(oldName, newName);
+  if (param.items) {
+    param.items = param.items.map((p) => updateIndex(p, oldName, newName));
     if (param.isArray && param.paramType !== PARAM_TYPE.virtual_object) {
       param.items = param.items.slice(0, 1);
     }
