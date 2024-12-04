@@ -5,7 +5,7 @@ var jsonContent = JSON.parse(contents);
 
 
 
-const fields = ['module', 'es2020', 'esm2020', 'fesm2020', 'fesm2015', 'es2015', 'node', 'default', 'types', 'typings'];
+const fields = ['module', 'es2020', 'esm2020', 'fesm2020', 'fesm2015', 'es2015', 'node', 'types', 'typings', 'default'];
 
 jsonContent.exports['./full'] = {};
 jsonContent.exports['./interface'] = {};
