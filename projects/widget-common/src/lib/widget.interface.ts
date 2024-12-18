@@ -33,6 +33,11 @@ export enum PARAM_TYPE {
   'custom_forge' = 17, // Работа с Autodesk Forge
   'custom_dashboard' = 18,
   'custom_objstate' = 19,
+
+
+  // группа виртуальных объектов для работы конфигуратора
+  'virtual_object' = 90,
+
 }
 
 export const PARAM_TYPE_ITOS = {
@@ -500,20 +505,22 @@ export interface WidgetParam {
   title: string;
   item_type: ITEM_TYPE;
   param_type?: PARAM_TYPE;
-  items?: WidgetParamsChildren | WidgetArrayParam[];
+  items?: WidgetParamsChildren | WidgetParamsChildren[] | WidgetParamChildren[];
   views?: string[]; // Перечисление возможных видов параметра
   available?: any[]; // Ограничение для генератора случайных чисел
   custom_data?: any; // Пользовательские данные, которые пробрасываются напрямую
 }
 
 export interface WidgetParamChildren {
-  title: string;
+  title?: string;
   item_type?: ITEM_TYPE;
   param_type?: PARAM_TYPE;
-  items?: WidgetParamsChildren | WidgetArrayParam[];
+  items?: WidgetParamsChildren | WidgetParamsChildren[] | WidgetParamChildren[];
   views?: string[]; // Перечисление возможных видов параметра
   available?: any[]; // Ограничение для генератора случайных чисел
   custom_data?: any; // Пользовательские данные, которые пробрасываются напрямую
+  viewConfig?: IWidgetParamConfig;
+  max?: number;
 }
 
 export interface WidgetArrayParam {
@@ -620,6 +627,9 @@ export interface IWidgetClass {
   version?: string;
   name?: string;
   description?: string;
+  web?: boolean;
+  analytic?: boolean;
+  mobile?: boolean;
 }
 
 export interface SocketEventData {

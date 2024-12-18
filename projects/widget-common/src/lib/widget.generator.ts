@@ -10,48 +10,51 @@ import {
   ItemSeries,
   ItemSingle,
   ItemSysInfo,
-  ItemTable, IWidget,
-  LineType, ObjStateValues,
+  ItemTable,
+  IWidget,
+  LineType,
+  ObjStateValues,
   PARAM_STATE_INT,
   PARAM_TYPE,
   ParamConfigSeries,
   ParamConfigurator,
   SeriesDuration,
   VALUE_TYPE,
-  WidgetArrayParam,
   WidgetItem,
   WidgetParamChildren,
   WidgetParamsChildren
 } from './widget.interface';
 import {findParam} from './widget.utils';
 
-export function generateValues(inputValues: WidgetParamsChildren | WidgetArrayParam[],
+export function generateValues(inputValues: WidgetParamsChildren | WidgetParamsChildren[] | WidgetParamChildren[],
                                params: ParamConfigurator[],
                                itemType = ITEM_TYPE.single, paramType = PARAM_TYPE.value, path = []): WidgetItem[] {
-
   if (inputValues instanceof Array) {
     // Проходимся по массив
-
     const result: WidgetItem[] = [];
     const conf: any = inputValues[0];
     itemType = conf.item_type !== undefined ? conf.item_type : itemType;
     paramType = conf.param_type !== undefined ? conf.param_type : paramType;
     const param = findParam(params, path.join('.'));
-    const max = Math.min(param.generateConfig.count || 3, conf.max || 10);
+    const max = Math.min(param.generateConfig?.count || 3, conf.max || 10);
     for (let i = 0; i < max; i++) {
-      result.push(generateValue(i, conf, paramType, itemType, param));
+
+      if (paramType === PARAM_TYPE.virtual_object) {
+        const itemPath = [...path, 1];
+        result.push(generateValues(conf, params, itemType, paramType, itemPath));
+      } else {
+        result.push(generateValue(i, conf, paramType, itemType, param));
+      }
     }
     return result;
   } else {
     // Проходимся по объекту
-
     const result: any = {};
     for (const key in inputValues) {
       if (inputValues.hasOwnProperty(key)) {
         const itemPath = [...path, key];
         const param = findParam(params, itemPath.join('.'));
         const item = inputValues[key];
-
         itemType = item.item_type || itemType;
         paramType = item.param_type || paramType;
         if (inputValues[key].items) {
@@ -60,7 +63,7 @@ export function generateValues(inputValues: WidgetParamsChildren | WidgetArrayPa
             result[key] = {
               items: generateValues(inputValues[key].items, params, itemType, paramType, itemPath),
               config: generateParamConfig(itemType, param),
-              viewConfig: {...(param.param ? (param.param as ParamConfigurator).viewConfig : {})},
+              viewConfig: {...(param.param ? param.param.viewConfig : {})},
               custom_data: inputValues[key].custom_data
             };
           } else {
@@ -68,7 +71,7 @@ export function generateValues(inputValues: WidgetParamsChildren | WidgetArrayPa
             result[key] = {
               ...generateValues(inputValues[key].items, params, itemType, paramType, itemPath),
               config: generateParamConfig(itemType, param),
-              viewConfig: {...(param.param ? (param.param as ParamConfigurator).viewConfig : {})},
+              viewConfig: {...(param.param ? param.param.viewConfig : {})},
               custom_data: inputValues[key].custom_data
             };
           }
@@ -690,10 +693,10 @@ export function getRandom(min, max) {
 }
 
 function getConfig(param, index): GenerateConfigItem {
-  if (param.generateConfig.items) {
+  if (param?.generateConfig?.items) {
     return param.generateConfig.items[index] || {};
   }
-  return param.generateConfig;
+  return param?.generateConfig ?? {};
 }
 
 const BORDERS: Border[] = [{

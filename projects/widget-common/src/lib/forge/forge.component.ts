@@ -22,7 +22,7 @@ import {HttpClient} from '@angular/common/http';
 import {FormsModule} from '@angular/forms';
 import {ScriptService} from './Script.service';
 import {ForgeOption} from './forge.interface';
-import {Cookie} from 'ng2-cookies/ng2-cookies';
+import Cookies from 'js-cookie'
 
 declare const Autodesk: any;
 
@@ -77,7 +77,7 @@ export class ForgeComponent implements OnInit, OnDestroy {
   }
 
   authForge(callback) {
-    callback(Cookie.get('forge'), 3599);
+    callback(Cookies.get('forge'), 3599);
   }
 
   launchViewer(urn) {
@@ -107,7 +107,7 @@ export class ForgeComponent implements OnInit, OnDestroy {
       promises.push(new Promise((resolve, reject) => {
         const handler = () => {
           viewer.removeEventListener(event, handler);
-          resolve();
+          resolve(null);
         };
         viewer.addEventListener(event, handler);
       }));

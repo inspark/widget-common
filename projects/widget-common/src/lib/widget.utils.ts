@@ -103,8 +103,9 @@ export class ChartUrl implements PipeTransform {
 
 
 // Добавляем значения для
-export function assignValues(inputValues: WidgetParamsChildren, params: IWidgetParam[], viewConfig: { [k: string]: IWidgetParamConfig }, path = []): ItemParent {
-
+export function assignValues(inputValues: WidgetParamsChildren, params: IWidgetParam[], viewConfig: {
+  [k: string]: IWidgetParamConfig
+}, path = []): ItemParent {
 
   const result: WidgetItems = {};
   for (const key in inputValues) {
@@ -117,7 +118,7 @@ export function assignValues(inputValues: WidgetParamsChildren, params: IWidgetP
         const cfg = getConfig(viewConfig, refName);
         if (item.items instanceof Array) {
           result[key] = {
-            items: assignValuesArray(item.items as WidgetArrayParam[], params, viewConfig, itemPath),
+            items: assignValuesArray(item.items as WidgetArrayParam[], params, viewConfig, itemPath, item.param_type),
             viewConfig: cfg,
             files: cfg.files ? cfg.files : null,
             custom_data: item.custom_data
@@ -130,7 +131,7 @@ export function assignValues(inputValues: WidgetParamsChildren, params: IWidgetP
             custom_data: item.custom_data
           } as ItemParent;
         }
-        if (param && param.config) {
+        if (param && param.config && (result[key] as ItemParent)) {
           (result[key] as ItemParent).config = param.config;
         }
       } else {
@@ -159,18 +160,19 @@ function getConfig(viewConfig, refName): IWidgetParamConfig {
 }
 
 function assignValuesArray(inputValues: WidgetArrayParam[], params: IWidgetParam[], viewConfigs: { [k: string]: IWidgetParamConfig },
-                           path = []): WidgetItem[] {
+                           path = [], paramType: PARAM_TYPE = PARAM_TYPE.value): WidgetItem[] {
   let result: WidgetItem[] = [];
   const sPath = path.join('.');
   const inputValue = inputValues[0];
   params.forEach(val => {
     const valPath = val.refName.split('.');
     const ind: any = valPath.splice(valPath.length - 1, 1);
+    const pType = inputValue.param_type ?? paramType;
     if (valPath.join('.') === sPath) {
       const viewConfig = getConfig(viewConfigs, val.refName);
       if (val.itemType === ITEM_TYPE.custom) {
         let value: any;
-        if (inputValue.param_type === PARAM_TYPE.custom_json) {
+        if (pType === PARAM_TYPE.custom_json) {
           try {
             value = JSON.parse((val.config as ParamConfigCustom).value);
           } catch (e) {
@@ -179,7 +181,11 @@ function assignValuesArray(inputValues: WidgetArrayParam[], params: IWidgetParam
         } else {
           value = (val.config as ParamConfigCustom).value;
         }
-        result[ind] = {...val, data: null, value, viewConfig};
+        if (pType === PARAM_TYPE.virtual_object) {
+          result[ind] = assignValues(inputValue as any, params, viewConfigs, [...path, ...ind]);
+        } else {
+          result[ind] = {...val, data: null, value, viewConfig};
+        }
       } else {
         const value = (val.itemType === ITEM_TYPE.single && val?.device?.param?.value) ? val.device.param.value : null;
         result[ind] = {...val, data: value, value, viewConfig};
@@ -235,7 +241,7 @@ function assignValue(item: WidgetParamChildren, itemPath, params: IWidgetParam[]
     return res;
   } else {
     const param = params.find(val => val.refName === path);
-    if (param) {
+    if (param && param.config) {
       const viewConfig = getConfig(viewConfigs, path);
       if (item.item_type === ITEM_TYPE.custom) {
         let value: any;
@@ -300,27 +306,37 @@ export function findParam(params: ParamConfigurator[], refname: string): ParamCo
 
 
 // Преобразует  структуру параметров виджета в структуру для конфигуратора
-export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[], itemType = ITEM_TYPE.single,
+export function createParamList(params: WidgetParamsChildren | WidgetParamsChildren[] | WidgetParamChildren[], itemType = ITEM_TYPE.single,
                                 paramType: PARAM_TYPE = PARAM_TYPE.value, path = [], parent = null): ParamConfigurator[] {
   const result: ParamConfigurator[] = [];
-
   if (params instanceof Array) {
     // Элемент масссива
     const item: any = params[0];
-    const itemPath = [...path, 1];
+    // if (!item.title) {
+    //   item.title = 'Item 1';
+    // }
+
     itemType = item.item_type || itemType;
     paramType = item.param_type || paramType;
-    result.push({
-      name: itemPath.join('.'),
-      title: 'Item 1',
-      views: item.views,
-      itemType,
-      paramType,
-      parent,
-      config: null,
-      generateConfig: {count: 3, param: true, data: true},
-      param: params[0] as WidgetParamChildren,
-    });
+
+    if (paramType === PARAM_TYPE.virtual_object) {
+      const itemPath = [...path, 1];
+      result.push(createParam(item, itemPath, itemType, paramType, item));
+
+    } else {
+      const itemPath = [...path, 1];
+      result.push({
+        name: itemPath.join('.'),
+        title: 'Item 1',
+        views: item.views,
+        itemType,
+        paramType,
+        parent,
+        config: null,
+        generateConfig: {count: 3, param: true, data: true},
+        param: item,
+      });
+    }
   } else {
     for (const key in params) {
       if (params.hasOwnProperty(key)) {
@@ -331,29 +347,7 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
 
         if (params[key].items) {
           // Массив
-          let config: any = {};
-          if (ITEM_TYPE.series === itemType) {
-            config = {count: 0, charttype: ChartTypes.lineChart, duration: SeriesDuration.day};
-          }
-          const res: ParamConfigurator = {
-            name: itemPath.join('.'),
-            title: _(item.title),
-            itemType,
-            paramType,
-            parent,
-            views: item.views,
-            config,
-            generateConfig: {count: 3, param: true, data: true},
-            param: params[key],
-          };
-          res.items = createParamList(params[key].items, itemType, paramType, itemPath, res);
-          if (params[key].items instanceof Array) {
-            res.isArray = true;
-            if (params[key].items[0].max) {
-              res.maxItems = params[key].items[0].max;
-            }
-          }
-          result.push(res);
+          result.push(createParam(item, itemPath, itemType, paramType, parent));
         } else {
           // Таблица
           if (itemType === ITEM_TYPE.table) {
@@ -409,6 +403,39 @@ export function createParamList(params: WidgetParamsChildren | WidgetArrayParam[
   return result;
 }
 
+
+function createParam(item, itemPath, itemType, paramType, parent) {
+  let config: any = {};
+  if (ITEM_TYPE.series === itemType) {
+    config = {count: 0, charttype: ChartTypes.lineChart, duration: SeriesDuration.day};
+  }
+  const res: ParamConfigurator = {
+    name: itemPath.join('.'),
+    title: _(item.title),
+    itemType,
+    paramType,
+    parent,
+    views: item.views,
+    config,
+    generateConfig: {count: 3, param: true, data: true},
+    param: item,
+  };
+  if (item.items) {
+    res.items = createParamList(item.items, itemType, paramType, itemPath, res);
+    if (item.items instanceof Array) {
+      res.isArray = true;
+      if (item.items[0].max) {
+        res.maxItems = item.items[0].max;
+      }
+    }
+  } else if (paramType === PARAM_TYPE.virtual_object) {
+    // Массив объектов
+    res.items = createParamList(item, itemType, paramType, itemPath, res);
+  }
+  return res;
+}
+
+
 export function createGenerateItemConfig(): GenerateConfigItem {
   return {
     pageLink: false,
@@ -426,14 +453,74 @@ export function createGenerateItemConfig(): GenerateConfigItem {
 }
 
 export function addArrayItem(parent: ParamConfigurator) {
-  parent.items.push({
-    name: [parent.name, parent.items.length + 1].join('.'),
-    title: `Item ${parent.items.length + 1}`,
-    itemType: parent.itemType,
-    paramType: parent.paramType,
-    parent: parent,
-    config: {}
-  });
+  if (parent.paramType === PARAM_TYPE.virtual_object) {
+    parent.items.push({
+      ...updateIndex(clearValue(deepClone(parent.items[0])), parent.items[0].name, [parent.name, parent.items.length + 1].join('.')),
+      name: [parent.name, parent.items.length + 1].join('.'),
+      title: `Item ${parent.items.length + 1}`,
+      parent: parent,
+    });
+  } else {
+    parent.items.push({
+      name: [parent.name, parent.items.length + 1].join('.'),
+      title: `Item ${parent.items.length + 1}`,
+      itemType: parent.itemType,
+      paramType: parent.paramType,
+      parent: parent,
+      config: {}
+    });
+  }
+}
+
+function deepClone(obj, map = new WeakMap()) {
+  if (obj === null || typeof obj !== 'object') {
+    return obj; // Если obj не объект или null, просто возвращаем его
+  }
+
+  if (obj instanceof Date) {
+    return new Date(obj.getTime()); // Клонируем даты
+  }
+
+  if (obj instanceof RegExp) {
+    return new RegExp(obj); // Клонируем регулярные выражения
+  }
+
+  if (map.has(obj)) {
+    return map.get(obj); // Обработка циклических ссылок
+  }
+
+  const result = Array.isArray(obj) ? [] : {}; // Создаем пустой объект или массив в зависимости от типа
+
+  map.set(obj, result); // Сохраняем объект в WeakMap для отслеживания циклических ссылок
+
+  for (const key of Object.keys(obj)) {
+    result[key] = deepClone(obj[key], map); // Рекурсивно клонируем все свойства
+  }
+
+  return result;
+}
+
+
+export function clearValue(param: ParamConfigurator) {
+  param.value = undefined;
+  if (param.items) {
+    param.items = param.items.map((p) => clearValue(p));
+    if (param.isArray && param.paramType !== PARAM_TYPE.virtual_object) {
+      param.items = param.items.slice(0, 1);
+    }
+  }
+  return param;
+}
+
+export function updateIndex(param: ParamConfigurator, oldName, newName) {
+  param.name = param.name.replace(oldName, newName);
+  if (param.items) {
+    param.items = param.items.map((p) => updateIndex(p, oldName, newName));
+    if (param.isArray && param.paramType !== PARAM_TYPE.virtual_object) {
+      param.items = param.items.slice(0, 1);
+    }
+  }
+  return param;
 }
 
 export function convertArcherToItem(item, param): ParamConfigurator {
