@@ -1,5 +1,6 @@
 import {ChartTypes, SiteTheme, VALUE_TYPE, WidgetCustomField, WidgetItem, WidgetParams, WidgetSize} from './widget.interface';
 import {WidgetApi} from './widget.api';
+import {Type} from '@angular/core';
 
 export const _ = (str: string) => str;
 
@@ -79,5 +80,6 @@ export interface WidgetPackage {
   autoAdjustHeight?: boolean;
   // Будет ли фрейм вокруг виджета
   showFrame?: boolean;
+  imports?: Array<Type<any>>;
 }
 
