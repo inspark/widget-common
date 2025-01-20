@@ -265,17 +265,55 @@ export interface IWidgetParam<TConfig = any> {
   canEditable?: boolean; // Может ли параметр редактироваться
 }
 
+export type ColumnWidthType = 'auto' | 'fit-content' | 'fix';
+
+export type ColumnSizeUnity = 'px' | '%';
+
+export interface IRowConfig {
+  name: string;
+}
+
+export interface IColConfig {
+  name: string;
+  widthType?: ColumnWidthType;
+  size?: { value: number; unit: ColumnSizeUnity };
+}
 
 export interface IWidgetParamConfig {
   formatValue?: string;
   view?: string;
+  /**
+   * @deprecated Use table.rowConfig
+   */
   rows?: number;
+  /**
+   * @deprecated Use table.rowConfig
+   */
   cols?: number;
-  rowsName?: string[];
-  colsName?: string[];
-  visibleRow?: boolean;
-  visibleCol?: boolean;
-
+  /**
+   * @deprecated Use table.rowConfig
+   */
+  rowsName?: string[]; // @deprecated
+  /**
+   * @deprecated Use table.colConfig
+   */
+  colsName?: string[]; // @deprecated
+  /**
+   * @deprecated Use table.visibleRow
+   */
+  visibleRow?: boolean; // @deprecated
+  /**
+   * @deprecated Use table.visibleCol
+   */
+  visibleCol?: boolean; // @deprecated
+  table?: {
+    rowConfig?: IRowConfig[];
+    colConfig?: IColConfig[];
+    visibleRow?: boolean;
+    visibleCol?: boolean;
+    rows?: number;
+    cols?: number;
+  };
   files?: { [k: string]: any };
   selectValue?: number | string;
 

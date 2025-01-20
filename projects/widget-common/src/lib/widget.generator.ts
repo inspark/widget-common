@@ -3,7 +3,7 @@ import {
   ChartViews,
   ChartViewToType,
   EventValues,
-  GenerateConfigItem,
+  GenerateConfigItem, IColConfig, IRowConfig,
   ITEM_TYPE,
   ItemCustom,
   ItemInterval,
@@ -643,6 +643,16 @@ function generateTableParams(index: number, paramType: PARAM_TYPE, item: WidgetP
     }
   }
 
+  const colConfig: IColConfig[] = [];
+
+  const rowConfig: IRowConfig[] = [];
+  for (let i = 1; i <= param.generateConfig.rows; i++) {
+    rowConfig.push({name: `Row ${i}`});
+  }
+  for (let i = 0; i <= param.generateConfig.columns; i++) {
+    colConfig.push(getRandomCol());
+  }
+
   return {
     device: null,
     refName: '',
@@ -659,11 +669,33 @@ function generateTableParams(index: number, paramType: PARAM_TYPE, item: WidgetP
       visibleRow: param.generateConfig.visibleRow,
       visibleCol: param.generateConfig.visibleCol,
       view: param.generateConfig.view,
+      table: {
+        cols: param.generateConfig.columns,
+        rows: param.generateConfig.rows,
+        visibleRow: param.generateConfig.visibleRow,
+        visibleCol: param.generateConfig.visibleCol,
+        colConfig,
+        rowConfig,
+      }
     },
     custom: {},
     borders: [],
     isEditing: false,
   };
+}
+
+function getRandomCol(hasLabel = true): IColConfig {
+  const rnd = Math.random();
+
+  if (rnd <= .25) {
+    return {name: hasLabel ? 'Col Fit' : undefined, widthType: 'fit-content'};
+  } else if (rnd <= .5) {
+    return {name: hasLabel ? 'Col Auto' : undefined, widthType: 'auto'};
+  } else if (rnd <= .8) {
+    return {name: hasLabel ? 'Col Fix Px100' : undefined, widthType: 'fix', size: {unit: 'px', value: 100}};
+  } else {
+    return {name: hasLabel ? 'Col Fix %20' : undefined, widthType: 'fix', size: {unit: '%', value: 20}};
+  }
 }
 
 function generateSysInfoParam(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemSysInfo {

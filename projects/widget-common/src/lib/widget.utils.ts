@@ -365,7 +365,13 @@ export function createParamList(params: WidgetParamsChildren | WidgetParamsChild
                 colsName: ['Col 1'],
                 rowsName: ['Row 1'],
                 visibleRow: true,
-                visibleCol: true
+                visibleCol: true,
+                table: {
+                  visibleRow: true,
+                  visibleCol: true,
+                  colConfig: [{name: 'Col 1'}],
+                  rowConfig: [{name: 'Row 1'}],
+                }
               },
               config: {},
               generateConfig: {
