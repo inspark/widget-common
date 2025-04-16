@@ -8,6 +8,7 @@ export enum ITEM_TYPE {
   'custom' = 7, // Поле не требующее обработки сервера
   'object' = 8, // Объект
   'objstate' = 9, // Объект
+  'liftinfo' = 10, // Классификатор + объекты
 }
 
 // нет контроля, норма, отклонение, критическое, хз todo Скорей всего нужно перенести в css
@@ -89,6 +90,9 @@ export interface ItemSysInfo extends IWidgetParam<ParamConfigSysInfo> {
   data: SysInfoValue;
 }
 
+export interface ItemLiftInfo extends IWidgetParam<ParamConfigLiftInfo> {
+  data: LiftInfoValue;
+}
 export interface ItemSeries extends IWidgetParam<ParamConfigSeries> {
   value: any;
   data: SeriesValue;
@@ -108,7 +112,7 @@ export interface ItemParent {
 }
 
 export type WidgetItem = any | ItemSingle | ItemTable | ItemSeries | ItemInterval | ItemParent
-  | EventValues | SysInfoValue | ObjStateValues;
+  | EventValues | SysInfoValue | ObjStateValues | LiftInfoValue;
 
 export interface WidgetItems {
   [k: string]: WidgetItem;
@@ -421,13 +425,19 @@ export interface ParamConfigSysInfo {
   rubricId: number;
 }
 
+export interface ParamConfigLiftInfo {
+  deviceClassifierId: number;
+  objectIds: number[];
+}
+
 export type ParamConfig =
   ParamConfigInterval
   | ParamConfigSeries
   | ParamConfigSingle
   | ParamConfigEvents
   | ParamConfigCustom
-  | ParamConfigSysInfo;
+  | ParamConfigSysInfo
+  | ParamConfigLiftInfo;
 
 
 /**
@@ -475,10 +485,22 @@ export interface ControllersInfo {
   offline: number;
 }
 
+export interface LiftsInfo {
+  total: number;
+  online: number;
+  offline: number;
+}
+
 export interface SysInfoValue {
   date: number;
   controllersInfo: ControllersInfo;
 }
+
+export interface LiftInfoValue {
+  date: number;
+  liftsInfo: LiftsInfo;
+}
+
 
 export type SeriesValue = Array<SeriesCandleValue | SeriesLineValue>;
 

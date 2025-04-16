@@ -10,6 +10,7 @@ import {
   ItemSeries,
   ItemSingle,
   ItemSysInfo,
+  ItemLiftInfo,
   ItemTable,
   IWidget,
   LineType,
@@ -160,6 +161,9 @@ function generateValue(index: number, item: WidgetParamChildren, paramType: PARA
       break;
     case ITEM_TYPE.sysinfo:
       res = generateSysInfoParam(index, paramType, item, param);
+      break;
+    case ITEM_TYPE.liftinfo:
+      res = generateLiftInfoParam(index, paramType, item, param);
       break;
   }
   if (item.custom_data) {
@@ -714,6 +718,21 @@ function generateSysInfoParam(index: number, paramType: PARAM_TYPE, item: Widget
   };
 }
 
+function generateLiftInfoParam(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemLiftInfo {
+  return {
+    id: 1,
+    device: null,
+    refName: '',
+    itemType: ITEM_TYPE.liftinfo,
+    widgetId: null,
+    title: 'Title param',
+    config: {deviceClassifierId: 76, objectIds: [372]},
+    data: {
+      liftsInfo: {total: getRandom(0, 10), online: getRandom(0, 10), offline: getRandom(0, 10)},
+      date: Date.now()
+    }
+  };
+}
 function generateMeasureUnit() {
   const units = ['град', '°C', 'лит', 'км', '%'];
   return units[getRandom(0, units.length - 1)];
