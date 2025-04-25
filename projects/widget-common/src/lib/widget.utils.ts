@@ -126,6 +126,7 @@ export function assignValues(inputValues: WidgetParamsChildren, params: IWidgetP
         } else {
           result[key] = {
             ...assignValues(item.items as WidgetParamsChildren, params, viewConfig, itemPath),
+            refName,
             viewConfig: cfg,
             files: cfg.files ? cfg.files : null,
             custom_data: item.custom_data
