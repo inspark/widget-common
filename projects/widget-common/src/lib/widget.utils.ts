@@ -370,7 +370,7 @@ export function createParamList(params: WidgetParamsChildren | WidgetParamsChild
                 table: {
                   visibleRow: true,
                   visibleCol: true,
-                  colConfig: [{name: 'Col 1'}],
+                  colConfig: [{name: ''}, {name: 'Col 1'}],
                   rowConfig: [{name: 'Row 1'}],
                 }
               },
