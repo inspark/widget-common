@@ -205,6 +205,8 @@ export enum PARAM_STATE {
   'success' = 1,
   'warning' = 2,
   'error' = 3,
+  'maintenance' = 4,
+
 }
 
 export const PARAM_STATE_INT = [];
@@ -214,6 +216,7 @@ PARAM_STATE_INT[0] = 'none';
 PARAM_STATE_INT[1] = 'success';
 PARAM_STATE_INT[2] = 'warning';
 PARAM_STATE_INT[3] = 'error';
+PARAM_STATE_INT[4] = 'maintenance';
 
 
 export interface IWidgetDeviceParam {
