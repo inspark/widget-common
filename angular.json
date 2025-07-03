@@ -3,7 +3,6 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-
     "widget-common": {
       "root": "projects/widget-common",
       "sourceRoot": "projects/widget-common/src",
@@ -40,5 +39,8 @@
       }
     }
   },
-  "defaultProject": "widget-common"
+  "defaultProject": "widget-common",
+  "cli": {
+    "analytics": false
+  }
 }

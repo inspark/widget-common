@@ -379,7 +379,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
       type: 'time',
       boundaryGap: false,
       axisLabel: {
-        formatter: '{d} {MMM} {yy}\n{HH}:{mm}',
+        formatter: '{d} {MMM}\n{HH}:{mm}',
       }
     };
     let yAxis: any[] = [];
@@ -767,6 +767,8 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
     const lastDay = new Date();
     if (num === 0) { // Если сдвиг 0, то неделя отсчитывается от текущего дня
       firstDay.setDate(d.getDate() - num * 7 + 1 - 7);
+    } else if (num === 1) { // Если сдвиг 1, то неделя отсчитывается от текущего дня
+      firstDay.setDate(d.getDate() - 8);
     } else {
       firstDay.setDate(d.getDate() - day - num * 7 + 1);
     }
