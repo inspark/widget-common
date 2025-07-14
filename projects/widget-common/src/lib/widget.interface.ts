@@ -93,6 +93,7 @@ export interface ItemSysInfo extends IWidgetParam<ParamConfigSysInfo> {
 export interface ItemLiftInfo extends IWidgetParam<ParamConfigLiftInfo> {
   data: LiftInfoValue;
 }
+
 export interface ItemSeries extends IWidgetParam<ParamConfigSeries> {
   value: any;
   data: SeriesValue;
@@ -652,7 +653,80 @@ export interface IWidget {
   hidden?: boolean;
   config?: IWidgetConfig;
   path?: string; // Путь при загрузке виджета(для дашей которые загружаются в дашах)
+  /**
+   * Format: int32
+   * @description Порядок размещения в рамках одного дашборда (порядок загрузки)
+   */
+  placement?: number;
+  /**
+   * Format: date-time
+   * @description Дата конфигурирования
+   */
+  configdate?: string;
+  /**
+   * Format: int32
+   * @description Координата X начального положения конкретног виджета в сетке
+   */
+  posx?: number;
+  /**
+   * Format: int32
+   * @description Координата Y начального положения конкретног виджета в сетке
+   */
+  posy?: number;
+  /** @description Признак наличия конфликта, нужна ручная настройка */
+  /**
+   * Format: int32
+   * @description Ширина начального положения виджета в сетке
+   */
+  width?: number;
+  /**
+   * Format: int32
+   * @description Высота начального положения виджета в сетке
+   */
+  height?: number;
+  /** @description Настройки внутреннего представления виджета в формате json (например substitution, valformat) */
+  /**
+   * Format: date-time
+   * @description Дата создания записи
+   */
+  createdate?: string;
+  /**
+   * Format: date-time
+   * @description Дата последнего изменения записи
+   */
+  lastdate?: string;
+  icon?: IWidgetIconInfo;
 }
+
+export interface IWidgetIconInfo {
+  /**
+   * Format: int32
+   * @description Идентификатор иконки
+   */
+  id?: number;
+  /** @description Наименование иконки */
+  name?: string;
+  iconset?: IWidgetIconSetInfo;
+  /** @description Путь к файлу в локальном хранилище */
+  filepath?: string;
+}
+
+/** @description Набор изображений */
+export interface IWidgetIconSetInfo {
+  /**
+   * Format: int32
+   * @description Идентификатор
+   */
+  id?: number;
+  /** @description Наименование */
+  name: string;
+  /**
+   * Format: int32
+   * @description Тип файлов, включаемых в набор (1 - иконка, 2 - картинка, 3 - видео)
+   */
+  imagetype: number;
+}
+
 
 export interface ServiceDashboardClass {
   id: number;
