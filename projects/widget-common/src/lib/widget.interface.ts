@@ -733,7 +733,7 @@ export enum DashboardType {
   ANALYTIC = 'ANALYTIC',
 }
 
-export interface ServiceDashboardClass {
+export interface ServiceDashboardClass<TConfig = string> {
   /**
    * Format: int32
    * @description Идентификатор
@@ -745,7 +745,7 @@ export interface ServiceDashboardClass {
   hidden?: boolean;
   objrubric: Objrubric;
   /** @description Конфигурация для отображения дашборда (структура - ответственность клиента) */
-  config?: string;
+  config?: TConfig;
   /**
    * @description Тип дашборда, WEB - для ЛК, MOBILE - для мобильного клиента)
    * @enum {string}
