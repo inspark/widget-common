@@ -23,7 +23,7 @@ import {
   VALUE_TYPE,
   WidgetItem,
   WidgetParamChildren,
-  WidgetParamsChildren
+  WidgetParamsChildren, DashboardType
 } from './widget.interface';
 import {findParam} from './widget.utils';
 
@@ -583,7 +583,7 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
         dashboard: {
           id: 1,
           dashname: 'Dash 1',
-          type: 'WEB',
+          type: DashboardType.WEB,
           objrubric: {
             id: 0,
             shortname: 'Rubric'
@@ -600,7 +600,7 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
         dashboard: {
           id: 1,
           dashname: 'Dash 1',
-          type: 'WEB',
+          type: DashboardType.WEB,
           objrubric: {
             id: 0,
             shortname: 'Rubric'
@@ -617,7 +617,7 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
         dashboard: {
           id: 1,
           dashname: 'Dash 1',
-          type: 'WEB',
+          type: DashboardType.WEB,
           objrubric: {
             id: 0,
             shortname: 'Rubric'

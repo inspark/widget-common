@@ -727,6 +727,12 @@ export interface IWidgetIconSetInfo {
   imagetype: number;
 }
 
+export enum DashboardType {
+  WEB = 'WEB',
+  MOBILE = 'MOBILE',
+  ANALYTIC = 'ANALYTIC',
+}
+
 export interface ServiceDashboardClass {
   /**
    * Format: int32
@@ -744,10 +750,9 @@ export interface ServiceDashboardClass {
    * @description Тип дашборда, WEB - для ЛК, MOBILE - для мобильного клиента)
    * @enum {string}
    */
-  type: 'WEB' | 'MOBILE' | 'ANALYTIC';
+  type: DashboardType;
   icon?: IWidgetIconInfo;
 }
-
 
 export interface Objrubric {
   id?: number;
