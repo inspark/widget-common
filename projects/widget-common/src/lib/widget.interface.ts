@@ -727,13 +727,25 @@ export interface IWidgetIconSetInfo {
   imagetype: number;
 }
 
-
 export interface ServiceDashboardClass {
-  id: number;
-  dashname?: string;
+  /**
+   * Format: int32
+   * @description Идентификатор
+   */
+  id?: number;
+  /** @description Наименование */
+  dashname: string;
+  /** @description Признак скрытого дашборда (не показывается) */
   hidden?: boolean;
-  objrubric?: Objrubric;
-  favorite?: number;
+  objrubric: Objrubric;
+  /** @description Конфигурация для отображения дашборда (структура - ответственность клиента) */
+  config?: string;
+  /**
+   * @description Тип дашборда, WEB - для ЛК, MOBILE - для мобильного клиента)
+   * @enum {string}
+   */
+  type: 'WEB' | 'MOBILE' | 'ANALYTIC';
+  icon?: IWidgetIconInfo;
 }
 
 
