@@ -583,6 +583,11 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
         dashboard: {
           id: 1,
           dashname: 'Dash 1',
+          type: 'WEB',
+          objrubric: {
+            id: 0,
+            shortname: 'Rubric'
+          }
         },
         widgetclass: {
           id: 1,
@@ -595,6 +600,11 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
         dashboard: {
           id: 1,
           dashname: 'Dash 1',
+          type: 'WEB',
+          objrubric: {
+            id: 0,
+            shortname: 'Rubric'
+          }
         },
         widgetclass: {
           id: 1,
@@ -607,6 +617,11 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
         dashboard: {
           id: 1,
           dashname: 'Dash 1',
+          type: 'WEB',
+          objrubric: {
+            id: 0,
+            shortname: 'Rubric'
+          }
         },
         widgetclass: {
           id: 1,
@@ -733,6 +748,7 @@ function generateLiftInfoParam(index: number, paramType: PARAM_TYPE, item: Widge
     }
   };
 }
+
 function generateMeasureUnit() {
   const units = ['град', '°C', 'лит', 'км', '%'];
   return units[getRandom(0, units.length - 1)];
