@@ -642,12 +642,11 @@ export interface ParamStates {
   };
 }
 
-
 // В коде конфиг ввиде объекта
-export interface IWidget {
+export interface IWidget<TDashboard = ServiceDashboardClass> {
   id?: number;
   widgetclass: IWidgetClass;
-  dashboard: ServiceDashboardClass;
+  dashboard: TDashboard;
   title: string;
   conflict?: boolean;
   hidden?: boolean;
