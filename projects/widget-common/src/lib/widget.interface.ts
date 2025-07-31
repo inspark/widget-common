@@ -241,18 +241,27 @@ export interface IWidgetDeviceParamData {
   name?: string;
   type?: PARAM_TYPE;
   value?: any;
-  valueDate?: number;
-  measure?: { title: string, unit: string, id: number };
+  valueDate?: string;
+  measure?: IWidgetDeviceParamMeasure;
   ctrability?: boolean;
+}
+
+export interface IWidgetDeviceParamMeasure{
+  title: string;
+  unit: string;
+  id: number;
+  icon: IWidgetIconInfo;
 }
 
 // Структура для хранения информации о параметры для виджетов
 export interface IWidgetParam<TConfig = any> {
   id?: number;
   device: IWidgetDeviceParam;
+  calc?: boolean;
   widgetId: number;
   refName: string;
   itemType: ITEM_TYPE;
+  paramType?: PARAM_TYPE;
   title: string;
   config: TConfig;
   filter?: any;
@@ -268,7 +277,7 @@ export interface IWidgetParam<TConfig = any> {
   custom?: any;
   custom_data?: any;
   borders?: Border[];
-  dashboardLink?: { dashname?: string, id: number };
+  dashboardLink?: { dashname?: string, id?: number };
   isEditing?: boolean; // Параметр, обозначающий, что поле редактируется
   canEditable?: boolean; // Может ли параметр редактироваться
 }
@@ -821,6 +830,19 @@ export interface WidgetSocketDataCommand {
   message?: string;
   error?: string;
   payload?: ControllerPayload | any;
+}
+
+export interface WidgetSocketAnalyticDataCommand {
+  cdpData: WidgetSocketAnalyticDataParamCommand | null;
+  ccpData: WidgetSocketAnalyticDataParamCommand | null;
+}
+
+export interface WidgetSocketAnalyticDataParamCommand {
+  id: number;
+  time: number;
+  value: string;
+  stateId: number;
+  sysStateId: number;
 }
 
 export interface IWidgetFile {

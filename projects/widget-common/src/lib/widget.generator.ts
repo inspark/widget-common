@@ -23,7 +23,7 @@ import {
   VALUE_TYPE,
   WidgetItem,
   WidgetParamChildren,
-  WidgetParamsChildren, DashboardType
+  WidgetParamsChildren, DashboardType, IWidgetIconInfo
 } from './widget.interface';
 import {findParam} from './widget.utils';
 
@@ -227,7 +227,12 @@ function generateSingleParams(index: number, paramType: PARAM_TYPE, item: Widget
       param: {
         id: null,
         name: 'deviceParam name',
-        measure: {unit: generateMeasureUnit(), title: 'Электричество', id: getRandom(10000, 99999)},
+        measure: {
+          unit: generateMeasureUnit(),
+          title: 'Электричество',
+          id: getRandom(10000, 99999),
+          icon: generateWidgetIcon(),
+        },
         type: PARAM_TYPE.value,
         calc: false,
         ctrability: config.ctrability,
@@ -289,7 +294,12 @@ function generateSeriesParam(index: number, paramType: PARAM_TYPE, item: WidgetP
       param: {
         id: null,
         name: 'deviceParam name',
-        measure: {unit: generateMeasureUnit(), title: 'Электричество', id: getRandom(10000, 99999)},
+        measure: {
+          unit: generateMeasureUnit(),
+          title: 'Электричество',
+          id: getRandom(10000, 99999),
+          icon: generateWidgetIcon(),
+        },
         type: PARAM_TYPE.value,
         calc: false,
       },
@@ -335,7 +345,12 @@ function generateIntervalParams(index: number, paramType: PARAM_TYPE, item: Widg
       param: {
         id: null,
         name: 'deviceParam name',
-        measure: {unit: generateMeasureUnit(), title: 'Электричество', id: getRandom(10000, 99999)},
+        measure: {
+          unit: generateMeasureUnit(),
+          title: 'Электричество',
+          id: getRandom(10000, 99999),
+          icon: generateWidgetIcon(),
+        },
         type: PARAM_TYPE.value,
         calc: false,
         ctrability: config.ctrability,
@@ -643,6 +658,19 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
       custom: {},
     };
   }
+}
+
+function generateWidgetIcon(): IWidgetIconInfo {
+  return {
+    name: 'icon',
+    id: 1,
+    filepath: 'path',
+    iconset: {
+      id: 1,
+      name: 'iconset',
+      imagetype: 1
+    }
+  };
 }
 
 function generateTableParams(index: number, paramType: PARAM_TYPE, item: WidgetParamChildren, param: ParamConfigurator): ItemTable {
