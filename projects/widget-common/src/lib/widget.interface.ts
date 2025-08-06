@@ -833,17 +833,10 @@ export interface WidgetSocketDataCommand {
 }
 
 export interface WidgetSocketAnalyticDataCommand {
-  cdpData: WidgetSocketAnalyticDataParamCommand | null;
-  ccpData: WidgetSocketAnalyticDataParamCommand | null;
+  cdpData: SingleValue | null;
+  ccpData: SingleValue | null;
 }
 
-export interface WidgetSocketAnalyticDataParamCommand {
-  id: number;
-  time: number;
-  value: string;
-  stateId: number;
-  sysStateId: number;
-}
 
 export interface IWidgetFile {
   name: string;
