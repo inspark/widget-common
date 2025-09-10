@@ -825,7 +825,7 @@ const BORDERS: Border[] = [{
     'color': 'falsevalue',
     'comment': 'Недостоверное значение параметра'
   }, 'intervals': [{'from': null, 'to': -20.0}]
-}];
+}].reverse();
 
 const CHART_VALUES = [
   {

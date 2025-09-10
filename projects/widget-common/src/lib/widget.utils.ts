@@ -317,12 +317,12 @@ export function createParamList(params: WidgetParamsChildren | WidgetParamsChild
     //   item.title = 'Item 1';
     // }
 
-    itemType = item.item_type || itemType;
-    paramType = item.param_type || paramType;
+    const pItemType = item.item_type || itemType;
+    const pParamType = item.param_type || paramType;
 
-    if (paramType === PARAM_TYPE.virtual_object) {
+    if (pParamType === PARAM_TYPE.virtual_object) {
       const itemPath = [...path, 1];
-      result.push(createParam(item, itemPath, itemType, paramType, item));
+      result.push(createParam(item, itemPath, pItemType, pParamType, item));
 
     } else {
       const itemPath = [...path, 1];
@@ -330,8 +330,8 @@ export function createParamList(params: WidgetParamsChildren | WidgetParamsChild
         name: itemPath.join('.'),
         title: 'Item 1',
         views: item.views,
-        itemType,
-        paramType,
+        itemType : pItemType,
+        paramType: pParamType,
         parent,
         config: null,
         generateConfig: {count: 3, param: true, data: true},
@@ -342,22 +342,23 @@ export function createParamList(params: WidgetParamsChildren | WidgetParamsChild
     for (const key in params) {
       if (params.hasOwnProperty(key)) {
         const item = params[key];
-        itemType = item.item_type || itemType;
-        paramType = item.param_type || paramType;
+
+        const pItemType = item.item_type || itemType;
+        const pParamType = item.param_type || paramType;
         const itemPath = [...path, key];
 
         if (params[key].items) {
           // Массив
-          result.push(createParam(item, itemPath, itemType, paramType, parent));
+          result.push(createParam(item, itemPath, pItemType, pParamType, parent));
         } else {
           // Таблица
-          if (itemType === ITEM_TYPE.table) {
+          if (pItemType === ITEM_TYPE.table) {
             result.push({
               name: itemPath.join('.'),
               views: item.views,
               title: item.title,
-              itemType,
-              paramType,
+              itemType : pItemType,
+              paramType: pParamType,
               parent,
               param: params[key],
               viewConfig: {
@@ -388,15 +389,15 @@ export function createParamList(params: WidgetParamsChildren | WidgetParamsChild
             // Простой элемент
 
             let config: any = {};
-            if (ITEM_TYPE.series === itemType) {
+            if (ITEM_TYPE.series === pItemType) {
               config = {count: 0, charttype: ChartTypes.lineChart, duration: SeriesDuration.day};
             }
             result.push({
               name: itemPath.join('.'),
               title: item.title,
               views: item.views,
-              itemType,
-              paramType,
+              itemType: pItemType,
+              paramType: pParamType,
               parent,
               config,
               param: params[key],
