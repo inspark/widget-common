@@ -224,7 +224,10 @@ export interface IWidgetDeviceParam {
   controller?: { id: number, serialnumber: string, isOnline?: boolean };
   object?: { id: number, shortname: string, fullname: string, timezone: number, latitude: number, longitude: number };
   param: IWidgetDeviceParamData;
-  zone?: { name: string };
+  zone?: { id: number; name: string };
+  room?: { id: number; name: string };
+  unit?: { id: number; name: string };
+  classifier?: { id: number; name: string };
   isWorking?: boolean;
   state?: { id?: number, name?: string, comment?: string };
   sysState?: {
@@ -246,7 +249,7 @@ export interface IWidgetDeviceParamData {
   ctrability?: boolean;
 }
 
-export interface IWidgetDeviceParamMeasure{
+export interface IWidgetDeviceParamMeasure {
   title: string;
   unit: string;
   id: number;
