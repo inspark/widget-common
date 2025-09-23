@@ -462,6 +462,7 @@ export type ParamConfig =
  карта значений - value
  */
 export interface SingleValue {
+  id?: number;
   locked: boolean;
   manually: boolean;
   date: number;
