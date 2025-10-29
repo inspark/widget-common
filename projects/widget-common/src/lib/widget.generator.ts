@@ -531,6 +531,24 @@ function generateCustomParams(index: number, paramType: PARAM_TYPE, item: Widget
       isEditing: false,
     };
   }
+
+  if (paramType === PARAM_TYPE.custom_fuxa) {
+    return {
+      device: null,
+      refName: '',
+      itemType: ITEM_TYPE.custom,
+      widgetId: null,
+      title: config.title !== null ? config.title : 'Title param',
+      config: generateParamConfig(ITEM_TYPE.custom, param, paramType),
+      value: config.value ? config.value : '',
+      viewConfig: {},
+      dashboardLink: config.pageLink ? {dashname: 'Test dashname', id: 2} : null,
+      custom: {},
+      canEditable: config.editable,
+      isEditing: false,
+    };
+  }
+
   if (paramType === PARAM_TYPE.custom_json) {
 
     const defValue = undefined;

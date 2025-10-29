@@ -34,6 +34,7 @@ export enum PARAM_TYPE {
   'custom_forge' = 17, // Работа с Autodesk Forge
   'custom_dashboard' = 18,
   'custom_objstate' = 19,
+  'custom_fuxa' = 20,
 
 
   // группа виртуальных объектов для работы конфигуратора
