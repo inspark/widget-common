@@ -252,6 +252,8 @@ function assignValue(item: WidgetParamChildren, itemPath, params: IWidgetParam[]
           } catch (e) {
             value = {};
           }
+        } else if (item.param_type === PARAM_TYPE.custom_fuxa) {
+          value = (param as any).value;
         } else {
           value = (param.config as ParamConfigCustom).value;
         }
@@ -330,7 +332,7 @@ export function createParamList(params: WidgetParamsChildren | WidgetParamsChild
         name: itemPath.join('.'),
         title: 'Item 1',
         views: item.views,
-        itemType : pItemType,
+        itemType: pItemType,
         paramType: pParamType,
         parent,
         config: null,
@@ -357,7 +359,7 @@ export function createParamList(params: WidgetParamsChildren | WidgetParamsChild
               name: itemPath.join('.'),
               views: item.views,
               title: item.title,
-              itemType : pItemType,
+              itemType: pItemType,
               paramType: pParamType,
               parent,
               param: params[key],
