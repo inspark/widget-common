@@ -863,3 +863,9 @@ export interface ModalOptions {
   header: string;
   width?: string;
 }
+
+export interface CustomSelectData {
+  items: Array<{ value: any, title: string }>;
+  defaultValue?: any;
+  required: true;
+}
