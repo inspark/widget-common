@@ -75,6 +75,8 @@ export interface WidgetPackage {
   styles: string;
   locales?: { code: string, file: string }[];
   needPicture?: boolean;
+  needIcon?: boolean;
+  noFullscreen?: boolean;
   fields?: WidgetCustomField[];
   // Для мобильных дашей. Будет ли виджет учитывать высоту заданную в настройках или подстроит автоматически
   autoAdjustHeight?: boolean;
