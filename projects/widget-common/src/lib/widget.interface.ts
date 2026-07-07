@@ -200,7 +200,6 @@ export interface GenerateConfigItem {
   selectValue?: number | string;
 }
 
-// @ts-ignore
 export enum PARAM_STATE {
   'falsevalue' = -1,
   'none' = 0,
@@ -388,7 +387,6 @@ export const ChartTypeToView = {
   [ChartTypes.candlestickBarChart]: ChartViews.candlestickBarChart,
   [ChartTypes.stackedAreaChart]: ChartViews.stackedAreaChart,
   [ChartTypes.histogramChart]: ChartViews.histogramChart,
-  [ChartTypes.lineChart]: ChartViews.lineWeekend,
 };
 
 export interface ParamConfigSingle {

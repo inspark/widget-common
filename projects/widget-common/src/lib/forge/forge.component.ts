@@ -1,69 +1,56 @@
 /**
- *
- * Интеграций с Forge Autodesk
+ * Интеграция с Autodesk Forge Viewer
  */
 /// <reference types="forge-viewer" />
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ElementRef, EventEmitter,
+  ElementRef,
+  EventEmitter,
   Input,
   NgModule,
   NgZone,
   OnDestroy,
-  OnInit, Output,
+  OnInit,
+  Output,
   ViewChild
 } from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ParamAssignExtension, ParamLabel} from './ParamAssign';
-
 import {HttpClient} from '@angular/common/http';
 import {FormsModule} from '@angular/forms';
 import {ScriptService} from './Script.service';
 import {ForgeOption} from './forge.interface';
-import Cookies from 'js-cookie'
+import Cookies from 'js-cookie';
 
 declare const Autodesk: any;
 
 
 @Component({
+  standalone: true,
   selector: 'app-forge',
   templateUrl: './forge.component.html',
   styleUrls: ['./forge.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [FormsModule, CommonModule],
+  providers: [ScriptService],
 })
 export class ForgeComponent implements OnInit, OnDestroy {
 
   constructor(private http: HttpClient,
               private cdr: ChangeDetectorRef,
               private ngZone: NgZone,
-              private scripts: ScriptService) {
-
-  }
+              private scripts: ScriptService) {}
 
   @ViewChild('forgeViewer') viewerDiv: ElementRef<HTMLDivElement>;
 
   @Input() urn = '';
-
   @Input() labels: ForgeOption[] = [];
-
   @Output() onReady = new EventEmitter();
 
   public documentId: string;
-
   viewer: any;
-
-
-  @NgModule({
-    declarations: [ForgeComponent],
-    imports: [FormsModule, CommonModule],
-    exports: [ForgeComponent],
-    providers: [ScriptService],
-    entryComponents: [ForgeComponent]
-  })
-  export;
-  class;
 
   public ngOnInit() {
     this.scripts.load('viewer').then(data => {
@@ -72,9 +59,7 @@ export class ForgeComponent implements OnInit, OnDestroy {
     this.scripts.loadStyles();
   }
 
-  ngOnDestroy() {
-
-  }
+  ngOnDestroy() {}
 
   authForge(callback) {
     callback(Cookies.get('forge'), 3599);
@@ -89,8 +74,7 @@ export class ForgeComponent implements OnInit, OnDestroy {
       ParamAssignExtension.registerExtension(ParamAssignExtension.extensionName, this.extensionLoaded.bind(this));
       Autodesk.Viewing.Initializer(options, () => {
         const documentId = 'urn:' + urn;
-        this.viewer = new Autodesk.Viewing.GuiViewer3D(this.viewerDiv.nativeElement,
-          {extensions: []});
+        this.viewer = new Autodesk.Viewing.GuiViewer3D(this.viewerDiv.nativeElement, {extensions: []});
         Autodesk.Viewing.Document.load(documentId, this.onDocumentLoadSuccess.bind(this), this.onDocumentLoadFailure.bind(this));
       });
     });
@@ -99,7 +83,6 @@ export class ForgeComponent implements OnInit, OnDestroy {
   extensionLoaded() {
     console.log('extensionLoaded');
   }
-
 
   afterViewerEvents(viewer, events) {
     const promises = [];
@@ -115,19 +98,10 @@ export class ForgeComponent implements OnInit, OnDestroy {
     return Promise.all(promises);
   }
 
-
   onDocumentLoadSuccess(doc) {
     this.viewer.start();
     const viewables = doc.getRoot().getDefaultGeometry();
     this.viewer.loadDocumentNode(doc, viewables, {}).then(async (model) => {
-
-      // await this.afterViewerEvents(
-      //   this.viewer,
-      //   [
-      //     Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
-      //     Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT
-      //   ]
-      // );
       this.loadParamExtension();
     });
   }
@@ -147,38 +121,20 @@ export class ForgeComponent implements OnInit, OnDestroy {
         });
       }, true);
 
-      this.viewer.loadExtension(ParamAssignExtension.extensionName, {
-        icons,
-        // onClick: (id) => {
-        //   switch (id) {
-        //     case 2850:
-        //       alert('Sensor offline');
-        //   }
-        // }
-      });
-
+      this.viewer.loadExtension(ParamAssignExtension.extensionName, {icons});
       this.onReady.emit({viewer: this.viewer});
-
     });
   }
 
   onDocumentLoadFailure(viewerErrorCode, viewerErrorMsg) {
     console.error('onDocumentLoadFailure() - errorCode:' + viewerErrorCode + '\n- errorMessage:' + viewerErrorMsg);
   }
-
 }
 
 
 @NgModule({
-  declarations: [ForgeComponent],
-  imports: [FormsModule, CommonModule],
+  imports: [ForgeComponent],
   exports: [ForgeComponent],
   providers: [ScriptService],
-  entryComponents: [ForgeComponent]
 })
-export class ForgeComponentModule {
-}
-
-
-
-
+export class ForgeComponentModule {}

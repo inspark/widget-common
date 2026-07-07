@@ -10,10 +10,15 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/widget-common/tsconfig.lib.json",
             "project": "projects/widget-common/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/widget-common/tsconfig.lib.prod.json"
+            }
           }
         },
         "test": {
@@ -25,14 +30,11 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "projects/widget-common/tsconfig.lib.json",
-              "projects/widget-common/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
+            "lintFilePatterns": [
+              "projects/widget-common/**/*.ts",
+              "projects/widget-common/**/*.html"
             ]
           }
         }

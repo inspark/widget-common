@@ -23,7 +23,7 @@ import {Pipe, PipeTransform} from '@angular/core';
 import {common} from './common';
 
 
-@Pipe({name: 'filterIndexOf'})
+@Pipe({name: 'filterIndexOf', standalone: true})
 export class FilterIndexOfPipe implements PipeTransform {
   transform(array: any[], field: string, search: any) {
     return array.filter(val => {
@@ -33,7 +33,7 @@ export class FilterIndexOfPipe implements PipeTransform {
 }
 
 
-@Pipe({name: 'periodFromDate'})
+@Pipe({name: 'periodFromDate', standalone: true})
 export class PeriodFromDatePipe implements PipeTransform {
   transform(count: number, period: string): string {
 
@@ -55,14 +55,14 @@ export class PeriodFromDatePipe implements PipeTransform {
 }
 
 
-@Pipe({name: 'arrayNumber'})
+@Pipe({name: 'arrayNumber', standalone: true})
 export class ArrayNumberPipe implements PipeTransform {
   transform(value, args: string[] = []): any {
     return Array(value).fill(1).map((x, i) => i + 1);
   }
 }
 
-@Pipe({name: 'makePictureUrl'})
+@Pipe({name: 'makePictureUrl', standalone: true})
 export class MakePictureUrl implements PipeTransform {
   transform(id: number): string {
     if (id === -1) {
@@ -73,7 +73,7 @@ export class MakePictureUrl implements PipeTransform {
   }
 }
 
-@Pipe({name: 'makeIconUrl'})
+@Pipe({name: 'makeIconUrl', standalone: true})
 export class MakeIconUrl implements PipeTransform {
   transform(id: number): string {
     if (id === -1) {
@@ -87,14 +87,14 @@ export class MakeIconUrl implements PipeTransform {
 /**
  * @deprecated
  */
-@Pipe({name: 'makeChartUrl'})
+@Pipe({name: 'makeChartUrl', standalone: true})
 export class MakeChartUrl implements PipeTransform {
   transform(id: number, isCalc, isSignal = false): string {
     return common.transformChartUrlConfig(id, isCalc, isSignal);
   }
 }
 
-@Pipe({name: 'chartUrl'})
+@Pipe({name: 'chartUrl', standalone: true})
 export class ChartUrl implements PipeTransform {
   transform(param: IWidgetDeviceParamData): string {
     return common.transformChartUrlConfig(param);
@@ -102,7 +102,6 @@ export class ChartUrl implements PipeTransform {
 }
 
 
-// Добавляем значения для
 export function assignValues(inputValues: WidgetParamsChildren, params: IWidgetParam[], viewConfig: {
   [k: string]: IWidgetParamConfig
 }, path = []): ItemParent {
@@ -308,17 +307,11 @@ export function findParam(params: ParamConfigurator[], refname: string): ParamCo
 }
 
 
-// Преобразует  структуру параметров виджета в структуру для конфигуратора
 export function createParamList(params: WidgetParamsChildren | WidgetParamsChildren[] | WidgetParamChildren[], itemType = ITEM_TYPE.single,
                                 paramType: PARAM_TYPE = PARAM_TYPE.value, path = [], parent = null): ParamConfigurator[] {
   const result: ParamConfigurator[] = [];
   if (params instanceof Array) {
-    // Элемент масссива
     const item: any = params[0];
-    // if (!item.title) {
-    //   item.title = 'Item 1';
-    // }
-
     const pItemType = item.item_type || itemType;
     const pParamType = item.param_type || paramType;
 
@@ -350,10 +343,8 @@ export function createParamList(params: WidgetParamsChildren | WidgetParamsChild
         const itemPath = [...path, key];
 
         if (params[key].items) {
-          // Массив
           result.push(createParam(item, itemPath, pItemType, pParamType, parent));
         } else {
-          // Таблица
           if (pItemType === ITEM_TYPE.table) {
             result.push({
               name: itemPath.join('.'),
@@ -388,8 +379,6 @@ export function createParamList(params: WidgetParamsChildren | WidgetParamsChild
               }
             });
           } else {
-            // Простой элемент
-
             let config: any = {};
             if (ITEM_TYPE.series === pItemType) {
               config = {count: 0, charttype: ChartTypes.lineChart, duration: SeriesDuration.day};
@@ -439,7 +428,6 @@ function createParam(item, itemPath, itemType, paramType, parent) {
       }
     }
   } else if (paramType === PARAM_TYPE.virtual_object) {
-    // Массив объектов
     res.items = createParamList(item, itemType, paramType, itemPath, res);
   }
   return res;
@@ -484,29 +472,22 @@ export function addArrayItem(parent: ParamConfigurator) {
 
 function deepClone(obj, map = new WeakMap()) {
   if (obj === null || typeof obj !== 'object') {
-    return obj; // Если obj не объект или null, просто возвращаем его
+    return obj;
   }
-
   if (obj instanceof Date) {
-    return new Date(obj.getTime()); // Клонируем даты
+    return new Date(obj.getTime());
   }
-
   if (obj instanceof RegExp) {
-    return new RegExp(obj); // Клонируем регулярные выражения
+    return new RegExp(obj);
   }
-
   if (map.has(obj)) {
-    return map.get(obj); // Обработка циклических ссылок
+    return map.get(obj);
   }
-
-  const result = Array.isArray(obj) ? [] : {}; // Создаем пустой объект или массив в зависимости от типа
-
-  map.set(obj, result); // Сохраняем объект в WeakMap для отслеживания циклических ссылок
-
+  const result = Array.isArray(obj) ? [] : {};
+  map.set(obj, result);
   for (const key of Object.keys(obj)) {
-    result[key] = deepClone(obj[key], map); // Рекурсивно клонируем все свойства
+    result[key] = deepClone(obj[key], map);
   }
-
   return result;
 }
 
@@ -568,7 +549,6 @@ export function prepareExternalJSON(json) {
 
 export class Utils {
 
-
   public static getDate(ts: number = Date.now()) {
     const d = new Date(ts);
     const dd = d.getDate();
@@ -626,9 +606,7 @@ export class Utils {
     }
     const hh = d.getHours();
     const mm = d.getMinutes();
-    const ss = d.getSeconds();
     return ('0' + hh).slice(-2) + ':' + ('0' + mm).slice(-2);
   }
-
 
 }

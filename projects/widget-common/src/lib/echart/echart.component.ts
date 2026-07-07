@@ -3,7 +3,6 @@ import {
   ChangeDetectorRef,
   Component,
   Input,
-  LOCALE_ID,
   NgModule,
   OnChanges,
   OnDestroy,
@@ -20,7 +19,7 @@ import {
   SiteTheme
 } from '../widget.interface';
 import {CommonModule, DatePipe} from '@angular/common';
-import {NgxEchartsModule} from 'ngx-echarts';
+import {NgxEchartsDirective} from 'ngx-echarts';
 import {EChartsOption, SeriesOption} from 'echarts/types/dist/echarts';
 import * as echarts from 'echarts';
 import {PieChartComponent} from '../pie-chart/pie-chart.component';
@@ -58,7 +57,7 @@ const getGradient = (seed: number) => GRADIENT[seed % GRADIENT.length];
 
 const cutName = (name: string, length: number) => {
   if (name.length > length + 3) {
-    return name.substr(0, length) + '...';
+    return name.substring(0, length) + '...';
   }
   return name;
 };
@@ -79,17 +78,19 @@ export interface SimpleData {
 }
 
 @Component({
+  standalone: true,
   selector: 'app-echart',
   templateUrl: './echart.component.html',
   styleUrls: ['./echart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.Emulated,
+  imports: [CommonModule, NgxEchartsDirective],
 })
 export class EchartComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() values: ItemSeries[];
   @Input() simpleData: SimpleData[];
-  @Input() config: ParamConfigSeries; // ожидается поле duration и count (count трактуем как shift)
+  @Input() config: ParamConfigSeries;
   @Input() locale = 'en';
   @Input() noDataMessage = 'No data';
   @Input() width = 250;
@@ -129,7 +130,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
         return res;
       }
     },
-    xAxis: {type: 'time', boundaryGap: false},
+    xAxis: {type: 'time', boundaryGap: ['0%', '0%']},
     yAxis: {type: 'value'},
     toolbox: {
       right: '20px',
@@ -172,8 +173,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
   display = true;
   echartsInstance: any;
 
-  constructor(private cdr: ChangeDetectorRef) {
-  }
+  constructor(private cdr: ChangeDetectorRef) {}
 
   ngOnChanges(changes: any) {
     if (changes.locale) {
@@ -288,14 +288,10 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
     values = this.updateValueTimeZone(values);
     const first = values[0];
 
-    // shift трактуем из config.count
     const shift = Math.max(0, Number(config.count || 0));
     const tz = first?.device?.object?.timezone ?? 0;
-
-    // Конечная точка всегда "сейчас" с учётом TZ
     const endNow = this.nowWithTZ(tz);
 
-    // Выбор периода
     let period: { startTime: number; endTime: number; text: string };
     switch (config.duration) {
       case SeriesDuration.day:
@@ -476,12 +472,8 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
   getMaxMinSimple(values: SimpleData['data']) {
     let max = Number.MIN_VALUE, min = Number.MAX_VALUE;
     values.forEach((value) => {
-      if (value > max) {
-        max = value;
-      }
-      if (value < min) {
-        min = value;
-      }
+      if (value > max) { max = value; }
+      if (value < min) { min = value; }
     });
     return {max, min};
   }
@@ -490,21 +482,13 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
     let max = Number.MIN_VALUE, min = Number.MAX_VALUE;
     if (this.config.charttype === ChartTypes.candlestickBarChart) {
       values.data.forEach((val: SeriesCandleValue) => {
-        if (val.high > max) {
-          max = val.high;
-        }
-        if (val.low < min) {
-          min = val.low;
-        }
+        if (val.high > max) { max = val.high; }
+        if (val.low < min) { min = val.low; }
       });
     } else {
       values.data.forEach((val: SeriesLineValue) => {
-        if (val.value > max) {
-          max = val.value;
-        }
-        if (val.value < min) {
-          min = val.value;
-        }
+        if (val.value > max) { max = val.value; }
+        if (val.value < min) { min = val.value; }
       });
     }
     return {max, min};
@@ -530,20 +514,13 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
     let max = Number.MIN_VALUE, min = Number.MAX_VALUE;
     if (values.data) {
       values.data.forEach((val: SeriesLineValue) => {
-        if (val.timestmp > max) {
-          max = val.timestmp;
-        }
-        if (val.timestmp < min) {
-          min = val.timestmp;
-        }
+        if (val.timestmp > max) { max = val.timestmp; }
+        if (val.timestmp < min) { min = val.timestmp; }
       });
     }
     return {max, min};
   }
 
-  // ===== ВРЕМЯ И ПЕРИОДЫ С УЧЁТОМ TZ =====
-
-  // "Сейчас" с учётом таймзоны объекта (timezone в часах)
   private nowWithTZ(timezone: number): Date {
     const now = new Date();
     const shiftMs = (now.getTimezoneOffset() - timezone * 60) * 60000;
@@ -556,11 +533,10 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
     return x;
   }
 
-  // Неделя начинается в понедельник
   private startOfWeekTZ(d: Date): Date {
     const x = new Date(d.getTime());
-    const dow = x.getDay(); // 0..6, где 1 — понедельник при сдвиге
-    const mondayOffset = (dow + 6) % 7; // 0 для понедельника
+    const dow = x.getDay();
+    const mondayOffset = (dow + 6) % 7;
     x.setDate(x.getDate() - mondayOffset);
     x.setHours(0, 0, 0, 0);
     return x;
@@ -573,9 +549,6 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
     return x;
   }
 
-  // day:
-  // shift=0 -> от начала текущего дня до "сейчас"
-  // shift>=1 -> от (сейчас - shift*дней) до "сейчас"
   getDay(shift: number, timezone: number, nowTZ: Date) {
     const end = new Date(nowTZ.getTime());
     let start: Date;
@@ -584,30 +557,18 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       start = new Date(end.getTime() - shift * FULL_DAY);
     }
-    return {
-      startTime: start.getTime(),
-      endTime: end.getTime(),
-      text: ''
-    };
+    return {startTime: start.getTime(), endTime: end.getTime(), text: ''};
   }
 
-  // week:
-  // всегда от начала недели; shift=0 текущая неделя, shift>=1 — на shift недель назад
   getWeek(shift: number, timezone: number, nowTZ: Date) {
     const end = new Date(nowTZ.getTime());
     let start = this.startOfWeekTZ(end);
     if (shift > 0) {
       start = new Date(start.getTime() - shift * 7 * FULL_DAY);
     }
-    return {
-      startTime: start.getTime(),
-      endTime: end.getTime(),
-      text: ''
-    };
+    return {startTime: start.getTime(), endTime: end.getTime(), text: ''};
   }
 
-  // month:
-  // всегда от начала месяца; shift=0 текущий, shift>=1 — на shift месяцев назад
   getMonth(shift: number, timezone: number, nowTZ: Date) {
     const end = new Date(nowTZ.getTime());
     let start = this.startOfMonthTZ(end);
@@ -616,14 +577,9 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
       s.setMonth(s.getMonth() - shift);
       start = s;
     }
-    return {
-      startTime: start.getTime(),
-      endTime: end.getTime(),
-      text: ''
-    };
+    return {startTime: start.getTime(), endTime: end.getTime(), text: ''};
   }
 
-  // сохраняем для совместимости (используется в markArea)
   modifyTime(date: Date, timezone: number) {
     return date.setTime(date.getTime() + (date.getTimezoneOffset() - timezone * 60) * 60000);
   }
@@ -637,67 +593,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
 }
 
 @NgModule({
-  declarations: [
-    EchartComponent,
-    PieChartComponent,
-  ],
-  imports: [
-    CommonModule,
-    NgxEchartsModule
-  ],
-  exports: [
-    EchartComponent,
-    PieChartComponent,
-  ],
-  providers: [
-    {provide: LOCALE_ID, useValue: 'en-US'},
-    {provide: LOCALE_ID, useValue: 'ru-RU'},
-  ],
-  entryComponents: [EchartComponent, PieChartComponent]
+  imports: [EchartComponent, PieChartComponent],
+  exports: [EchartComponent, PieChartComponent],
 })
-export class EChartComponentModule {
-}
-
-function makeTimeScaleOption(data: any[], opt?: { useUTC?: boolean; tooltipFormatter?: (p: any) => string }) {
-  opt = opt || {};
-  const useUTC = opt.useUTC;
-  const tooltipFormatter = opt.tooltipFormatter;
-  return {
-    useUTC: useUTC,
-    tooltip: {
-      trigger: 'axis',
-      formatter: tooltipFormatter
-    },
-    xAxis: [{
-      type: 'time',
-      splitNumber: 7,
-      axisLabel: {
-        formatter: function (tick: number) {
-          return echarts.time.format(
-            tick,
-            '{yyyy}-{MM}-{dd} {HH}:{mm}:{ss}',
-            useUTC
-          );
-        },
-        rotate: 10
-      },
-      splitLine: {show: false}
-    }],
-    yAxis: [{type: 'value', splitLine: {show: false}}],
-    series: [{
-      type: 'line',
-      smooth: true,
-      data: data,
-      label: {
-        show: true,
-        formatter: function (params: any) {
-          return echarts.time.format(
-            params.value[0],
-            '{yyyy}-{MM}-{dd} {HH}:{mm}:{ss}',
-            useUTC
-          );
-        }
-      }
-    }]
-  };
-}
+export class EChartComponentModule {}

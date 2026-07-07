@@ -5,30 +5,22 @@
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
-    "module": "ESNext",
-    "moduleResolution": "node",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es5",
+    "target": "ES2022",
+    "useDefineForClassFields": false,
     "typeRoots": [
       "node_modules/@types"
     ],
-    "types": [
-      // add node as an option
-      "node"
-    ],
     "lib": [
-      "es2018",
+      "ES2022",
       "dom"
     ],
     "paths": {
-      "@angular/*": ["./node_modules/@angular/*"],
-      "sem-dashboard": [
-        "dist/sem-dashboard"
-      ],
-      "sem-dashboard/*": [
-        "dist/sem-dashboard/*"
-      ]
-    }
+      "@angular/*": ["./node_modules/@angular/*"]
+    },
+    "skipLibCheck": true
   }
 }

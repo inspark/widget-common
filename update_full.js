@@ -23,5 +23,11 @@ fields.forEach(field => {
   }
 });
 
+// Allow deep imports from ./full/lib/* so consumers can import individual type files
+jsonContent.exports['./full/lib/*'] = {
+  types: './full/lib/*.d.ts',
+  default: './full/fesm2022/inspark-widget-common.mjs'
+};
+
 fs.writeFileSync("./dist/widget-common/package.json", JSON.stringify(jsonContent));
 console.log('Done!');
