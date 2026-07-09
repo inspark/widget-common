@@ -9,7 +9,7 @@ var re = {
   not_json: /[^j]/,
   text: /^[^\x25]+/,
   modulo: /^\x25{2}/,
-  placeholder: /^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?((hh)|(mm)|(ss)|[b-gijostTuvxX])/,
+  placeholder: /^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?((yyyy)|(hh)|(HH)|(mm)|(MM)|(ss)|(dd)|[b-gijostTuvxX])/,
   key: /^([a-z_][a-z_\d]*)/i,
   key_access: /^\.([a-z_][a-z_\d]*)/i,
   index_access: /^\[(\d+)\]/,
@@ -23,6 +23,11 @@ export function sprintf(key, ...args) {
 
 export function vsprintf(fmt, argv) {
   return sprintf.apply(null, [fmt].concat(argv || []));
+}
+
+function tsToDate(arg) {
+  var n = typeof arg === 'string' ? parseFloat(arg) : +arg;
+  return new Date(n < 1e10 ? n * 1000 : n);
 }
 
 function sprintf_format(parse_tree, argv) {
@@ -91,6 +96,18 @@ function sprintf_format(parse_tree, argv) {
           break
         case 'ss':
           arg = ('0' + ((parseFloat(arg) - parseInt(arg)) * 60)).slice(-2);
+          break
+        case 'HH':
+          arg = ('0' + tsToDate(arg).getHours()).slice(-2);
+          break
+        case 'MM':
+          arg = ('0' + (tsToDate(arg).getMonth() + 1)).slice(-2);
+          break
+        case 'dd':
+          arg = ('0' + tsToDate(arg).getDate()).slice(-2);
+          break
+        case 'yyyy':
+          arg = tsToDate(arg).getFullYear().toString();
           break
         case 'n':
           arg = match[7] ? parseFloat(arg).toFixed(match[7]) : parseFloat(arg)
