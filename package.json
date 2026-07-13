@@ -2,15 +2,15 @@
   "name": "widget-common-container",
   "version": "0.0.0",
   "scripts": {
-    "clean": "rm -rf dist/*",
+    "clean": "rimraf dist",
     "build_full": "copy-files-from-to --config ./projects/widget-common/versions/full/copy.json && ng build",
     "build_interface": "copy-files-from-to --config ./projects/widget-common/versions/interfaces/copy.json && ng build",
-    "build": "NODE_OPTIONS=--openssl-legacy-provider npm run clean && npm run build_full && npm run build_interface && copy-files-from-to --config ./projects/widget-common/copy.json --mode production && node update_full.js",
+    "build": "npm run clean && npm run build_full && npm run build_interface && copy-files-from-to --config ./projects/widget-common/copy.json --mode production && node update_full.js",
     "dev": "ng build --watch=true",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "publish": "npm publish dist/widget-common/"
+    "publish": "npm publish --tag 14.0.36 dist/widget-common/ "
   },
   "private": false,
   "dependencies": {
