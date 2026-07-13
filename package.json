@@ -1,6 +1,6 @@
 {
   "name": "widget-common-container",
-  "version": "0.0.0",
+  "version": "14.0.36",
   "scripts": {
     "clean": "rimraf dist",
     "build_full": "copy-files-from-to --config ./projects/widget-common/versions/full/copy.json && ng build",
