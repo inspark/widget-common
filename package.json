@@ -10,7 +10,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "publish": "npm publish --tag 14.0.36 dist/widget-common/ "
+    "publish": "npm publish dist/widget-common/ "
   },
   "private": false,
   "dependencies": {
