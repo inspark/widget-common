@@ -322,19 +322,30 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     const measures = values.map(v => v.device.param.measure.id).filter((v, i, s) => s.indexOf(v) === i);
+    const measureAxisIndex = new Map<any, number>();
+    measures.forEach((measureId, axisIndex) => measureAxisIndex.set(measureId, axisIndex));
+    const getYAxisIndex = (value: ItemSeries) =>
+      yAxis.length > 1 ? (measureAxisIndex.get(value.device.param.measure.id) ?? 0) : 0;
     if (measures.length > 1 && config.viewtype !== ChartViews.stackedAreaChart) {
-      yAxis = values.map((v, ind) => {
-        const maxmin = this.getMaxMin(v);
+      yAxis = measures.map((measureId, axisIndex) => {
+        const group = values.filter(v => v.device.param.measure.id === measureId);
+        const maxmin = group.reduce((acc, v) => {
+          const current = this.getMaxMin(v);
+          return {
+            min: Math.min(acc.min, current.min),
+            max: Math.max(acc.max, current.max)
+          };
+        }, {min: Number.MAX_VALUE, max: Number.MIN_VALUE});
         const diff = Math.round((maxmin.max - maxmin.min) * 0.1);
         return {
           type: 'value',
           min: Math.round(maxmin.min - diff),
           max: Math.round(maxmin.max + diff),
-          position: ind % 2 === 0 ? 'left' : 'right',
-          offset: 60 * Math.floor(ind / 2),
-          axisLine: {show: true, lineStyle: {color: this.getChartColor(ind)}},
+          position: axisIndex % 2 === 0 ? 'left' : 'right',
+          offset: 60 * Math.floor(axisIndex / 2),
+          axisLine: {show: true, lineStyle: {color: this.getChartColor(axisIndex)}},
           splitLine: {show: false},
-          axisLabel: {formatter: '{value} ', color: this.getChartColor(ind)}
+          axisLabel: {formatter: '{value} ', color: this.getChartColor(axisIndex)}
         };
       });
     } else {
@@ -355,7 +366,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
           data: value.data.map((val: any) => [val.timestmp, val.value, value]),
           itemStyle: {color: this.getChartColor(ind)},
           name: title,
-          yAxisIndex: yAxis.length > 1 ? ind : 0,
+          yAxisIndex: getYAxisIndex(value),
         });
       });
     } else if (config.viewtype === ChartViews.candlestickBarChart) {
@@ -366,7 +377,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
           type: 'candlestick',
           data: value.data.map((val: any) => [val.timestmp, val.open, val.close, val.low, val.high, value]),
           name: title,
-          yAxisIndex: yAxis.length > 1 ? ind : 0,
+          yAxisIndex: getYAxisIndex(value),
         });
       });
     } else {
@@ -380,7 +391,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
             stack: 'Total',
             smooth: true,
             name: title,
-            yAxisIndex: yAxis.length > 1 ? ind : 0,
+            yAxisIndex: getYAxisIndex(value),
             data: value.data.map((val: any) => [val.timestmp, val.value, value]),
             lineStyle: {width: 0},
             showSymbol: false,
@@ -417,7 +428,7 @@ export class EchartComponent implements OnInit, OnChanges, OnDestroy {
             smooth: true,
             name: title,
             markArea,
-            yAxisIndex: yAxis.length > 1 ? ind : 0,
+            yAxisIndex: getYAxisIndex(value),
             lineStyle: {color: this.getChartColor(ind)},
             itemStyle: {color: this.getChartColor(ind)},
             data: value.data.map((val: any) => [val.timestmp, val.value, value]),
