@@ -92,10 +92,14 @@ function sprintf_format(parse_tree, argv) {
           arg = (Math.floor(parseInt(arg) / 60));
           break
         case 'mm':
-          arg = ('0' + (parseInt(arg) % 60)).slice(-2);
+          arg = parseFloat(arg) > 1e7
+            ? ('0' + tsToDate(arg).getMinutes()).slice(-2)
+            : ('0' + (parseInt(arg) % 60)).slice(-2);
           break
         case 'ss':
-          arg = ('0' + ((parseFloat(arg) - parseInt(arg)) * 60)).slice(-2);
+          arg = parseFloat(arg) > 1e7
+            ? ('0' + tsToDate(arg).getSeconds()).slice(-2)
+            : ('0' + ((parseFloat(arg) - parseInt(arg)) * 60)).slice(-2);
           break
         case 'HH':
           arg = ('0' + tsToDate(arg).getHours()).slice(-2);
